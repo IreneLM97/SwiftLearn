@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">SwiftLearn</string>
+
+    <string name="title">Swift Learn</string>
+
+    <string name="book_img">Imagen de libro</string>
+    <string name="welcome">Bienvenido</string>
+
+    <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
+    <string name="send_info">Enviar información a otra aplicación</string>
 </resources>
