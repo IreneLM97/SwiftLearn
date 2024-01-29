@@ -1,56 +1,69 @@
 package com.example.swiftlearn
 
-import android.content.Context
-import android.content.Intent
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.example.swiftlearn.ui.screens.login.LoginScreen
-import com.example.swiftlearn.ui.screens.login.LoginViewModel
+import android.annotation.SuppressLint
+import androidx.compose.material.icons.Icons.Filled
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import com.example.swiftlearn.ui.navigation.SwiftLearnNavigation
 
-enum class SwiftLearnScreen {
-    LoginScreen,
-    RegisterScreen
-}
-
+/**
+ * Top level composable that represents screens for the application.
+ */
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SwiftLearnApp(
-    viewModel: LoginViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
-    // Configuración del sistema de navegación
-    NavHost(
-        navController = navController,
-        startDestination = SwiftLearnScreen.LoginScreen.name,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // Estructura de la pantalla que muestra la lista de categorías (pantalla principal)
-        composable(route = SwiftLearnScreen.LoginScreen.name) {
-            LoginScreen()
-        }
-    }
+    SwiftLearnNavigation(navController = navController)
 }
 
-private fun shareInfo(
-    context: Context,
-    summary: String
+/**
+ * App bar to display title and conditionally display the back navigation.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwiftLearnTopAppBar(
+    title: String,
+    canNavigateBack: Boolean,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    navigateUp: () -> Unit = {}
 ) {
-    // Crear un Intent de acción SEND para compartir
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"  // contenido de texto plano
-        putExtra(Intent.EXTRA_TEXT, summary)  // agregamos resumen
-    }
-
-    // Iniciar una actividad para elegir la aplicación de destino a la que se quiere compartir
-    context.startActivity(
-        Intent.createChooser(
-            intent,
-            context.getString(R.string.send_info)
-        )
+    TopAppBar(
+        title = {
+            Text(
+                text = stringResource(R.string.title),
+                color = colorResource(id = R.color.white)
+            )
+        },
+        modifier = modifier,
+        scrollBehavior = scrollBehavior,
+        colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = colorResource(R.color.my_dark_purple)
+        ),
+        navigationIcon = {
+            if (canNavigateBack) {
+                IconButton(onClick = navigateUp) {
+                    Icon(
+                        imageVector = Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_button)
+                    )
+                }
+            }
+        }
     )
 }
+
+
