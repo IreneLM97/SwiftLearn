@@ -44,7 +44,7 @@ fun SwiftLearnTopAppBar(
     TopAppBar(
         title = {
             Text(
-                text = stringResource(R.string.title),
+                text = stringResource(R.string.login_title),
                 color = colorResource(id = R.color.white)
             )
         },
@@ -58,7 +58,7 @@ fun SwiftLearnTopAppBar(
                 IconButton(onClick = navigateUp) {
                     Icon(
                         imageVector = Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back_button)
+                        contentDescription = stringResource(R.string.description_back_icon)
                     )
                 }
             }

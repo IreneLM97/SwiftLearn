@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import com.example.swiftlearn.R
 import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.example.swiftlearn.ui.screens.login.LoginScreen
+import com.example.swiftlearn.ui.screens.register.RegisterDestination
+import com.example.swiftlearn.ui.screens.register.RegisterScreen
 import com.example.swiftlearn.ui.screens.splash.SplashScreen
 
 /**
@@ -29,7 +31,14 @@ fun SwiftLearnNavigation(
             SplashScreen(navController = navController)
         }
         composable(route = LoginDestination.route) {
-            LoginScreen()
+            LoginScreen(
+                onRegisterClick = {
+                    navController.navigate(RegisterDestination.route)
+                }
+            )
+        }
+        composable(route = RegisterDestination.route) {
+            RegisterScreen()
         }
     }
 }
