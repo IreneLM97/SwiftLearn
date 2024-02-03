@@ -59,7 +59,7 @@ fun SplashScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.swiftlearn),
-                contentDescription = stringResource(R.string.logo),
+                contentDescription = stringResource(R.string.description_logo_icon),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(300.dp)

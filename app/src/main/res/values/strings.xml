@@ -1,14 +1,27 @@
 <resources>
     <string name="app_name">SwiftLearn</string>
 
-    <string name="title">Swift Learn</string>
+    <!-- Títulos de las páginas -->
+    <string name="login_title">Swift Learn</string>
 
-    <string name="book_img">Imagen de libro</string>
+
     <string name="welcome">Bienvenido</string>
 
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
-    <string name="home">home</string>
-    <string name="back_button">Volver atrás</string>
-    <string name="logo">Logo de la aplicación</string>
+
+    <string name="email_label">Correo electrónico</string>
+    <string name="pass_label">Contraseña</string>
+    <string name="icon_label">Icono de mostrar/ocultar</string>
+    <string name="login_label">Iniciar sesión</string>
+    <string name="no_cuenta_label">¿No tienes una cuenta?</string>
+    <string name="google_label">Continuar con Google</string>
+    <string name="register_label">Regístrate</string>
+    <string name="register">Registro</string>
+
+    <string name="description_logo_icon">Logo de la aplicación</string>
+    <string name="description_back_icon">Volver atrás</string>
+    <string name="description_google_icon">Icono Google</string>
+    <string name="description_book_icon">Imagen de libro</string>
+    <string name="remember_me_label">Recuérdame</string>
 </resources>

@@ -44,7 +44,7 @@ fun SwiftLearnTopAppBar(
     TopAppBar(
         title = {
             Text(
-                text = stringResource(R.string.login_title),
+                text = title,
                 color = colorResource(id = R.color.white)
             )
         },

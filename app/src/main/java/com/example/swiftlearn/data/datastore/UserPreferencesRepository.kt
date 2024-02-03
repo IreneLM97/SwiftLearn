@@ -17,12 +17,12 @@ import java.io.IOException
 /**
  * Clase de datos que representa las preferencias del usuario.
  *
- * @param rememberUser Boolean que indica si el usuario quiere ser recordado o no.
- * @param emailUser Email del usuario.
+ * @param emailValue Email del usuario.
+ * @param rememberValue Boolean que indica si el usuario quiere ser recordado o no.
  */
 data class UserPreferences(
-    val rememberUser: Boolean = false,
-    val emailUser: String = ""
+    val emailValue: String = "",
+    val rememberValue: Boolean = false
 )
 
 /**
@@ -30,8 +30,8 @@ data class UserPreferences(
  */
 object UserPreferencesKeys {
     const val TAG = "UserPreferencesRepo"
-    val REMEMBER_VALUE = stringPreferencesKey("remember_value")
     val EMAIL_VALUE = stringPreferencesKey("email_value")
+    val REMEMBER_VALUE = stringPreferencesKey("remember_value")
 }
 
 /**
@@ -46,16 +46,17 @@ class UserPreferencesRepository(
     /**
      * Guarda las preferencias del usuario.
      *
-     * @param rememberUser Preferencia que indica si quiere ser recordado o no.
-     * @param emailUser Email del usuario.
+     * @param emailValue Email del usuario.
+     * @param rememberValue Preferencia que indica si quiere ser recordado o no.
      */
     suspend fun saveUserPreferences(
-        rememberUser: Boolean,
-        emailUser: String
+        emailValue: String,
+        rememberValue: Boolean
     ) {
         dataStore.edit { preferences ->
-            preferences[REMEMBER_VALUE] = rememberUser.toString()
-            preferences[EMAIL_VALUE] = emailUser
+            preferences[EMAIL_VALUE] = emailValue
+            preferences[REMEMBER_VALUE] = rememberValue.toString()
+
         }
     }
 
@@ -73,8 +74,8 @@ class UserPreferencesRepository(
         }
         .map { preferences ->
             UserPreferences(
-                rememberUser = (preferences[REMEMBER_VALUE]?.toBoolean() ?: "false") as Boolean,
-                emailUser = preferences[EMAIL_VALUE] ?: ""
+                emailValue = preferences[EMAIL_VALUE] ?: "",
+                rememberValue = (preferences[REMEMBER_VALUE]?.toBoolean() ?: false)
             )
         }
 }
