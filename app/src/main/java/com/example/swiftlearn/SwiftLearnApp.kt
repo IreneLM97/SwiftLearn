@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.example.swiftlearn.ui.navigation.SwiftLearnNavigation
@@ -58,7 +59,8 @@ fun SwiftLearnTopAppBar(
                 IconButton(onClick = navigateUp) {
                     Icon(
                         imageVector = Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.description_back_icon)
+                        contentDescription = stringResource(R.string.description_back_icon),
+                        tint = Color.White
                     )
                 }
             }

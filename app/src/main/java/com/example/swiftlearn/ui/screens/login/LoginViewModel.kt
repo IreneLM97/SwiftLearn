@@ -1,6 +1,5 @@
 package com.example.swiftlearn.ui.screens.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.data.datastore.UserPreferencesRepository
@@ -75,7 +74,6 @@ class LoginViewModel(
     /**
      * Función que se ejecuta cuando cambia el toggle.
      *
-     * @param emailValue Valor del correo del usuario.
      * @param rememberValue Valor del toggle que indica si quiere ser recordado o no.
      */
     fun onToggleChanged(

@@ -38,7 +38,11 @@ fun SwiftLearnNavigation(
             )
         }
         composable(route = RegisterDestination.route) {
-            RegisterScreen()
+            RegisterScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

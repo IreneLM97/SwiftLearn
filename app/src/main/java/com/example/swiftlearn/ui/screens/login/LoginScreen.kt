@@ -9,24 +9,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Shapes
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,8 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -68,7 +56,6 @@ fun LoginScreen(
     onRegisterClick: () -> Unit = {},
     viewModel: LoginViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    // Obtenemos el estado actual de la búsqueda y el flujo de datos de favoritos y aeropuertos
     val loginUiState = viewModel.loginUiState.collectAsState().value
 
     // Diseño de la estructura básica de la pantalla
@@ -125,7 +112,7 @@ private fun LoginHeader() {
     ) {
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
 
-        // Imagen que muestra la imagen del libro
+        // Imagen de un libro
         Image(
             painter = painterResource(R.drawable.librospila),
             contentDescription = stringResource(R.string.description_book_icon),
@@ -136,7 +123,7 @@ private fun LoginHeader() {
 
         // Texto de bienvenida
         Text(
-            text = stringResource(R.string.welcome),
+            text = stringResource(R.string.welcome_label),
             color = colorResource(id = R.color.my_dark_purple),
             fontSize = 40.sp,
             style = MaterialTheme.typography.headlineSmall
@@ -151,7 +138,7 @@ fun LoginForm(
     onEmailChanged: (String) -> Unit = {},
     onPasswordChanged: (String) -> Unit = {},
     onToggleChecked: (Boolean) -> Unit = {},
-    onDone: (String, String) -> Unit = {_, _ -> }
+    onLoginClick: (String, String) -> Unit = {_, _ -> }
 ) {
     // Estructura del formulario
     Column(
