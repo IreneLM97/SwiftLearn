@@ -1,7 +1,7 @@
 package com.example.swiftlearn.ui.screens.login
 
 /**
- * Clase de estado que representa el estado actual del login.
+ * Clase de estado que representa el estado actual del inicio de sesión.
  *
  * @property emailValue Email del usuario.
  * @property passwordValue Contraseña del usuario.

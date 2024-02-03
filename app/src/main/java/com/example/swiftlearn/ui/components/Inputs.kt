@@ -150,7 +150,7 @@ fun PasswordVisibleIcon(
     ) {
         Icon(
             imageVector = image,
-            contentDescription = stringResource(R.string.icon_label),
+            contentDescription = stringResource(R.string.description_eye_icon),
             tint = tint
         )
     }

@@ -2,27 +2,40 @@
     <string name="app_name">SwiftLearn</string>
 
     <!-- Títulos de las páginas -->
+    <string name="register_app_bar">Registro</string>
     <string name="login_title">Swift Learn</string>
 
-
+    <!-- Label de formularios -->
     <string name="welcome_label">Bienvenido</string>
     <string name="new_account_label">Nueva cuenta</string>
-
-    <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
-    <string name="send_info">Enviar información a otra aplicación</string>
-
-    <string name="email_label">Correo electrónico</string>
-    <string name="pass_label">Contraseña</string>
-    <string name="icon_label">Icono de mostrar/ocultar</string>
     <string name="login_label">Iniciar sesión</string>
-    <string name="no_cuenta_label">¿No tienes una cuenta?</string>
+    <string name="register_label">Registrarme</string>
+    <string name="register_link_label">Regístrate</string>
     <string name="google_label">Continuar con Google</string>
-    <string name="register_label">Regístrate</string>
-    <string name="register">Registro</string>
+    <string name="no_cuenta_label">¿No tienes una cuenta?</string>
+    <string name="remember_me_label">Recuérdame</string>
 
+    <string name="perfil_label">¿Qué perfil eres?</string>
+    <string name="profesor_label">Profesor</string>
+    <string name="alumno_label">Alumno</string>
+    <string name="username_label">Nombre de usuario</string>
+    <string name="phone_label">Teléfono</string>
+    <string name="address_label">Dirección</string>
+    <string name="postal_code_label">Código postal</string>
+    <string name="email_label">Correo electrónico</string>
+    <string name="password_label">Contraseña</string>
+    <string name="confirm_password_label">Confirmar contraseña</string>
+
+    <!-- Descripción de iconos -->
+    <string name="description_eye_icon">Icono de mostrar/ocultar</string>
     <string name="description_logo_icon">Logo de la aplicación</string>
     <string name="description_back_icon">Volver atrás</string>
     <string name="description_google_icon">Icono Google</string>
     <string name="description_book_icon">Imagen de libro</string>
-    <string name="remember_me_label">Recuérdame</string>
+
+    <!-- Enviar información a otra aplicación -->
+    <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
+    <string name="send_info">Enviar información a otra aplicación</string>
+
+
 </resources>

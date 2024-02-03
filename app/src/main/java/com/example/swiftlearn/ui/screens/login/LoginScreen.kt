@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +56,7 @@ fun LoginScreen(
     onRegisterClick: () -> Unit = {},
     viewModel: LoginViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    // Guardamos el estado de la pantalla de inicio de sesión
     val loginUiState = viewModel.loginUiState.collectAsState().value
 
     // Diseño de la estructura básica de la pantalla
@@ -85,8 +85,7 @@ fun LoginScreen(
                 },
                 onToggleChecked = {
                     viewModel.onToggleChanged(it)
-                },
-
+                }
             )
 
             // Mensaje para ir a Registrarse
@@ -133,14 +132,10 @@ private fun LoginHeader() {
 @Composable
 fun LoginForm(
     loginUiState: LoginUiState = LoginUiState(),
-    onFieldChanged: (Field, String) -> Unit = {_,_ -> },
+    onFieldChanged: (LoginViewModel.Field, String) -> Unit = {_,_ -> },
     onToggleChecked: (Boolean) -> Unit = {},
     onLoginClick: (String, String) -> Unit = {_, _ -> }
 ) {
-    val isEntryValid = remember(loginUiState.emailValue, loginUiState.passwordValue) {
-        loginUiState.emailValue.trim().isNotEmpty() && loginUiState.passwordValue.trim().isNotEmpty()
-    }
-
     // Estructura del formulario
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -148,7 +143,7 @@ fun LoginForm(
         // Campo correo electrónico
         InputField(
             value =  loginUiState.emailValue,
-            onValueChanged = { onFieldChanged(Field.EMAIL, it) },
+            onValueChanged = { onFieldChanged(LoginViewModel.Field.EMAIL, it) },
             label = stringResource(R.string.email_label),
             icon = Icons.Default.Email,
             keyboardType = KeyboardType.Text
@@ -158,9 +153,9 @@ fun LoginForm(
         PasswordField(
             password = loginUiState.passwordValue,
             passwordVisible = rememberSaveable { mutableStateOf(false) },
-            onPasswordChanged = { onFieldChanged(Field.PASSWORD, it) },
+            onPasswordChanged = { onFieldChanged(LoginViewModel.Field.PASSWORD, it) },
             icon = Icons.Default.Lock,
-            label = stringResource(R.string.pass_label)
+            label = stringResource(R.string.password_label)
         )
 
         // Toggle "Recuérdame"
@@ -175,7 +170,7 @@ fun LoginForm(
             backButtonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
             label = stringResource(R.string.login_label),
-            isEnabled = isEntryValid
+            isEnabled = LoginViewModel.validateForm(loginUiState)
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_big)))
 
@@ -209,7 +204,7 @@ fun LoginToRegister(
         )
 
         Text(
-            text = stringResource(R.string.register_label),
+            text = stringResource(R.string.register_link_label),
             color = colorResource(id = R.color.my_dark_purple),
             fontSize = 20.sp,
             style = MaterialTheme.typography.headlineSmall,

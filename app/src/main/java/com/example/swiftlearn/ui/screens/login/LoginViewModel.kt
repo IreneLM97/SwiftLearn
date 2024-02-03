@@ -8,13 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-enum class Field {
-    EMAIL,
-    PASSWORD
-}
-
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla de búsqueda.
+ * [ViewModel] para gestionar el estado y la lógica de la pantalla de inicio de sesión.
  *
  * @param userPreferencesRepository Repositorio para acceder a las preferencias del usuario.
  */
@@ -43,13 +38,22 @@ class LoginViewModel(
     }
 
     /**
+     * Enumeración que representa todos los campos del formulario de inicio de sesión.
+     */
+    enum class Field {
+        EMAIL,
+        PASSWORD
+    }
+
+    /**
      * Función que se ejecuta cuando cambia un campo del formulario.
      *
      * @param field Campo de entrada que ha cambiado.
      * @param value Nuevo valor del campo de entrada.
      */
     fun onFieldChanged(
-        field: Field, value: String
+        field: Field,
+        value: String
     ) {
         // Actualizamos el campo correspondiente
         _loginUiState.update {
@@ -87,6 +91,21 @@ class LoginViewModel(
                 emailValue = if(rememberValue) loginUiState.value.emailValue else "",
                 rememberValue = rememberValue
             )
+        }
+    }
+
+    companion object {
+        /**
+         * Función para validar el formulario de inicio de sesión.
+         *
+         * @param loginUiState Estado actual de la interfaz de inicio de sesión.
+         * @return true si el formulario es válido, false en caso contrario.
+         */
+        fun validateForm(
+            loginUiState: LoginUiState
+        ): Boolean {
+            return loginUiState.emailValue.trim().isNotEmpty() &&
+                    loginUiState.passwordValue.trim().isNotEmpty()
         }
     }
 }
