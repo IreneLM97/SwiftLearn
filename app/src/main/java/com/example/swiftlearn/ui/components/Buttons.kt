@@ -39,19 +39,23 @@ fun ButtonWithText(
     backButtonColor: Color,
     textColor: Color,
     label: String,
+    isEnabled: Boolean = true,
     onClick: () -> Unit = {}
 ) {
+    val color = if (isEnabled) backButtonColor else colorResource(id = R.color.my_gray_purple)
+
     Button(
         onClick = onClick,
+        enabled = isEnabled,
         modifier = Modifier
             .background(
-                color = backButtonColor,
+                color = color,
                 shape = CircleShape
             )
             .clip(shape = CircleShape)
             .fillMaxWidth(),
         shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(backButtonColor),
+        colors = ButtonDefaults.buttonColors(color),
 
         ) {
         Text(
@@ -88,9 +92,8 @@ fun ButtonWithTextAndImage(
             )
             .fillMaxWidth(),
         shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(backButtonColor),
-
-        ) {
+        colors = ButtonDefaults.buttonColors(backButtonColor)
+    ) {
         Image(
             painter = image,
             contentDescription = stringResource(R.string.description_google_icon),

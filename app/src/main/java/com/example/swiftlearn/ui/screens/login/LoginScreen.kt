@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,17 +74,14 @@ fun LoginScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Dibujamos la cabecera del login
+            // Cabecera del login
             LoginHeader()
 
-            // Dibujamos el formulario de inicio de sesión
+            // Formulario de inicio de sesión
             LoginForm(
                 loginUiState = loginUiState,
-                onEmailChanged = {
-                    viewModel.onEmailChanged(it)
-                },
-                onPasswordChanged = {
-                    viewModel.onPasswordChanged(it)
+                onFieldChanged = { field, value ->
+                    viewModel.onFieldChanged(field, value)
                 },
                 onToggleChecked = {
                     viewModel.onToggleChanged(it)
@@ -91,7 +89,7 @@ fun LoginScreen(
 
             )
 
-            // Dibujamos mensaje para ir a registrarse
+            // Mensaje para ir a Registrarse
             LoginToRegister(
                 onRegisterClick = onRegisterClick
             )
@@ -135,11 +133,14 @@ private fun LoginHeader() {
 @Composable
 fun LoginForm(
     loginUiState: LoginUiState = LoginUiState(),
-    onEmailChanged: (String) -> Unit = {},
-    onPasswordChanged: (String) -> Unit = {},
+    onFieldChanged: (Field, String) -> Unit = {_,_ -> },
     onToggleChecked: (Boolean) -> Unit = {},
     onLoginClick: (String, String) -> Unit = {_, _ -> }
 ) {
+    val isEntryValid = remember(loginUiState.emailValue, loginUiState.passwordValue) {
+        loginUiState.emailValue.trim().isNotEmpty() && loginUiState.passwordValue.trim().isNotEmpty()
+    }
+
     // Estructura del formulario
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -147,7 +148,7 @@ fun LoginForm(
         // Campo correo electrónico
         InputField(
             value =  loginUiState.emailValue,
-            onValueChanged = onEmailChanged,
+            onValueChanged = { onFieldChanged(Field.EMAIL, it) },
             label = stringResource(R.string.email_label),
             icon = Icons.Default.Email,
             keyboardType = KeyboardType.Text
@@ -157,12 +158,12 @@ fun LoginForm(
         PasswordField(
             password = loginUiState.passwordValue,
             passwordVisible = rememberSaveable { mutableStateOf(false) },
-            onPasswordChanged = onPasswordChanged,
+            onPasswordChanged = { onFieldChanged(Field.PASSWORD, it) },
             icon = Icons.Default.Lock,
             label = stringResource(R.string.pass_label)
         )
 
-        // Toggle "Recordarme"
+        // Toggle "Recuérdame"
         ToggleButton(
             isActivate = loginUiState.rememberValue,
             onToggleCkecked = onToggleChecked
@@ -173,7 +174,8 @@ fun LoginForm(
         ButtonWithText(
             backButtonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
-            label = stringResource(R.string.login_label)
+            label = stringResource(R.string.login_label),
+            isEnabled = isEntryValid
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_big)))
 

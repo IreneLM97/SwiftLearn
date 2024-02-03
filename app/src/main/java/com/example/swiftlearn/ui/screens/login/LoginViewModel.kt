@@ -8,6 +8,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+enum class Field {
+    EMAIL,
+    PASSWORD
+}
+
 /**
  * [ViewModel] para gestionar el estado y la lógica de la pantalla de búsqueda.
  *
@@ -38,18 +43,24 @@ class LoginViewModel(
     }
 
     /**
-     * Función que se ejecuta cuando cambia el email.
+     * Función que se ejecuta cuando cambia un campo del formulario.
      *
-     * @param emailValue Valor del correo del usuario.
+     * @param field Campo de entrada que ha cambiado.
+     * @param value Nuevo valor del campo de entrada.
      */
-    fun onEmailChanged(
-        emailValue: String
+    fun onFieldChanged(
+        field: Field, value: String
     ) {
-        // Actualizamos el email
-        _loginUiState.update { it.copy(emailValue = emailValue) }
+        // Actualizamos el campo correspondiente
+        _loginUiState.update {
+            when (field) {
+                Field.EMAIL -> it.copy(emailValue = value)
+                Field.PASSWORD -> it.copy(passwordValue = value)
+            }
+        }
 
-        // Si está marcado el toggle de recordar, guardamos en preferencias el email
-        if(loginUiState.value.rememberValue) {
+        // Si está marcado el toggle de recordar y se cambió el email, guardamos en preferencias el email
+        if (loginUiState.value.rememberValue && field == Field.EMAIL) {
             viewModelScope.launch {
                 userPreferencesRepository.saveUserPreferences(
                     emailValue = loginUiState.value.emailValue,
@@ -57,18 +68,6 @@ class LoginViewModel(
                 )
             }
         }
-    }
-
-    /**
-     * Función que se ejecuta cuando cambia la contraseña.
-     *
-     * @param passwordValue Valor de la contraseña del usuario.
-     */
-    fun onPasswordChanged(
-        passwordValue: String
-    ) {
-        // Actualizamos la contraseña
-        _loginUiState.update { it.copy(passwordValue = passwordValue) }
     }
 
     /**
