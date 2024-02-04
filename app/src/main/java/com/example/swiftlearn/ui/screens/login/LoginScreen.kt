@@ -57,8 +57,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 
 object LoginDestination : NavigationDestination {
-    override val route = "login"
     override val titleRes = R.string.login_title
+    override val route = "login"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -185,7 +185,7 @@ private fun LoginHeader() {
 
         // Imagen de un libro
         Image(
-            painter = painterResource(R.drawable.librospila),
+            painter = painterResource(R.drawable.icon_books),
             contentDescription = stringResource(R.string.description_book_icon),
             modifier = Modifier
                 .fillMaxWidth()
@@ -261,7 +261,7 @@ private fun LoginForm(
         // Botón para iniciar sesión con Google
         ButtonWithTextAndImage(
             label = stringResource(id = R.string.google_label),
-            image = painterResource(id = R.drawable.google),
+            image = painterResource(id = R.drawable.icon_google),
             buttonColor = colorResource(id = R.color.white),
             borderButtonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.my_dark_purple),
@@ -282,7 +282,7 @@ private fun LoginToRegister(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = stringResource(R.string.no_cuenta_label),
+            text = stringResource(R.string.no_account_label),
             color = colorResource(id = R.color.my_dark_gray),
             fontSize = 20.sp,
             style = MaterialTheme.typography.headlineSmall

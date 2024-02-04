@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.swiftlearn.R
-import com.example.swiftlearn.ui.home.HomeDestination
 import com.example.swiftlearn.ui.navigation.SwiftLearnScreens
+import com.example.swiftlearn.ui.screens.home.HomeDestination
 import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
@@ -75,7 +75,7 @@ fun SplashScreen(
                 .scale(scale.value),
         ) {
             Image(
-                painter = painterResource(id = R.drawable.swiftlearn),
+                painter = painterResource(id = R.drawable.icon_swiftlearn),
                 contentDescription = stringResource(R.string.description_logo_icon),
                 modifier = Modifier
                     .fillMaxWidth()

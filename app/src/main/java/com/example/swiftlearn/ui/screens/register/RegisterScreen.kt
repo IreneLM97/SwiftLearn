@@ -56,8 +56,8 @@ import com.example.swiftlearn.ui.navigation.NavigationDestination
 import com.example.swiftlearn.ui.screens.ValidationUtils
 
 object RegisterDestination : NavigationDestination {
-    override val route = "register"
     override val titleRes = R.string.register_app_bar
+    override val route = "register"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -312,7 +312,7 @@ private fun RolOptions(
                     else Color.White
             ) {
                 Text(
-                    text = stringResource(R.string.profesor_label),
+                    text = stringResource(R.string.professor_label),
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     color =
@@ -337,7 +337,7 @@ private fun RolOptions(
                     else Color.White
             ) {
                 Text(
-                    text = stringResource(R.string.alumno_label),
+                    text = stringResource(R.string.student_label),
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     color =

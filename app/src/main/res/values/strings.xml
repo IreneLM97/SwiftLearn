@@ -12,12 +12,12 @@
     <string name="register_label">Registrarme</string>
     <string name="register_link_label">Regístrate</string>
     <string name="google_label">Continuar con Google</string>
-    <string name="no_cuenta_label">¿No tienes una cuenta?</string>
+    <string name="no_account_label">¿No tienes una cuenta?</string>
     <string name="remember_me_label">Recuérdame</string>
 
-    <string name="perfil_label">¿Qué perfil eres?</string>
-    <string name="profesor_label">Profesor</string>
-    <string name="alumno_label">Alumno</string>
+    <string name="profile_label">¿Qué perfil eres?</string>
+    <string name="professor_label">Profesor</string>
+    <string name="student_label">Alumno</string>
     <string name="username_label">Nombre de usuario</string>
     <string name="phone_label">Teléfono</string>
     <string name="address_label">Dirección</string>
@@ -36,6 +36,13 @@
     <string name="invalid_password_label">Contraseña inválida (debe incluir al menos 6 caracteres)</string>
     <string name="invalid_confirm_password_label">No coinciden las contraseñas</string>
 
+    <!-- Título de items del menu inferior -->
+    <string name="title_adverts">Anuncios</string>
+    <string name="title_classes">Clases</string>
+    <string name="title_new_advert">Nuevo</string>
+    <string name="title_map">Mapa</string>
+    <string name="title_profile">Perfil</string>
+
     <!-- Descripción de iconos -->
     <string name="description_eye_icon">Icono de mostrar/ocultar</string>
     <string name="description_logo_icon">Logo de la aplicación</string>
@@ -46,5 +53,4 @@
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
-
 </resources>
