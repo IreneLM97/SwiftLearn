@@ -8,6 +8,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.swiftlearn.R
+import com.example.swiftlearn.ui.home.HomeDestination
+import com.example.swiftlearn.ui.home.HomeScreen
 import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.example.swiftlearn.ui.screens.login.LoginScreen
 import com.example.swiftlearn.ui.screens.register.RegisterDestination
@@ -32,17 +34,23 @@ fun SwiftLearnNavigation(
         }
         composable(route = LoginDestination.route) {
             LoginScreen(
-                onRegisterClick = {
+                navigateToHome = {
+                    navController.navigate(HomeDestination.route)
+                },
+                navigateToRegister = {
                     navController.navigate(RegisterDestination.route)
                 }
             )
         }
         composable(route = RegisterDestination.route) {
             RegisterScreen(
-                onBackClick = {
+                navigateBack = {
                     navController.popBackStack()
                 }
             )
+        }
+        composable(route = HomeDestination.route) {
+            HomeScreen()
         }
     }
 }

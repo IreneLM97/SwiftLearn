@@ -40,7 +40,7 @@ fun SwiftLearnTopAppBar(
     canNavigateBack: Boolean,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    navigateUp: () -> Unit = {}
+    navigateBack: () -> Unit = {}
 ) {
     TopAppBar(
         title = {
@@ -56,7 +56,7 @@ fun SwiftLearnTopAppBar(
         ),
         navigationIcon = {
             if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
+                IconButton(onClick = navigateBack) {
                     Icon(
                         imageVector = Filled.ArrowBack,
                         contentDescription = stringResource(R.string.description_back_icon),

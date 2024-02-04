@@ -59,8 +59,7 @@ object RegisterDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
-    onRegisterClick: () -> Unit = {},
-    onBackClick: () -> Unit = {},
+    navigateBack: () -> Unit = {},
     viewModel: RegisterViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Guardamos el estado de la pantalla de registro
@@ -73,7 +72,7 @@ fun RegisterScreen(
             SwiftLearnTopAppBar(
                 title = stringResource(id = RegisterDestination.titleRes),
                 canNavigateBack = true,
-                navigateUp = onBackClick
+                navigateBack = navigateBack
             )
         }
     ) { innerPadding ->

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "364363264567",
+    "project_id": "swiftlearn-ad8f7",
+    "storage_bucket": "swiftlearn-ad8f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:364363264567:android:4a7c9b63f1355d85b885b2",
+        "android_client_info": {
+          "package_name": "com.example.swiftlearn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJpgVYixVDpzkNCYu3Pwbz6bzCYqGwFmQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

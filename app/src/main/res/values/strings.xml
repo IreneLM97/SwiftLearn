@@ -36,6 +36,7 @@
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
+    <string name="error_login_label">CORREO O CONTRASEÑA INVÁLIDOS</string>
 
 
 </resources>

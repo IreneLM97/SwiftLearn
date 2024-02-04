@@ -1,9 +1,19 @@
 package com.example.swiftlearn.ui.screens.login
 
+import android.content.Context
+import android.util.Log
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.swiftlearn.R
 import com.example.swiftlearn.data.datastore.UserPreferencesRepository
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,6 +29,20 @@ class LoginViewModel(
     // Estado de la interfaz de inicio de sesión
     private val _loginUiState = MutableStateFlow(LoginUiState())
     val loginUiState = _loginUiState.asStateFlow()
+
+    // Variable para la autentificación de usuarios
+    private val auth: FirebaseAuth = Firebase.auth
+
+    // Variable para controlar que no se crean varios usuarios accidentalmente
+    private val _loading = MutableLiveData(false)
+
+    // Estado para almacenar el mensaje de error si no se puede iniciar sesión
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
+
+    // Estado para indicar si se está realizando el proceso de inicio de sesión
+    private val _loadingState = MutableStateFlow(false)
+    val loadingState: StateFlow<Boolean> = _loadingState
 
     // Inicialización del ViewModel
     init {
@@ -91,6 +115,32 @@ class LoginViewModel(
                 emailValue = if(rememberValue) loginUiState.value.emailValue else "",
                 rememberValue = rememberValue
             )
+        }
+    }
+
+    fun loginWithEmailAndPassword(
+        context: Context,
+        email: String,
+        password: String,
+        navigateToHome: () -> Unit = {}
+    ) {
+        // Indicar que se está cargando
+        _loadingState.value = true
+
+        viewModelScope.launch {
+            try{
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener{task ->
+                        // Termina de cargar
+                        _loadingState.value = false
+
+                        if(task.isSuccessful) {
+                            navigateToHome()
+                        } else {
+                            _errorMessage.value = context.getString(R.string.error_login_label)
+                        }
+                    }
+            } catch(ex: Exception) {}
         }
     }
 
