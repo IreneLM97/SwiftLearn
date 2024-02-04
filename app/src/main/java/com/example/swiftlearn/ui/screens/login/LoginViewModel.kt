@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.R
 import com.example.swiftlearn.data.datastore.UserPreferencesRepository
 import com.google.firebase.Firebase
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -135,6 +136,24 @@ class LoginViewModel(
                             navigateToHome()
                         } else {
                             _errorMessage.value = context.getString(R.string.error_login_label)
+                        }
+                    }
+            } catch(ex: Exception) {}
+        }
+    }
+
+    fun signInWithGoogleCredential(
+        credential: AuthCredential,
+        navigateToHome: () -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try{
+                auth.signInWithCredential(credential)
+                    .addOnCompleteListener{task ->
+                        if(task.isSuccessful) {
+                            navigateToHome()
+                        } else {
+                            Log.d("prueba", "error en prueba google")
                         }
                     }
             } catch(ex: Exception) {}

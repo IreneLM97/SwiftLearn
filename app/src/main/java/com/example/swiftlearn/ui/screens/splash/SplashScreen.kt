@@ -23,7 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.swiftlearn.R
+import com.example.swiftlearn.ui.home.HomeDestination
+import com.example.swiftlearn.ui.navigation.SwiftLearnScreens
 import com.example.swiftlearn.ui.screens.login.LoginDestination
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 @Composable
@@ -45,7 +48,20 @@ fun SplashScreen(
             )
         )
         delay(2000L)
-        navController.navigate(LoginDestination.route)
+
+        // Comprobamos si está autentificado el usuario
+        //   -> si no está autentificado se manda a la pantalla de inicio de sesión
+        //   -> si está autentificado se manda a la pantalla principal de la aplicación
+        if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
+            navController.navigate(LoginDestination.route)
+        } else {
+            navController.navigate(HomeDestination.route) {
+                // Evitamos que si damos hacia atrás en el dispositivo vuelva a salir el splash
+                popUpTo(SwiftLearnScreens.SplashScreen.name) {
+                    inclusive = true
+                }
+            }
+        }
     }
     Surface(
         modifier = Modifier

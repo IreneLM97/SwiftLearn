@@ -1,5 +1,7 @@
 package com.example.swiftlearn.ui.screens.login
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +50,10 @@ import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.components.PasswordField
 import com.example.swiftlearn.ui.components.ToggleButton
 import com.example.swiftlearn.ui.navigation.NavigationDestination
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.GoogleAuthProvider
 
 object LoginDestination : NavigationDestination {
     override val route = "login"
@@ -70,6 +76,22 @@ fun LoginScreen(
 
     // Guardamos el contexto de la aplicación
     val context = LocalContext.current
+
+    // Guardamos el token necesario para iniciar sesión con Google
+    val token = "364363264567-74rs13s1fn9lk308blpml1mjhvjulgnp.apps.googleusercontent.com"
+
+    // Creamos un launcher
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts
+            .StartActivityForResult()
+    ) {
+        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            viewModel.signInWithGoogleCredential(credential, navigateToHome)
+        } catch(_: Exception) {}
+    }
 
     // Diseño de la estructura básica de la pantalla
     Scaffold(
@@ -126,6 +148,15 @@ fun LoginScreen(
                             password = password,
                             navigateToHome = navigateToHome
                         )
+                    },
+                    onGoogleLoginClick = {
+                        val opciones = GoogleSignInOptions
+                            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(token)
+                            .requestEmail()
+                            .build()
+                        val googleSignInClient = GoogleSignIn.getClient(context, opciones)
+                        launcher.launch(googleSignInClient.signInIntent)
                     }
                 )
 
@@ -176,7 +207,8 @@ fun LoginForm(
     loginUiState: LoginUiState = LoginUiState(),
     onFieldChanged: (LoginViewModel.Field, String) -> Unit = {_,_ -> },
     onToggleChecked: (Boolean) -> Unit = {},
-    onLoginClick: (String, String) -> Unit = {_, _ -> }
+    onLoginClick: (String, String) -> Unit = {_, _ -> },
+    onGoogleLoginClick: () -> Unit = {}
 ) {
     // Estructura del formulario
     Column(
@@ -227,7 +259,8 @@ fun LoginForm(
             borderButtonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.my_dark_purple),
             label = stringResource(id = R.string.google_label),
-            image = painterResource(id = R.drawable.google)
+            image = painterResource(id = R.drawable.google),
+            onClick = onGoogleLoginClick
         )
         Spacer(modifier = Modifier.height(35.dp))
     }
