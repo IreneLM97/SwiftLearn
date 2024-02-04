@@ -10,12 +10,12 @@ enum class Rol {
  *
  */
 data class RegisterUiState(
-    val rolValue: Rol = Rol.Profesor,
     val usernameValue: String = "",
     val phoneValue: String = "",
     val addressValue: String = "",
-    val postalCodeValue: String = "",
+    val postalValue: String = "",
     val emailValue: String = "",
     val passwordValue: String = "",
-    val confirmPasswordValue: String = ""
+    val confirmPasswordValue: String = "",
+    val rolValue: Rol = Rol.Profesor
 )

@@ -120,7 +120,7 @@ fun LoginScreen(
                         viewModel.onToggleChanged(it)
                     },
                     onLoginClick = { email, password ->
-                        viewModel.loginWithEmailAndPassword(
+                        viewModel.signInWithEmailAndPassword(
                             context = context,
                             email = email,
                             password = password,

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -45,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
 import com.example.swiftlearn.SwiftLearnTopAppBar
+import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.InputField
@@ -59,11 +62,19 @@ object RegisterDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
+    navigateToHome: () -> Unit = {},
     navigateBack: () -> Unit = {},
     viewModel: RegisterViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Guardamos el estado de la pantalla de registro
     val registerUiState = viewModel.registerUiState.collectAsState().value
+    // Guardamos el estado del mensaje de error
+    val errorMessage = viewModel.errorMessage.collectAsState().value
+    // Guardamos el estado de carga de la página
+    val loadingState = viewModel.loadingState.collectAsState().value
+
+    // Guardamos el contexto de la aplicación
+    val context = LocalContext.current
 
     // Diseño de la estructura básica de la pantalla
     Scaffold(
@@ -76,21 +87,46 @@ fun RegisterScreen(
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            // Cabecera del registro
-            RegisterHeader()
+        if(loadingState) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // Cabecera del registro
+                RegisterHeader()
 
-            // Formulario de registro
-            RegisterForm(
-                registerUiState = registerUiState,
-                onFieldChanged = { field, value ->
-                    viewModel.onFieldChanged(field, value)
+                // Mostrar mensaje de error si existe
+                errorMessage?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        textAlign = TextAlign.Center,
+                        fontSize = 17.sp,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .fillMaxWidth()
+                    )
                 }
-            )
+
+                // Formulario de registro
+                RegisterForm(
+                    registerUiState = registerUiState,
+                    onFieldChanged = { field, value ->
+                        viewModel.onFieldChanged(field, value)
+                    },
+                    onRegisterClick = {
+                        viewModel.createUserWithEmailAndPassword(context, it, navigateToHome)
+                    }
+                )
+            }
         }
     }
 }
@@ -123,7 +159,7 @@ private fun RegisterHeader() {
 fun RegisterForm(
     registerUiState: RegisterUiState = RegisterUiState(),
     onFieldChanged: (RegisterViewModel.Field, String) -> Unit = { _, _ -> },
-    onRegisterClick: (String, String) -> Unit = {_, _ -> }
+    onRegisterClick: (User) -> Unit = { _ -> }
 ) {
     // Estructura del formulario
     Column(
@@ -167,7 +203,7 @@ fun RegisterForm(
 
         // Campo código postal
         InputField(
-            value =  registerUiState.postalCodeValue,
+            value =  registerUiState.postalValue,
             onValueChanged = { onFieldChanged(RegisterViewModel.Field.POSTALCODE, it) },
             label = stringResource(R.string.postal_code_label),
             icon = Icons.Default.LocationOn,
@@ -207,7 +243,22 @@ fun RegisterForm(
             backButtonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
             label = stringResource(R.string.register_label),
-            isEnabled = RegisterViewModel.validateForm(registerUiState)
+            isEnabled = RegisterViewModel.validateForm(registerUiState),
+            onClick = {
+                // Llama a la función createUserWithEmailAndPassword pasando el usuario
+                onRegisterClick(
+                    User(
+                        id = "",
+                        username = registerUiState.usernameValue,
+                        phone = registerUiState.phoneValue,
+                        address = registerUiState.addressValue,
+                        postal = registerUiState.postalValue,
+                        email = registerUiState.emailValue,
+                        password = registerUiState.passwordValue,
+                        rol = registerUiState.rolValue.toString()
+                    )
+                )
+            }
         )
         Spacer(modifier = Modifier.height(40.dp))
     }

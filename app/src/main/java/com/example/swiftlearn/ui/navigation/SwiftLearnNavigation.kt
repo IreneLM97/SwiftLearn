@@ -16,6 +16,10 @@ import com.example.swiftlearn.ui.screens.register.RegisterDestination
 import com.example.swiftlearn.ui.screens.register.RegisterScreen
 import com.example.swiftlearn.ui.screens.splash.SplashScreen
 
+enum class SwiftLearnScreens {
+    SplashScreen
+}
+
 /**
  * Provides Navigation graph for the application.
  */
@@ -44,6 +48,9 @@ fun SwiftLearnNavigation(
         }
         composable(route = RegisterDestination.route) {
             RegisterScreen(
+                navigateToHome = {
+                    navController.navigate(HomeDestination.route)
+                },
                 navigateBack = {
                     navController.popBackStack()
                 }

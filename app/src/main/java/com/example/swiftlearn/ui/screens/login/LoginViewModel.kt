@@ -33,9 +33,6 @@ class LoginViewModel(
     // Variable para la autentificación de usuarios
     private val auth: FirebaseAuth = Firebase.auth
 
-    // Variable para controlar que no se crean varios usuarios accidentalmente
-    private val _loading = MutableLiveData(false)
-
     // Estado para almacenar el mensaje de error si no se puede iniciar sesión
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
@@ -118,7 +115,7 @@ class LoginViewModel(
         }
     }
 
-    fun loginWithEmailAndPassword(
+    fun signInWithEmailAndPassword(
         context: Context,
         email: String,
         password: String,
