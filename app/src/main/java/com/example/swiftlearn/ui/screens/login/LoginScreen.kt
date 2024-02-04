@@ -50,6 +50,7 @@ import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.components.PasswordField
 import com.example.swiftlearn.ui.components.ToggleButton
 import com.example.swiftlearn.ui.navigation.NavigationDestination
+import com.example.swiftlearn.ui.screens.ValidationUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -80,7 +81,7 @@ fun LoginScreen(
     // Guardamos el token necesario para iniciar sesión con Google
     val token = "364363264567-74rs13s1fn9lk308blpml1mjhvjulgnp.apps.googleusercontent.com"
 
-    // Creamos un launcher
+    // Creamos un launcher que se llamará para el inicio de sesión con Google
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts
             .StartActivityForResult()
@@ -150,12 +151,12 @@ fun LoginScreen(
                         )
                     },
                     onGoogleLoginClick = {
-                        val opciones = GoogleSignInOptions
+                        val options = GoogleSignInOptions
                             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                             .requestIdToken(token)
                             .requestEmail()
                             .build()
-                        val googleSignInClient = GoogleSignIn.getClient(context, opciones)
+                        val googleSignInClient = GoogleSignIn.getClient(context, options)
                         launcher.launch(googleSignInClient.signInIntent)
                     }
                 )
@@ -203,7 +204,7 @@ private fun LoginHeader() {
 }
 
 @Composable
-fun LoginForm(
+private fun LoginForm(
     loginUiState: LoginUiState = LoginUiState(),
     onFieldChanged: (LoginViewModel.Field, String) -> Unit = {_,_ -> },
     onToggleChecked: (Boolean) -> Unit = {},
@@ -216,20 +217,24 @@ fun LoginForm(
     ) {
         // Campo correo electrónico
         InputField(
-            value =  loginUiState.emailValue,
-            onValueChanged = { onFieldChanged(LoginViewModel.Field.EMAIL, it) },
             label = stringResource(R.string.email_label),
-            icon = Icons.Default.Email,
+            value =  loginUiState.emailValue,
+            onValueChange = { onFieldChanged(LoginViewModel.Field.EMAIL, it) },
+            isValid = loginUiState.emailValue.trim().isEmpty() || ValidationUtils.isEmailValid(loginUiState.emailValue),
+            errorMessage = stringResource(R.string.invalid_email_label),
+            leadingIcon = Icons.Default.Email,
             keyboardType = KeyboardType.Text
         )
 
         // Campo contraseña
         PasswordField(
+            label = stringResource(R.string.password_label),
             password = loginUiState.passwordValue,
             passwordVisible = rememberSaveable { mutableStateOf(false) },
-            onPasswordChanged = { onFieldChanged(LoginViewModel.Field.PASSWORD, it) },
-            icon = Icons.Default.Lock,
-            label = stringResource(R.string.password_label)
+            onPasswordChange = { onFieldChanged(LoginViewModel.Field.PASSWORD, it) },
+            isValid = loginUiState.passwordValue.trim().isEmpty() || ValidationUtils.isPasswordValid(loginUiState.passwordValue),
+            errorMessage = stringResource(id = R.string.invalid_password_label),
+            leadingIcon = Icons.Default.Lock
         )
 
         // Toggle "Recuérdame"
@@ -241,9 +246,9 @@ fun LoginForm(
 
         // Botón para iniciar sesión
         ButtonWithText(
-            backButtonColor = colorResource(id = R.color.my_dark_purple),
-            textColor = colorResource(id = R.color.white),
             label = stringResource(R.string.login_label),
+            buttonColor = colorResource(id = R.color.my_dark_purple),
+            textColor = colorResource(id = R.color.white),
             isEnabled = LoginViewModel.validateForm(loginUiState),
             onClick = {
                 // Llama a la función onLoginClick pasando el email y la contraseña
@@ -255,11 +260,11 @@ fun LoginForm(
 
         // Botón para iniciar sesión con Google
         ButtonWithTextAndImage(
-            backButtonColor = colorResource(id = R.color.white),
-            borderButtonColor = colorResource(id = R.color.my_dark_purple),
-            textColor = colorResource(id = R.color.my_dark_purple),
             label = stringResource(id = R.string.google_label),
             image = painterResource(id = R.drawable.google),
+            buttonColor = colorResource(id = R.color.white),
+            borderButtonColor = colorResource(id = R.color.my_dark_purple),
+            textColor = colorResource(id = R.color.my_dark_purple),
             onClick = onGoogleLoginClick
         )
         Spacer(modifier = Modifier.height(35.dp))
@@ -267,7 +272,7 @@ fun LoginForm(
 }
 
 @Composable
-fun LoginToRegister(
+private fun LoginToRegister(
     onRegisterClick: () -> Unit = {}
 ) {
     // Mensaje para registrarse si aún no tiene cuenta

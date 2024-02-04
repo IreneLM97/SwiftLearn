@@ -36,13 +36,13 @@ import com.example.swiftlearn.R
 
 @Composable
 fun ButtonWithText(
-    backButtonColor: Color,
-    textColor: Color,
     label: String,
+    buttonColor: Color,
+    textColor: Color,
     isEnabled: Boolean = true,
     onClick: () -> Unit = {}
 ) {
-    val color = if (isEnabled) backButtonColor else colorResource(id = R.color.my_gray_purple)
+    val color = if (isEnabled) buttonColor else colorResource(id = R.color.my_gray_purple)
 
     Button(
         onClick = onClick,
@@ -70,18 +70,18 @@ fun ButtonWithText(
 
 @Composable
 fun ButtonWithTextAndImage(
-    backButtonColor: Color,
-    borderButtonColor: Color,
-    textColor: Color,
     label: String,
     image: Painter,
+    buttonColor: Color,
+    borderButtonColor: Color,
+    textColor: Color,
     onClick: () -> Unit = {}
 ) {
     Button(
         onClick = onClick,
         modifier = Modifier
             .background(
-                color = backButtonColor,
+                color = buttonColor,
                 shape = CircleShape
             )
             .clip(shape = CircleShape)
@@ -92,7 +92,7 @@ fun ButtonWithTextAndImage(
             )
             .fillMaxWidth(),
         shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(backButtonColor)
+        colors = ButtonDefaults.buttonColors(buttonColor)
     ) {
         Image(
             painter = image,

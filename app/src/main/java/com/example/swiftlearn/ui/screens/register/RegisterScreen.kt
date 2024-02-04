@@ -53,6 +53,7 @@ import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.components.PasswordField
 import com.example.swiftlearn.ui.navigation.NavigationDestination
+import com.example.swiftlearn.ui.screens.ValidationUtils
 
 object RegisterDestination : NavigationDestination {
     override val route = "register"
@@ -156,7 +157,7 @@ private fun RegisterHeader() {
 }
 
 @Composable
-fun RegisterForm(
+private fun RegisterForm(
     registerUiState: RegisterUiState = RegisterUiState(),
     onFieldChanged: (RegisterViewModel.Field, String) -> Unit = { _, _ -> },
     onRegisterClick: (User) -> Unit = { _ -> }
@@ -176,73 +177,88 @@ fun RegisterForm(
 
         // Campo nombre de usuario
         InputField(
-            value =  registerUiState.usernameValue,
-            onValueChanged = { onFieldChanged(RegisterViewModel.Field.USERNAME, it) },
             label = stringResource(R.string.username_label),
-            icon = Icons.Default.AccountCircle,
+            value =  registerUiState.usernameValue,
+            onValueChange = { onFieldChanged(RegisterViewModel.Field.USERNAME, it) },
+            leadingIcon = Icons.Default.AccountCircle,
             keyboardType = KeyboardType.Text
         )
 
         // Campo teléfono
         InputField(
-            value =  registerUiState.phoneValue,
-            onValueChanged = { onFieldChanged(RegisterViewModel.Field.PHONE, it) },
             label = stringResource(R.string.phone_label),
-            icon = Icons.Filled.Phone,
+            value =  registerUiState.phoneValue,
+            onValueChange = { onFieldChanged(RegisterViewModel.Field.PHONE, it) },
+            isValid = registerUiState.phoneValue.trim().isEmpty()
+                    || ValidationUtils.isPhoneValid(registerUiState.phoneValue),
+            errorMessage = stringResource(id = R.string.invalid_phone_label),
+            leadingIcon = Icons.Filled.Phone,
             keyboardType = KeyboardType.Text
         )
 
         // Campo dirección
         InputField(
-            value =  registerUiState.addressValue,
-            onValueChanged = { onFieldChanged(RegisterViewModel.Field.ADDRESS, it) },
             label = stringResource(R.string.address_label),
-            icon = Icons.Default.LocationCity,
+            value =  registerUiState.addressValue,
+            onValueChange = { onFieldChanged(RegisterViewModel.Field.ADDRESS, it) },
+            leadingIcon = Icons.Default.LocationCity,
             keyboardType = KeyboardType.Text
         )
 
         // Campo código postal
         InputField(
-            value =  registerUiState.postalValue,
-            onValueChanged = { onFieldChanged(RegisterViewModel.Field.POSTALCODE, it) },
             label = stringResource(R.string.postal_code_label),
-            icon = Icons.Default.LocationOn,
+            value =  registerUiState.postalValue,
+            onValueChange = { onFieldChanged(RegisterViewModel.Field.POSTALCODE, it) },
+            isValid = registerUiState.postalValue.trim().isEmpty()
+                    || ValidationUtils.isPostalValid(registerUiState.postalValue),
+            errorMessage = stringResource(id = R.string.invalid_postal_label),
+            leadingIcon = Icons.Default.LocationOn,
             keyboardType = KeyboardType.Text
         )
 
         // Campo correo electrónico
         InputField(
-            value =  registerUiState.emailValue,
-            onValueChanged = { onFieldChanged(RegisterViewModel.Field.EMAIL, it) },
             label = stringResource(R.string.email_label),
-            icon = Icons.Default.Email,
+            value =  registerUiState.emailValue,
+            onValueChange = { onFieldChanged(RegisterViewModel.Field.EMAIL, it) },
+            isValid = registerUiState.emailValue.trim().isEmpty()
+                    || ValidationUtils.isEmailValid(registerUiState.emailValue),
+            errorMessage = stringResource(id = R.string.invalid_email_label),
+            leadingIcon = Icons.Default.Email,
             keyboardType = KeyboardType.Text
         )
 
         // Campo contraseña
         PasswordField(
+            label = stringResource(R.string.password_label),
             password = registerUiState.passwordValue,
             passwordVisible = rememberSaveable { mutableStateOf(false) },
-            onPasswordChanged = { onFieldChanged(RegisterViewModel.Field.PASSWORD, it) },
-            icon = Icons.Default.Lock,
-            label = stringResource(R.string.password_label)
+            onPasswordChange = { onFieldChanged(RegisterViewModel.Field.PASSWORD, it) },
+            isValid = registerUiState.passwordValue.trim().isEmpty()
+                    || ValidationUtils.isPasswordValid(registerUiState.passwordValue),
+            errorMessage = stringResource(id = R.string.invalid_password_label),
+            leadingIcon = Icons.Default.Lock
         )
 
         // Campo repetir contraseña
         PasswordField(
+            label = stringResource(R.string.confirm_password_label),
             password = registerUiState.confirmPasswordValue,
             passwordVisible = rememberSaveable { mutableStateOf(false) },
-            onPasswordChanged = { onFieldChanged(RegisterViewModel.Field.CONFIRMPASSWORD, it) },
-            icon = Icons.Default.Repeat,
-            label = stringResource(R.string.confirm_password_label)
+            onPasswordChange = { onFieldChanged(RegisterViewModel.Field.CONFIRMPASSWORD, it) },
+            isValid = registerUiState.confirmPasswordValue.trim().isEmpty()
+                    || ValidationUtils.isConfirmPasswordValid(registerUiState.passwordValue, registerUiState.confirmPasswordValue),
+            errorMessage = stringResource(id = R.string.invalid_confirm_password_label),
+            leadingIcon = Icons.Default.Repeat
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_big)))
 
         // Botón para registrarse
         ButtonWithText(
-            backButtonColor = colorResource(id = R.color.my_dark_purple),
-            textColor = colorResource(id = R.color.white),
             label = stringResource(R.string.register_label),
+            buttonColor = colorResource(id = R.color.my_dark_purple),
+            textColor = colorResource(id = R.color.white),
             isEnabled = RegisterViewModel.validateForm(registerUiState),
             onClick = {
                 // Llama a la función createUserWithEmailAndPassword pasando el usuario
@@ -265,7 +281,7 @@ fun RegisterForm(
 }
 
 @Composable
-fun RolOptions(
+private fun RolOptions(
     registerUiState: RegisterUiState = RegisterUiState(),
     onRolSelected: (Rol) -> Unit = {}
 ) {

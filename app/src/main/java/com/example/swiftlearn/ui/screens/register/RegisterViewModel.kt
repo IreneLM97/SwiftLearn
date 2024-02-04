@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.example.swiftlearn.R
 import com.example.swiftlearn.model.User
+import com.example.swiftlearn.ui.screens.ValidationUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -118,13 +119,12 @@ class RegisterViewModel : ViewModel() {
          */
         fun validateForm(registerUiState: RegisterUiState): Boolean {
             return registerUiState.usernameValue.trim().isNotEmpty() &&
-                    registerUiState.phoneValue.trim().isNotEmpty() &&
+                    ValidationUtils.isPhoneValid(registerUiState.phoneValue) &&
                     registerUiState.addressValue.trim().isNotEmpty() &&
-                    registerUiState.postalValue.trim().isNotEmpty() &&
-                    registerUiState.emailValue.trim().isNotEmpty() &&
-                    registerUiState.passwordValue.trim().isNotEmpty() &&
-                    registerUiState.confirmPasswordValue.trim().isNotEmpty() &&
-                    registerUiState.passwordValue == registerUiState.confirmPasswordValue
+                    ValidationUtils.isPostalValid(registerUiState.postalValue) &&
+                    ValidationUtils.isEmailValid(registerUiState.emailValue) &&
+                    ValidationUtils.isPasswordValid(registerUiState.passwordValue) &&
+                    ValidationUtils.isConfirmPasswordValid(registerUiState.passwordValue, registerUiState.confirmPasswordValue)
         }
     }
 }

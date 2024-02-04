@@ -52,7 +52,7 @@ fun SplashScreen(
         // Comprobamos si está autentificado el usuario
         //   -> si no está autentificado se manda a la pantalla de inicio de sesión
         //   -> si está autentificado se manda a la pantalla principal de la aplicación
-        if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
+        /*if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
             navController.navigate(LoginDestination.route)
         } else {
             navController.navigate(HomeDestination.route) {
@@ -61,7 +61,8 @@ fun SplashScreen(
                     inclusive = true
                 }
             }
-        }
+        }*/
+        navController.navigate(LoginDestination.route)
     }
     Surface(
         modifier = Modifier

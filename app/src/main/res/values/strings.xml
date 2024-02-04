@@ -26,6 +26,16 @@
     <string name="password_label">Contraseña</string>
     <string name="confirm_password_label">Confirmar contraseña</string>
 
+    <!-- Label de errores de formulario -->
+    <string name="error_login_label">CORREO O CONTRASEÑA INVÁLIDOS</string>
+    <string name="error_register_label">YA EXISTE UN USUARIO CON ESE CORREO</string>
+
+    <string name="invalid_phone_label">Teléfono inválido</string>
+    <string name="invalid_postal_label">Código postal inválido (debe tener 5 dígitos)</string>
+    <string name="invalid_email_label">Correo electrónico inválido (incluir @ y dominio correcto)</string>
+    <string name="invalid_password_label">Contraseña inválida (debe incluir al menos 6 caracteres)</string>
+    <string name="invalid_confirm_password_label">No coinciden las contraseñas</string>
+
     <!-- Descripción de iconos -->
     <string name="description_eye_icon">Icono de mostrar/ocultar</string>
     <string name="description_logo_icon">Logo de la aplicación</string>
@@ -36,8 +46,5 @@
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
-    <string name="error_login_label">CORREO O CONTRASEÑA INVÁLIDOS</string>
-    <string name="error_register_label">YA EXISTE USUARIO CON ESE CORREO</string>
-
 
 </resources>

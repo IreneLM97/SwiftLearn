@@ -2,13 +2,11 @@ package com.example.swiftlearn.ui.screens.login
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.R
 import com.example.swiftlearn.data.datastore.UserPreferencesRepository
+import com.example.swiftlearn.ui.screens.ValidationUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -138,7 +136,7 @@ class LoginViewModel(
                             _errorMessage.value = context.getString(R.string.error_login_label)
                         }
                     }
-            } catch(ex: Exception) {}
+            } catch(_: Exception) {}
         }
     }
 
@@ -156,7 +154,7 @@ class LoginViewModel(
                             Log.d("prueba", "error en prueba google")
                         }
                     }
-            } catch(ex: Exception) {}
+            } catch(_: Exception) {}
         }
     }
 
@@ -170,8 +168,8 @@ class LoginViewModel(
         fun validateForm(
             loginUiState: LoginUiState
         ): Boolean {
-            return loginUiState.emailValue.trim().isNotEmpty() &&
-                    loginUiState.passwordValue.trim().isNotEmpty()
+            return ValidationUtils.isEmailValid(loginUiState.emailValue) &&
+                    ValidationUtils.isPasswordValid(loginUiState.passwordValue)
         }
     }
 }
