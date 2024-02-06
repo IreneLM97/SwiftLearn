@@ -29,8 +29,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.swiftlearn.R
+import com.example.swiftlearn.model.Rol
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.navigation.NavigationDestination
+import com.example.swiftlearn.ui.navigation.StudentNavigation
+import com.example.swiftlearn.ui.navigation.TutorNavigation
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -50,33 +53,24 @@ fun HomeScreen(
     // Recordar el estado del Scaffold
     val scaffoldState = rememberScaffoldState()
 
-    // Lista de elementos de navegación en la barra inferior
-    val navigationItems = listOf(
-        MenuItems.AdvertsItem,
-        MenuItems.ClassesItem,
-        MenuItems.MapItem,
-        MenuItems.ProfileItem
-    )
-
     Scaffold(
         scaffoldState = scaffoldState,
         bottomBar = {
-            NavigationInferior(navController, navigationItems)
+            if(homeUiState.user.rol == Rol.Profesor) NavInfTutor(navController, tutorMenuItems)
+            else NavInfStudent(navController, studentMenuItems)
         },
         floatingActionButton = {
-            FloatingButtonNavigation(navController = navController)
+            if(homeUiState.user.rol == Rol.Profesor) FloatingButtonNavigation(navController = navController)
         },
-        isFloatingActionButtonDocked = true
+        isFloatingActionButtonDocked = homeUiState.user.rol == Rol.Profesor
     ) {
-        //HomeNavigation(navController = navController)
-        Text(
-            text = homeUiState.user.username
-        )
+        if(homeUiState.user.rol == Rol.Profesor) TutorNavigation(navController = navController)
+        else StudentNavigation(navController = navController)
     }
 }
 
 @Composable
-private fun NavigationInferior(
+private fun NavInfTutor(
     navController: NavHostController,
     menuItems: List<MenuItems>
 ) {
@@ -99,9 +93,7 @@ private fun NavigationInferior(
                 val selected = currentItem?.destination?.route == item.route
                 BottomNavigationItem(
                     selected = selected,
-                    onClick = {
-                        navController.navigate(item.route)
-                    },
+                    onClick = { navController.navigate(item.route) },
                     icon = {
                         Icon(
                             painter =
@@ -116,7 +108,55 @@ private fun NavigationInferior(
                     label = {
                         Text(
                             text = stringResource(item.titleRes),
-                            fontSize = 13.sp,
+                            fontSize = 12.sp,
+                            color = Color.White
+                        )
+                    },
+                    alwaysShowLabel = false
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun NavInfStudent(
+    navController: NavHostController,
+    menuItems: List<MenuItems>
+) {
+    BottomAppBar(
+        backgroundColor = colorResource(id = R.color.my_dark_purple),
+        modifier = Modifier
+            .height(60.dp)
+    ) {
+        BottomNavigation(
+            backgroundColor = colorResource(id = R.color.my_dark_purple),
+            modifier = Modifier
+                .height(60.dp)
+        ) {
+            val currentItem by navController.currentBackStackEntryAsState()
+            menuItems.forEach { item ->
+                val selected = currentItem?.destination?.route == item.route
+                BottomNavigationItem(
+                    selected = selected,
+                    onClick = {
+                        navController.navigate(item.route)
+                    },
+                    icon = {
+                        Icon(
+                            painter =
+                            if(selected) painterResource(id = item.filledIconRes)
+                            else painterResource(item.outlinedIconRes),
+                            tint = Color.White,
+                            contentDescription = stringResource(item.titleRes),
+                            modifier = Modifier
+                                .size(30.dp)
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(item.titleRes),
+                            fontSize = 12.sp,
                             color = Color.White
                         )
                     },

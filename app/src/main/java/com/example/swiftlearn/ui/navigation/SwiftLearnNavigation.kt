@@ -10,12 +10,6 @@ import androidx.navigation.compose.composable
 import com.example.swiftlearn.R
 import com.example.swiftlearn.ui.screens.home.HomeDestination
 import com.example.swiftlearn.ui.screens.home.HomeScreen
-import com.example.swiftlearn.ui.screens.home.MenuItems
-import com.example.swiftlearn.ui.screens.home.professor.AdvertScreen
-import com.example.swiftlearn.ui.screens.home.professor.ClassesScreen
-import com.example.swiftlearn.ui.screens.home.professor.MapScreen
-import com.example.swiftlearn.ui.screens.home.professor.NewAdvertScreen
-import com.example.swiftlearn.ui.screens.home.professor.ProfileScreen
 import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.example.swiftlearn.ui.screens.login.LoginScreen
 import com.example.swiftlearn.ui.screens.register.RegisterDestination
