@@ -2,22 +2,26 @@ package com.example.swiftlearn.ui.screens.register
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.R
+import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.screens.ValidationUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 /**
  * [ViewModel] para gestionar el estado y la lógica de la pantalla de registro.
  */
-class RegisterViewModel : ViewModel() {
+class RegisterViewModel(
+    val userRepository: UserRepository
+) : ViewModel() {
     // Estado de la interfaz de registro
     private val _registerUiState = MutableStateFlow(RegisterUiState())
     val registerUiState = _registerUiState.asStateFlow()
@@ -110,8 +114,9 @@ class RegisterViewModel : ViewModel() {
         val userWithId = user.copy(id = id.toString())
 
         // Agregamos la información del usuario a la colección
-        FirebaseFirestore.getInstance().collection("users")
-            .add(userWithId.toMap())
+        viewModelScope.launch {
+            userRepository.insertUser(userWithId)
+        }
     }
 
     companion object {

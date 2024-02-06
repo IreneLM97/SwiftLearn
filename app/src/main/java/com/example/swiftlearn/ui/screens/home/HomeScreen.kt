@@ -24,9 +24,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.swiftlearn.R
+import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.navigation.HomeNavigation
 import com.example.swiftlearn.ui.navigation.NavigationDestination
 
@@ -37,7 +39,9 @@ object HomeDestination : NavigationDestination {
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
 

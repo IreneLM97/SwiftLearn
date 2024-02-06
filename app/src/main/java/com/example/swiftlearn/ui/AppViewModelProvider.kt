@@ -6,6 +6,8 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.swiftlearn.SwiftLearnApplication
+import com.example.swiftlearn.data.firestore.users.UserRepositoryImpl
+import com.example.swiftlearn.ui.screens.home.HomeViewModel
 import com.example.swiftlearn.ui.screens.login.LoginViewModel
 import com.example.swiftlearn.ui.screens.register.RegisterViewModel
 
@@ -25,7 +27,14 @@ object AppViewModelProvider {
         initializer {
             // Crear e inicializar la instancia de RegisterViewModel
             RegisterViewModel(
+                userRepository = swiftLearnApplication().container.userRepository
             )
+        }
+
+        // Inicialización para HomeViewModel
+        initializer {
+            // Crear e inicializar la instancia de HomeViewModel
+            HomeViewModel()
         }
     }
 }
