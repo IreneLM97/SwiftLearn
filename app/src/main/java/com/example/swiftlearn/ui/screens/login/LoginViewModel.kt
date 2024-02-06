@@ -1,7 +1,6 @@
 package com.example.swiftlearn.ui.screens.login
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.R
@@ -49,6 +48,7 @@ class LoginViewModel(
                     _loginUiState.update {
                         it.copy(
                             emailValue = userPreferences.emailValue,
+                            passwordValue = userPreferences.passwordValue,
                             rememberValue = true
                         )
                     }
@@ -75,19 +75,24 @@ class LoginViewModel(
         field: Field,
         value: String
     ) {
+        // Eliminar el caracter de nueva línea del valor original
+        // NOTA. Esto se hace por si se hubiese pulsado la tecla Enter del teclado
+        val cleanedValue = value.replace("\n", "")
+
         // Actualizamos el campo correspondiente
         _loginUiState.update {
             when (field) {
-                Field.EMAIL -> it.copy(emailValue = value)
-                Field.PASSWORD -> it.copy(passwordValue = value)
+                Field.EMAIL -> it.copy(emailValue = cleanedValue)
+                Field.PASSWORD -> it.copy(passwordValue = cleanedValue)
             }
         }
 
-        // Si está marcado el toggle de recordar y se cambió el email, guardamos en preferencias el email
-        if (loginUiState.value.rememberValue && field == Field.EMAIL) {
+        // Si está marcado el toggle de recordar, guardamos en preferencias
+        if (loginUiState.value.rememberValue) {
             viewModelScope.launch {
                 userPreferencesRepository.saveUserPreferences(
                     emailValue = loginUiState.value.emailValue,
+                    passwordValue = loginUiState.value.passwordValue,
                     rememberValue = true
                 )
             }
@@ -109,6 +114,7 @@ class LoginViewModel(
         viewModelScope.launch {
             userPreferencesRepository.saveUserPreferences(
                 emailValue = if(rememberValue) loginUiState.value.emailValue else "",
+                passwordValue = if(rememberValue) loginUiState.value.passwordValue else "",
                 rememberValue = rememberValue
             )
         }
@@ -150,8 +156,6 @@ class LoginViewModel(
                     .addOnCompleteListener{task ->
                         if(task.isSuccessful) {
                             navigateToHome()
-                        } else {
-                            Log.d("prueba", "error en prueba google")
                         }
                     }
             } catch(_: Exception) {}

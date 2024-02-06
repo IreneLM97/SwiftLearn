@@ -57,17 +57,21 @@ class RegisterViewModel : ViewModel() {
         field: Field,
         value: String
     ) {
+        // Eliminar el caracter de nueva línea del valor original
+        // NOTA. Esto se hace por si se hubiese pulsado la tecla Enter del teclado
+        val cleanedValue = value.replace("\n", "")
+
         // Actualizamos el campo correspondiente
         _registerUiState.update {
             when (field) {
-                Field.ROL -> it.copy(rolValue = if (value == "Profesor") Rol.Profesor else Rol.Alumno)
-                Field.USERNAME -> it.copy(usernameValue = value)
-                Field.PHONE -> it.copy(phoneValue = value)
-                Field.ADDRESS -> it.copy(addressValue = value)
-                Field.POSTALCODE -> it.copy(postalValue = value)
-                Field.EMAIL -> it.copy(emailValue = value)
-                Field.PASSWORD -> it.copy(passwordValue = value)
-                Field.CONFIRMPASSWORD -> it.copy(confirmPasswordValue = value)
+                Field.ROL -> it.copy(rolValue = if (cleanedValue == "Profesor") Rol.Profesor else Rol.Alumno)
+                Field.USERNAME -> it.copy(usernameValue = cleanedValue)
+                Field.PHONE -> it.copy(phoneValue = cleanedValue)
+                Field.ADDRESS -> it.copy(addressValue = cleanedValue)
+                Field.POSTALCODE -> it.copy(postalValue = cleanedValue)
+                Field.EMAIL -> it.copy(emailValue = cleanedValue)
+                Field.PASSWORD -> it.copy(passwordValue = cleanedValue)
+                Field.CONFIRMPASSWORD -> it.copy(confirmPasswordValue = cleanedValue)
             }
         }
     }
@@ -117,7 +121,9 @@ class RegisterViewModel : ViewModel() {
          * @param registerUiState Estado actual de la interfaz de registro.
          * @return true si el formulario es válido, false en caso contrario.
          */
-        fun validateForm(registerUiState: RegisterUiState): Boolean {
+        fun validateForm(
+            registerUiState: RegisterUiState
+        ): Boolean {
             return registerUiState.usernameValue.trim().isNotEmpty() &&
                     ValidationUtils.isPhoneValid(registerUiState.phoneValue) &&
                     registerUiState.addressValue.trim().isNotEmpty() &&
