@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.swiftlearn.data.datastore.UserPreferencesKeys.EMAIL_VALUE
+import com.example.swiftlearn.data.datastore.UserPreferencesKeys.PASSWORD_VALUE
 import com.example.swiftlearn.data.datastore.UserPreferencesKeys.REMEMBER_VALUE
 import com.example.swiftlearn.data.datastore.UserPreferencesKeys.TAG
 import kotlinx.coroutines.flow.Flow
@@ -18,10 +19,12 @@ import java.io.IOException
  * Clase de datos que representa las preferencias del usuario.
  *
  * @param emailValue Email del usuario.
+ * @param passwordValue Contraseña del usuario.
  * @param rememberValue Boolean que indica si el usuario quiere ser recordado o no.
  */
 data class UserPreferences(
     val emailValue: String = "",
+    val passwordValue: String = "",
     val rememberValue: Boolean = false
 )
 
@@ -31,6 +34,7 @@ data class UserPreferences(
 object UserPreferencesKeys {
     const val TAG = "UserPreferencesRepo"
     val EMAIL_VALUE = stringPreferencesKey("email_value")
+    val PASSWORD_VALUE = stringPreferencesKey("password_value")
     val REMEMBER_VALUE = stringPreferencesKey("remember_value")
 }
 
@@ -47,14 +51,17 @@ class UserPreferencesRepository(
      * Guarda las preferencias del usuario.
      *
      * @param emailValue Email del usuario.
+     * @param passwordValue Contraseña del usuario.
      * @param rememberValue Preferencia que indica si quiere ser recordado o no.
      */
     suspend fun saveUserPreferences(
         emailValue: String,
+        passwordValue: String,
         rememberValue: Boolean
     ) {
         dataStore.edit { preferences ->
             preferences[EMAIL_VALUE] = emailValue
+            preferences[PASSWORD_VALUE] = passwordValue
             preferences[REMEMBER_VALUE] = rememberValue.toString()
 
         }
@@ -75,6 +82,7 @@ class UserPreferencesRepository(
         .map { preferences ->
             UserPreferences(
                 emailValue = preferences[EMAIL_VALUE] ?: "",
+                passwordValue = preferences[PASSWORD_VALUE] ?: "",
                 rememberValue = (preferences[REMEMBER_VALUE]?.toBoolean() ?: false)
             )
         }
