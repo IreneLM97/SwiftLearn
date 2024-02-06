@@ -5,13 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.R
 import com.example.swiftlearn.data.datastore.UserPreferencesRepository
+import com.example.swiftlearn.data.firestore.users.UserRepository
+import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.screens.ValidationUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,7 +23,8 @@ import kotlinx.coroutines.launch
  * @param userPreferencesRepository Repositorio para acceder a las preferencias del usuario.
  */
 class LoginViewModel(
-    val userPreferencesRepository: UserPreferencesRepository
+    val userPreferencesRepository: UserPreferencesRepository,
+    val userRepository: UserRepository
 ) : ViewModel() {
     // Estado de la interfaz de inicio de sesión
     private val _loginUiState = MutableStateFlow(LoginUiState())
@@ -31,25 +33,18 @@ class LoginViewModel(
     // Variable para la autentificación de usuarios
     private val auth: FirebaseAuth = Firebase.auth
 
-    // Estado para almacenar el mensaje de error si no se puede iniciar sesión
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
-
-    // Estado para indicar si se está realizando el proceso de inicio de sesión
-    private val _loadingState = MutableStateFlow(false)
-    val loadingState: StateFlow<Boolean> = _loadingState
-
     // Inicialización del ViewModel
     init {
         viewModelScope.launch {
             // Observamos los cambios en las preferencias del usuario
             userPreferencesRepository.userPreferences.collect {userPreferences ->
-                if(userPreferences.rememberValue) {
+                if(userPreferences.remember) {
                     _loginUiState.update {
+                        val loginDetails = LoginDetails(userPreferences.email, userPreferences.password)
                         it.copy(
-                            emailValue = userPreferences.emailValue,
-                            passwordValue = userPreferences.passwordValue,
-                            rememberValue = true
+                            loginDetails = loginDetails,
+                            remember = true,
+                            isEntryValid = validateForm(loginDetails)
                         )
                     }
                 }
@@ -57,89 +52,70 @@ class LoginViewModel(
         }
     }
 
-    /**
-     * Enumeración que representa todos los campos del formulario de inicio de sesión.
-     */
-    enum class Field {
-        EMAIL,
-        PASSWORD
-    }
-
-    /**
-     * Función que se ejecuta cuando cambia un campo del formulario.
-     *
-     * @param field Campo de entrada que ha cambiado.
-     * @param value Nuevo valor del campo de entrada.
-     */
     fun onFieldChanged(
-        field: Field,
-        value: String
+        loginDetails: LoginDetails
     ) {
-        // Eliminar el caracter de nueva línea del valor original
-        // NOTA. Esto se hace por si se hubiese pulsado la tecla Enter del teclado
-        val cleanedValue = value.replace("\n", "")
-
-        // Actualizamos el campo correspondiente
-        _loginUiState.update {
-            when (field) {
-                Field.EMAIL -> it.copy(emailValue = cleanedValue)
-                Field.PASSWORD -> it.copy(passwordValue = cleanedValue)
-            }
-        }
+        _loginUiState.update {it.copy(loginDetails = loginDetails, isEntryValid = validateForm(loginDetails)) }
 
         // Si está marcado el toggle de recordar, guardamos en preferencias
-        if (loginUiState.value.rememberValue) {
+        if (loginUiState.value.remember) {
             viewModelScope.launch {
                 userPreferencesRepository.saveUserPreferences(
-                    emailValue = loginUiState.value.emailValue,
-                    passwordValue = loginUiState.value.passwordValue,
-                    rememberValue = true
+                    email = loginUiState.value.loginDetails.email,
+                    password = loginUiState.value.loginDetails.password,
+                    remember = true
                 )
             }
         }
     }
 
+    private fun validateForm(
+        loginDetails: LoginDetails
+    ): Boolean {
+        return ValidationUtils.isEmailValid(loginDetails.email) &&
+                ValidationUtils.isPasswordValid(loginDetails.password)
+    }
+
     /**
      * Función que se ejecuta cuando cambia el toggle.
      *
-     * @param rememberValue Valor del toggle que indica si quiere ser recordado o no.
+     * @param remember Valor del toggle que indica si quiere ser recordado o no.
      */
     fun onToggleChanged(
-        rememberValue: Boolean = false
+        remember: Boolean = false
     ) {
         // Actualizamos el estado de la página
-        _loginUiState.update {it.copy(rememberValue = rememberValue) }
+        _loginUiState.update { it.copy(remember = remember) }
 
         // Actualizamos las preferencias del usuario
         viewModelScope.launch {
             userPreferencesRepository.saveUserPreferences(
-                emailValue = if(rememberValue) loginUiState.value.emailValue else "",
-                passwordValue = if(rememberValue) loginUiState.value.passwordValue else "",
-                rememberValue = rememberValue
+                email = if(remember) loginUiState.value.loginDetails.email else "",
+                password = if(remember) loginUiState.value.loginDetails.password else "",
+                remember = remember
             )
         }
     }
 
     fun signInWithEmailAndPassword(
         context: Context,
-        email: String,
-        password: String,
+        loginDetails: LoginDetails,
         navigateToHome: () -> Unit = {}
     ) {
         // Indicar que se está cargando
-        _loadingState.value = true
+        _loginUiState.update { it.copy(loadingState = true) }
 
         viewModelScope.launch {
             try{
-                auth.signInWithEmailAndPassword(email, password)
+                auth.signInWithEmailAndPassword(loginDetails.email, loginDetails.password)
                     .addOnCompleteListener{task ->
                         // Termina de cargar
-                        _loadingState.value = false
+                        _loginUiState.update { it.copy(loadingState = false) }
 
                         if(task.isSuccessful) {
                             navigateToHome()
                         } else {
-                            _errorMessage.value = context.getString(R.string.error_login_label)
+                            _loginUiState.update { it.copy(errorMessage = context.getString(R.string.error_login_label)) }
                         }
                     }
             } catch(_: Exception) {}
@@ -155,25 +131,18 @@ class LoginViewModel(
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener{task ->
                         if(task.isSuccessful) {
+                            viewModelScope.launch {
+                                userRepository.insertUser(
+                                    User(
+                                        authId = auth.currentUser?.uid.toString(),
+                                        email = auth.currentUser?.email.toString()
+                                    )
+                                )
+                            }
                             navigateToHome()
                         }
                     }
             } catch(_: Exception) {}
-        }
-    }
-
-    companion object {
-        /**
-         * Función para validar el formulario de inicio de sesión.
-         *
-         * @param loginUiState Estado actual de la interfaz de inicio de sesión.
-         * @return true si el formulario es válido, false en caso contrario.
-         */
-        fun validateForm(
-            loginUiState: LoginUiState
-        ): Boolean {
-            return ValidationUtils.isEmailValid(loginUiState.emailValue) &&
-                    ValidationUtils.isPasswordValid(loginUiState.passwordValue)
         }
     }
 }

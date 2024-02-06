@@ -48,7 +48,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
 import com.example.swiftlearn.SwiftLearnTopAppBar
 import com.example.swiftlearn.model.Rol
-import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.InputField
@@ -70,10 +69,6 @@ fun RegisterScreen(
 ) {
     // Guardamos el estado de la pantalla de registro
     val registerUiState = viewModel.registerUiState.collectAsState().value
-    // Guardamos el estado del mensaje de error
-    val errorMessage = viewModel.errorMessage.collectAsState().value
-    // Guardamos el estado de carga de la página
-    val loadingState = viewModel.loadingState.collectAsState().value
 
     // Guardamos el contexto de la aplicación
     val context = LocalContext.current
@@ -89,7 +84,7 @@ fun RegisterScreen(
             )
         }
     ) { innerPadding ->
-        if(loadingState) {
+        if(registerUiState.loadingState) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -106,7 +101,7 @@ fun RegisterScreen(
                 RegisterHeader()
 
                 // Mostrar mensaje de error si existe
-                errorMessage?.let {
+                registerUiState.errorMessage?.let {
                     Text(
                         text = it,
                         color = Color.Red,
@@ -121,12 +116,8 @@ fun RegisterScreen(
                 // Formulario de registro
                 RegisterForm(
                     registerUiState = registerUiState,
-                    onFieldChanged = { field, value ->
-                        viewModel.onFieldChanged(field, value)
-                    },
-                    onRegisterClick = {
-                        viewModel.createUserWithEmailAndPassword(context, it, navigateToHome)
-                    }
+                    onFieldChanged = viewModel::onFieldChanged,
+                    onRegisterClick = { viewModel.createUserWithEmailAndPassword(context, registerUiState.registerDetails, navigateToHome) }
                 )
             }
         }
@@ -159,28 +150,29 @@ private fun RegisterHeader() {
 
 @Composable
 private fun RegisterForm(
-    registerUiState: RegisterUiState = RegisterUiState(),
-    onFieldChanged: (RegisterViewModel.Field, String) -> Unit = { _, _ -> },
-    onRegisterClick: (User) -> Unit = { _ -> }
+    registerUiState: RegisterUiState,
+    onFieldChanged: (RegisterDetails) -> Unit = {},
+    onRegisterClick: () -> Unit = {}
 ) {
+    // Variable para manejar la información del usuario
+    val registerDetails = registerUiState.registerDetails
+
     // Estructura del formulario
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Opciones de rol para que seleccione el usuario
         RolOptions(
-            registerUiState = registerUiState,
-            onRolSelected = {
-                onFieldChanged(RegisterViewModel.Field.ROL, it.toString())
-            }
+            registerDetails = registerDetails,
+            onRolSelected = { onFieldChanged(registerDetails.copy(rol = it)) }
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
 
         // Campo nombre de usuario
         InputField(
             label = stringResource(R.string.username_label),
-            value =  registerUiState.usernameValue,
-            onValueChange = { onFieldChanged(RegisterViewModel.Field.USERNAME, it) },
+            value = registerDetails.username,
+            onValueChange = { onFieldChanged(registerDetails.copy(username = it.replace("\n", ""))) },
             leadingIcon = Icons.Default.AccountCircle,
             keyboardType = KeyboardType.Text
         )
@@ -188,10 +180,9 @@ private fun RegisterForm(
         // Campo teléfono
         InputField(
             label = stringResource(R.string.phone_label),
-            value =  registerUiState.phoneValue,
-            onValueChange = { onFieldChanged(RegisterViewModel.Field.PHONE, it) },
-            isValid = registerUiState.phoneValue.trim().isEmpty()
-                    || ValidationUtils.isPhoneValid(registerUiState.phoneValue),
+            value =  registerDetails.phone,
+            onValueChange = { onFieldChanged(registerDetails.copy(phone = it.replace("\n", ""))) },
+            isValid = registerDetails.phone.trim().isEmpty() || ValidationUtils.isPhoneValid(registerDetails.phone),
             errorMessage = stringResource(id = R.string.invalid_phone_label),
             leadingIcon = Icons.Filled.Phone,
             keyboardType = KeyboardType.Text
@@ -200,8 +191,8 @@ private fun RegisterForm(
         // Campo dirección
         InputField(
             label = stringResource(R.string.address_label),
-            value =  registerUiState.addressValue,
-            onValueChange = { onFieldChanged(RegisterViewModel.Field.ADDRESS, it) },
+            value =  registerDetails.address,
+            onValueChange = { onFieldChanged(registerDetails.copy(address = it.replace("\n", ""))) },
             leadingIcon = Icons.Default.LocationCity,
             keyboardType = KeyboardType.Text
         )
@@ -209,10 +200,10 @@ private fun RegisterForm(
         // Campo código postal
         InputField(
             label = stringResource(R.string.postal_code_label),
-            value =  registerUiState.postalValue,
-            onValueChange = { onFieldChanged(RegisterViewModel.Field.POSTALCODE, it) },
-            isValid = registerUiState.postalValue.trim().isEmpty()
-                    || ValidationUtils.isPostalValid(registerUiState.postalValue),
+            value =  registerDetails.postal,
+            onValueChange = { onFieldChanged(registerDetails.copy(postal = it.replace("\n", ""))) },
+            isValid = registerDetails.postal.trim().isEmpty()
+                    || ValidationUtils.isPostalValid(registerDetails.postal),
             errorMessage = stringResource(id = R.string.invalid_postal_label),
             leadingIcon = Icons.Default.LocationOn,
             keyboardType = KeyboardType.Text
@@ -221,10 +212,10 @@ private fun RegisterForm(
         // Campo correo electrónico
         InputField(
             label = stringResource(R.string.email_label),
-            value =  registerUiState.emailValue,
-            onValueChange = { onFieldChanged(RegisterViewModel.Field.EMAIL, it) },
-            isValid = registerUiState.emailValue.trim().isEmpty()
-                    || ValidationUtils.isEmailValid(registerUiState.emailValue),
+            value =  registerDetails.email,
+            onValueChange = { onFieldChanged(registerDetails.copy(email = it.replace("\n", ""))) },
+            isValid = registerDetails.email.trim().isEmpty()
+                    || ValidationUtils.isEmailValid(registerDetails.email),
             errorMessage = stringResource(id = R.string.invalid_email_label),
             leadingIcon = Icons.Default.Email,
             keyboardType = KeyboardType.Text
@@ -233,11 +224,11 @@ private fun RegisterForm(
         // Campo contraseña
         PasswordField(
             label = stringResource(R.string.password_label),
-            password = registerUiState.passwordValue,
+            password = registerDetails.password,
             passwordVisible = rememberSaveable { mutableStateOf(false) },
-            onPasswordChange = { onFieldChanged(RegisterViewModel.Field.PASSWORD, it) },
-            isValid = registerUiState.passwordValue.trim().isEmpty()
-                    || ValidationUtils.isPasswordValid(registerUiState.passwordValue),
+            onPasswordChange = { onFieldChanged(registerDetails.copy(password = it.replace("\n", ""))) },
+            isValid = registerDetails.password.trim().isEmpty()
+                    || ValidationUtils.isPasswordValid(registerDetails.password),
             errorMessage = stringResource(id = R.string.invalid_password_label),
             leadingIcon = Icons.Default.Lock
         )
@@ -245,11 +236,11 @@ private fun RegisterForm(
         // Campo repetir contraseña
         PasswordField(
             label = stringResource(R.string.confirm_password_label),
-            password = registerUiState.confirmPasswordValue,
+            password = registerDetails.confirmPassword,
             passwordVisible = rememberSaveable { mutableStateOf(false) },
-            onPasswordChange = { onFieldChanged(RegisterViewModel.Field.CONFIRMPASSWORD, it) },
-            isValid = registerUiState.confirmPasswordValue.trim().isEmpty()
-                    || ValidationUtils.isConfirmPasswordValid(registerUiState.passwordValue, registerUiState.confirmPasswordValue),
+            onPasswordChange = { onFieldChanged(registerDetails.copy(confirmPassword = it.replace("\n", ""))) },
+            isValid = registerDetails.confirmPassword.trim().isEmpty()
+                    || ValidationUtils.isConfirmPasswordValid(registerDetails.password, registerDetails.confirmPassword),
             errorMessage = stringResource(id = R.string.invalid_confirm_password_label),
             leadingIcon = Icons.Default.Repeat
         )
@@ -260,22 +251,8 @@ private fun RegisterForm(
             label = stringResource(R.string.register_label),
             buttonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
-            isEnabled = RegisterViewModel.validateForm(registerUiState),
-            onClick = {
-                // Llama a la función createUserWithEmailAndPassword pasando el usuario
-                onRegisterClick(
-                    User(
-                        id = "",
-                        username = registerUiState.usernameValue,
-                        phone = registerUiState.phoneValue,
-                        address = registerUiState.addressValue,
-                        postal = registerUiState.postalValue,
-                        email = registerUiState.emailValue,
-                        password = registerUiState.passwordValue,
-                        rol = registerUiState.rolValue
-                    )
-                )
-            }
+            isEnabled = registerUiState.isEntryValid,
+            onClick = onRegisterClick
         )
         Spacer(modifier = Modifier.height(40.dp))
     }
@@ -283,7 +260,7 @@ private fun RegisterForm(
 
 @Composable
 private fun RolOptions(
-    registerUiState: RegisterUiState = RegisterUiState(),
+    registerDetails: RegisterDetails = RegisterDetails(),
     onRolSelected: (Rol) -> Unit = {}
 ) {
     // Contenedor de las dos opciones
@@ -309,7 +286,7 @@ private fun RolOptions(
                     .clip(RoundedCornerShape(16.dp))
                     .clickable { onRolSelected(Rol.Profesor) },
                 color =
-                    if (registerUiState.rolValue == Rol.Profesor) colorResource(id = R.color.my_dark_purple)
+                    if (registerDetails.rol == Rol.Profesor) colorResource(id = R.color.my_dark_purple)
                     else Color.White
             ) {
                 Text(
@@ -317,7 +294,7 @@ private fun RolOptions(
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     color =
-                        if (registerUiState.rolValue == Rol.Profesor) Color.White
+                        if (registerDetails.rol == Rol.Profesor) Color.White
                         else Color.Black,
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -334,7 +311,7 @@ private fun RolOptions(
                     .clip(RoundedCornerShape(16.dp))
                     .clickable { onRolSelected(Rol.Alumno) },
                 color =
-                    if (registerUiState.rolValue == Rol.Alumno) colorResource(id = R.color.my_dark_purple)
+                    if (registerDetails.rol == Rol.Alumno) colorResource(id = R.color.my_dark_purple)
                     else Color.White
             ) {
                 Text(
@@ -342,7 +319,7 @@ private fun RolOptions(
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     color =
-                        if (registerUiState.rolValue == Rol.Alumno) Color.White
+                        if (registerDetails.rol == Rol.Alumno) Color.White
                         else Color.Black,
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)

@@ -5,14 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.R
 import com.example.swiftlearn.data.firestore.users.UserRepository
-import com.example.swiftlearn.model.Rol
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.screens.ValidationUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,75 +28,48 @@ class RegisterViewModel(
     // Variable para la autentificación de usuarios
     private val auth: FirebaseAuth = Firebase.auth
 
-    // Estado para almacenar el mensaje de error si no se puede registrar
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
-
-    // Estado para indicar si se está realizando el proceso de registro
-    private val _loadingState = MutableStateFlow(false)
-    val loadingState: StateFlow<Boolean> = _loadingState
-
-    /**
-     * Enumeración que representa todos los campos del formulario de registro.
-     */
-    enum class Field {
-        ROL,
-        USERNAME,
-        PHONE,
-        ADDRESS,
-        POSTALCODE,
-        EMAIL,
-        PASSWORD,
-        CONFIRMPASSWORD
+    fun onFieldChanged(
+        registerDetails: RegisterDetails
+    ) {
+        _registerUiState.update { it.copy(registerDetails = registerDetails, isEntryValid = validateForm(registerDetails)) }
     }
 
     /**
-     * Función que se ejecuta cuando cambia un campo del formulario.
+     * Función para validar el formulario de registro.
      *
-     * @param field Campo de entrada que ha cambiado.
-     * @param value Nuevo valor del campo de entrada.
+     * @param registerDetails Datos del usuario recogidos del formulario.
+     * @return true si el formulario es válido, false en caso contrario.
      */
-    fun onFieldChanged(
-        field: Field,
-        value: String
-    ) {
-        // Eliminar el caracter de nueva línea del valor original
-        // NOTA. Esto se hace por si se hubiese pulsado la tecla Enter del teclado
-        val cleanedValue = value.replace("\n", "")
-
-        // Actualizamos el campo correspondiente
-        _registerUiState.update {
-            when (field) {
-                Field.ROL -> it.copy(rolValue = if (cleanedValue == "Profesor") Rol.Profesor else Rol.Alumno)
-                Field.USERNAME -> it.copy(usernameValue = cleanedValue)
-                Field.PHONE -> it.copy(phoneValue = cleanedValue)
-                Field.ADDRESS -> it.copy(addressValue = cleanedValue)
-                Field.POSTALCODE -> it.copy(postalValue = cleanedValue)
-                Field.EMAIL -> it.copy(emailValue = cleanedValue)
-                Field.PASSWORD -> it.copy(passwordValue = cleanedValue)
-                Field.CONFIRMPASSWORD -> it.copy(confirmPasswordValue = cleanedValue)
-            }
-        }
+    private fun validateForm(
+        registerDetails: RegisterDetails
+    ): Boolean {
+        return registerDetails.username.trim().isNotEmpty() &&
+                ValidationUtils.isPhoneValid(registerDetails.phone) &&
+                registerDetails.address.trim().isNotEmpty() &&
+                ValidationUtils.isPostalValid(registerDetails.postal) &&
+                ValidationUtils.isEmailValid(registerDetails.email) &&
+                ValidationUtils.isPasswordValid(registerDetails.password) &&
+                ValidationUtils.isConfirmPasswordValid(registerDetails.password, registerDetails.confirmPassword)
     }
 
     fun createUserWithEmailAndPassword(
         context: Context,
-        user: User,
+        registerDetails: RegisterDetails,
         navigateToHome: () -> Unit = {}
     ) {
-        if(!_loadingState.value) {
-            _loadingState.value = true
+        if(!_registerUiState.value.loadingState) {
+            _registerUiState.update { it.copy(loadingState = true) }
 
-            auth.createUserWithEmailAndPassword(user.email, user.password)
+            auth.createUserWithEmailAndPassword(registerDetails.email, registerDetails.password)
                 .addOnCompleteListener {task ->
                     // Termina de cargar
-                    _loadingState.value = false
+                    _registerUiState.update { it.copy(loadingState = false) }
 
                     if(task.isSuccessful) {
-                        createUser(user)
+                        createUser(registerDetails.toUser())
                         navigateToHome()
                     } else {
-                        _errorMessage.value = context.getString(R.string.error_register_label)
+                        _registerUiState.update { it.copy(errorMessage = context.getString(R.string.error_register_label)) }
                     }
                 }
 
@@ -109,34 +80,14 @@ class RegisterViewModel(
         user: User
     ) {
         // Recogemos el Id que se generó al autentificar al usuario
-        val id = auth.currentUser?.uid
+        val authId = auth.currentUser?.uid
 
         // Asignamos el Id al usuario
-        val userWithId = user.copy(id = id.toString())
+        val userWithAuthId = user.copy(authId = authId.toString())
 
         // Agregamos la información del usuario a la colección
         viewModelScope.launch {
-            userRepository.insertUser(userWithId)
-        }
-    }
-
-    companion object {
-        /**
-         * Función para validar el formulario de registro.
-         *
-         * @param registerUiState Estado actual de la interfaz de registro.
-         * @return true si el formulario es válido, false en caso contrario.
-         */
-        fun validateForm(
-            registerUiState: RegisterUiState
-        ): Boolean {
-            return registerUiState.usernameValue.trim().isNotEmpty() &&
-                    ValidationUtils.isPhoneValid(registerUiState.phoneValue) &&
-                    registerUiState.addressValue.trim().isNotEmpty() &&
-                    ValidationUtils.isPostalValid(registerUiState.postalValue) &&
-                    ValidationUtils.isEmailValid(registerUiState.emailValue) &&
-                    ValidationUtils.isPasswordValid(registerUiState.passwordValue) &&
-                    ValidationUtils.isConfirmPasswordValid(registerUiState.passwordValue, registerUiState.confirmPasswordValue)
+            userRepository.insertUser(userWithAuthId)
         }
     }
 }

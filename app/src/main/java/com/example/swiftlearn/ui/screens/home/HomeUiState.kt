@@ -7,5 +7,5 @@ import com.example.swiftlearn.model.User
  * @property User Usuario que se encuentra iniciado sesión en la aplicación.
  */
 data class HomeUiState(
-    val user: User
+    val user: User = User()
 )

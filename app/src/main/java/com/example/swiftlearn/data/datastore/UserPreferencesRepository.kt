@@ -18,14 +18,14 @@ import java.io.IOException
 /**
  * Clase de datos que representa las preferencias del usuario.
  *
- * @param emailValue Email del usuario.
- * @param passwordValue Contraseña del usuario.
- * @param rememberValue Boolean que indica si el usuario quiere ser recordado o no.
+ * @param email Email del usuario.
+ * @param password Contraseña del usuario.
+ * @param remember Boolean que indica si el usuario quiere ser recordado o no.
  */
 data class UserPreferences(
-    val emailValue: String = "",
-    val passwordValue: String = "",
-    val rememberValue: Boolean = false
+    val email: String = "",
+    val password: String = "",
+    val remember: Boolean = false
 )
 
 /**
@@ -50,19 +50,19 @@ class UserPreferencesRepository(
     /**
      * Guarda las preferencias del usuario.
      *
-     * @param emailValue Email del usuario.
-     * @param passwordValue Contraseña del usuario.
-     * @param rememberValue Preferencia que indica si quiere ser recordado o no.
+     * @param email Email del usuario.
+     * @param password Contraseña del usuario.
+     * @param remember Preferencia que indica si quiere ser recordado o no.
      */
     suspend fun saveUserPreferences(
-        emailValue: String,
-        passwordValue: String,
-        rememberValue: Boolean
+        email: String,
+        password: String,
+        remember: Boolean
     ) {
         dataStore.edit { preferences ->
-            preferences[EMAIL_VALUE] = emailValue
-            preferences[PASSWORD_VALUE] = passwordValue
-            preferences[REMEMBER_VALUE] = rememberValue.toString()
+            preferences[EMAIL_VALUE] = email
+            preferences[PASSWORD_VALUE] = password
+            preferences[REMEMBER_VALUE] = remember.toString()
 
         }
     }
@@ -81,9 +81,9 @@ class UserPreferencesRepository(
         }
         .map { preferences ->
             UserPreferences(
-                emailValue = preferences[EMAIL_VALUE] ?: "",
-                passwordValue = preferences[PASSWORD_VALUE] ?: "",
-                rememberValue = (preferences[REMEMBER_VALUE]?.toBoolean() ?: false)
+                email = preferences[EMAIL_VALUE] ?: "",
+                password = preferences[PASSWORD_VALUE] ?: "",
+                remember = (preferences[REMEMBER_VALUE]?.toBoolean() ?: false)
             )
         }
 }

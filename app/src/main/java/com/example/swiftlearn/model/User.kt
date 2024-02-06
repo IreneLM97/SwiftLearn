@@ -6,7 +6,7 @@ enum class Rol {
 }
 
 data class User(
-    val id: String = "",
+    val authId: String = "",
     val username: String = "",
     val phone: String = "",
     val address: String = "",
@@ -17,7 +17,7 @@ data class User(
 ) {
     fun toMap(): MutableMap<String, Any> {
         return mutableMapOf(
-            "id" to this.id,
+            "authId" to this.authId,
             "username" to this.username,
             "phone" to this.phone,
             "address" to this.address,

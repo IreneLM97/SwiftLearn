@@ -70,10 +70,6 @@ fun LoginScreen(
 ) {
     // Guardamos el estado de la pantalla de inicio de sesión
     val loginUiState = viewModel.loginUiState.collectAsState().value
-    // Guardamos el estado del mensaje de error
-    val errorMessage = viewModel.errorMessage.collectAsState().value
-    // Guardamos el estado de carga de la página
-    val loadingState = viewModel.loadingState.collectAsState().value
 
     // Guardamos el contexto de la aplicación
     val context = LocalContext.current
@@ -104,7 +100,7 @@ fun LoginScreen(
             )
         }
     ) { innerPadding ->
-        if(loadingState) {
+        if(loginUiState.loadingState) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -121,7 +117,7 @@ fun LoginScreen(
                 LoginHeader()
 
                 // Mostrar mensaje de error si existe
-                errorMessage?.let {
+                loginUiState.errorMessage?.let {
                     Text(
                         text = it,
                         color = Color.Red,
@@ -136,20 +132,9 @@ fun LoginScreen(
                 // Formulario de inicio de sesión
                 LoginForm(
                     loginUiState = loginUiState,
-                    onFieldChanged = { field, value ->
-                        viewModel.onFieldChanged(field, value)
-                    },
-                    onToggleChecked = {
-                        viewModel.onToggleChanged(it)
-                    },
-                    onLoginClick = { email, password ->
-                        viewModel.signInWithEmailAndPassword(
-                            context = context,
-                            email = email,
-                            password = password,
-                            navigateToHome = navigateToHome
-                        )
-                    },
+                    onFieldChanged = viewModel::onFieldChanged,
+                    onToggleChecked = viewModel::onToggleChanged,
+                    onLoginClick = { viewModel.signInWithEmailAndPassword(context = context, loginUiState.loginDetails, navigateToHome) },
                     onGoogleLoginClick = {
                         val options = GoogleSignInOptions
                             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -206,11 +191,14 @@ private fun LoginHeader() {
 @Composable
 private fun LoginForm(
     loginUiState: LoginUiState = LoginUiState(),
-    onFieldChanged: (LoginViewModel.Field, String) -> Unit = {_,_ -> },
+    onFieldChanged: (LoginDetails) -> Unit = {},
     onToggleChecked: (Boolean) -> Unit = {},
-    onLoginClick: (String, String) -> Unit = {_, _ -> },
+    onLoginClick: () -> Unit = {},
     onGoogleLoginClick: () -> Unit = {}
 ) {
+    // Variable para manejar la información del usuario
+    val loginDetails = loginUiState.loginDetails
+
     // Estructura del formulario
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -218,9 +206,9 @@ private fun LoginForm(
         // Campo correo electrónico
         InputField(
             label = stringResource(R.string.email_label),
-            value =  loginUiState.emailValue,
-            onValueChange = { onFieldChanged(LoginViewModel.Field.EMAIL, it) },
-            isValid = loginUiState.emailValue.trim().isEmpty() || ValidationUtils.isEmailValid(loginUiState.emailValue),
+            value =  loginUiState.loginDetails.email,
+            onValueChange = { onFieldChanged(loginDetails.copy(email = it.replace("\n", ""))) },
+            isValid = loginDetails.email.trim().isEmpty() || ValidationUtils.isEmailValid(loginDetails.email),
             errorMessage = stringResource(R.string.invalid_email_label),
             leadingIcon = Icons.Default.Email,
             keyboardType = KeyboardType.Text
@@ -229,17 +217,17 @@ private fun LoginForm(
         // Campo contraseña
         PasswordField(
             label = stringResource(R.string.password_label),
-            password = loginUiState.passwordValue,
+            password = loginUiState.loginDetails.password,
             passwordVisible = rememberSaveable { mutableStateOf(false) },
-            onPasswordChange = { onFieldChanged(LoginViewModel.Field.PASSWORD, it) },
-            isValid = loginUiState.passwordValue.trim().isEmpty() || ValidationUtils.isPasswordValid(loginUiState.passwordValue),
+            onPasswordChange = { onFieldChanged(loginDetails.copy(password = it.replace("\n", ""))) },
+            isValid = loginDetails.password.trim().isEmpty() || ValidationUtils.isPasswordValid(loginDetails.password),
             errorMessage = stringResource(id = R.string.invalid_password_label),
             leadingIcon = Icons.Default.Lock
         )
 
         // Toggle "Recuérdame"
         ToggleButton(
-            isActivate = loginUiState.rememberValue,
+            isActivate = loginUiState.remember,
             onToggleCkecked = onToggleChecked
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_big)))
@@ -249,11 +237,8 @@ private fun LoginForm(
             label = stringResource(R.string.login_label),
             buttonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
-            isEnabled = LoginViewModel.validateForm(loginUiState),
-            onClick = {
-                // Llama a la función onLoginClick pasando el email y la contraseña
-                onLoginClick(loginUiState.emailValue, loginUiState.passwordValue)
-            }
+            isEnabled = loginUiState.isEntryValid,
+            onClick = onLoginClick
 
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_big)))

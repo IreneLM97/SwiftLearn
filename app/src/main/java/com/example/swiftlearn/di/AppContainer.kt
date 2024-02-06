@@ -19,9 +19,6 @@ interface AppContainer {
 class AppDataContainer (
     private val context: Context
 ) : AppContainer {
-    /**
-     * [FlightRepository] que utiliza un [OfflineFlightRepository] construido a partir de la base de datos Room.
-     */
     override val userRepository: UserRepository by lazy {
         UserRepositoryImpl()
     }

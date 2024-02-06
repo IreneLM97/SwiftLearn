@@ -15,11 +15,14 @@ class UserRepositoryImpl: UserRepository {
         }
     }*/
 
-    override suspend fun getUserById(userId: String): User? {
-        return usersCollection.document(userId)
-            .get()
-            .await()
-            .toObject(User::class.java)
+    override suspend fun getUserByAuthId(authId: String): User? {
+        return try {
+            val querySnapshot = usersCollection.whereEqualTo("authId", authId).get().await()
+            val documentSnapshot = querySnapshot.documents.firstOrNull()
+            documentSnapshot?.toObject(User::class.java)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     override suspend fun insertUser(user: User) {
@@ -27,13 +30,13 @@ class UserRepositoryImpl: UserRepository {
     }
 
     override suspend fun deleteUser(user: User) {
-        usersCollection.document(user.id)
+        usersCollection.document(user.authId)
             .delete()
             .await()
     }
 
     override suspend fun updateUser(user: User) {
-        usersCollection.document(user.id)
+        usersCollection.document(user.authId)
             .set(user.toMap())
             .await()
     }

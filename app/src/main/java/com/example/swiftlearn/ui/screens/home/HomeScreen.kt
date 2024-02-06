@@ -16,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +30,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.swiftlearn.R
 import com.example.swiftlearn.ui.AppViewModelProvider
-import com.example.swiftlearn.ui.navigation.HomeNavigation
 import com.example.swiftlearn.ui.navigation.NavigationDestination
 
 object HomeDestination : NavigationDestination {
@@ -42,9 +42,15 @@ object HomeDestination : NavigationDestination {
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    // Guardamos el estado de la pantalla principal
+    val homeUiState = viewModel.homeUiState.collectAsState().value
+
+    // Recordar el controlador de navegación
     val navController = rememberNavController()
+    // Recordar el estado del Scaffold
     val scaffoldState = rememberScaffoldState()
 
+    // Lista de elementos de navegación en la barra inferior
     val navigationItems = listOf(
         MenuItems.AdvertsItem,
         MenuItems.ClassesItem,
@@ -62,7 +68,10 @@ fun HomeScreen(
         },
         isFloatingActionButtonDocked = true
     ) {
-        HomeNavigation(navController = navController)
+        //HomeNavigation(navController = navController)
+        Text(
+            text = homeUiState.user.username
+        )
     }
 }
 
