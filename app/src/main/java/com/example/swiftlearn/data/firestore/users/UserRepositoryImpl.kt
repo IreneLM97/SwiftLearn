@@ -2,19 +2,24 @@ package com.example.swiftlearn.data.firestore.users
 
 import com.example.swiftlearn.model.User
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 class UserRepositoryImpl: UserRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val usersCollection = firestore.collection("users")
 
-    override fun getUserById(userId: String): Flow<User?> {
+    /*override fun getUserById(userId: String): Flow<User?> {
         return flow {
             val documentSnapshot = usersCollection.document(userId).get().await()
             emit(documentSnapshot.toObject(User::class.java))
         }
+    }*/
+
+    override suspend fun getUserById(userId: String): User? {
+        return usersCollection.document(userId)
+            .get()
+            .await()
+            .toObject(User::class.java)
     }
 
     override suspend fun insertUser(user: User) {

@@ -1,9 +1,6 @@
 package com.example.swiftlearn.ui.screens.register
 
-enum class Rol {
-    Profesor,
-    Alumno
-}
+import com.example.swiftlearn.model.Rol
 
 /**
  * Clase de estado que representa el estado actual del registro.

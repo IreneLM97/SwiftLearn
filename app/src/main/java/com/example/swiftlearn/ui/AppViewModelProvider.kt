@@ -19,7 +19,8 @@ object AppViewModelProvider {
         // Inicialización para LoginViewModel
         initializer {
             LoginViewModel(
-                userPreferencesRepository = swiftLearnApplication().userPreferencesRepository
+                userPreferencesRepository = swiftLearnApplication().userPreferencesRepository,
+                userRepository = swiftLearnApplication().container.userRepository
             )
         }
 
@@ -34,7 +35,9 @@ object AppViewModelProvider {
         // Inicialización para HomeViewModel
         initializer {
             // Crear e inicializar la instancia de HomeViewModel
-            HomeViewModel()
+            HomeViewModel(
+                userRepository = swiftLearnApplication().container.userRepository
+            )
         }
     }
 }

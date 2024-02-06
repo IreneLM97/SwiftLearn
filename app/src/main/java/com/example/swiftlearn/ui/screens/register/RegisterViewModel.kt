@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.R
 import com.example.swiftlearn.data.firestore.users.UserRepository
+import com.example.swiftlearn.model.Rol
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.screens.ValidationUtils
 import com.google.firebase.Firebase

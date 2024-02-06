@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
 import com.example.swiftlearn.SwiftLearnTopAppBar
+import com.example.swiftlearn.model.Rol
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
@@ -271,7 +272,7 @@ private fun RegisterForm(
                         postal = registerUiState.postalValue,
                         email = registerUiState.emailValue,
                         password = registerUiState.passwordValue,
-                        rol = registerUiState.rolValue.toString()
+                        rol = registerUiState.rolValue
                     )
                 )
             }
