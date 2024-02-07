@@ -27,10 +27,11 @@ enum class SwiftLearnScreens {
 fun SwiftLearnNavigation(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    startDestination: String = SwiftLearnScreens.SplashScreen.name
 ) {
     NavHost(
         navController = navController,
-        startDestination = SwiftLearnScreens.SplashScreen.name,
+        startDestination = startDestination,
         modifier = modifier
     ) {
         composable(route = SwiftLearnScreens.SplashScreen.name) {

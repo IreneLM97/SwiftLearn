@@ -83,4 +83,8 @@ class ProfileViewModel(
             _profileUiState.update { it.copy(loadingState = false) }
         }
     }
+
+    fun signOut() {
+        auth.signOut()
+    }
 }

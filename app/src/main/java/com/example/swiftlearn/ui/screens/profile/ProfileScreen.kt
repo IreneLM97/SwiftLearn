@@ -71,6 +71,10 @@ fun ProfileScreen(
                 onDeleteClick = {
                     //viewModel.deleteUser(profileUiState.profileDetails.toUser())
                     navigateToLogin()
+                },
+                onSignOutClick = {
+                    viewModel.signOut()
+                    navigateToLogin()
                 }
             )
         }

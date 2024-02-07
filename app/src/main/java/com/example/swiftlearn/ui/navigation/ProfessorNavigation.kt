@@ -6,15 +6,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.swiftlearn.ui.screens.home.HomeDestination
+import com.example.swiftlearn.ui.screens.home.HomeScreen
 import com.example.swiftlearn.ui.screens.home.MenuItems
 import com.example.swiftlearn.ui.screens.home.professor.AdvertScreen
 import com.example.swiftlearn.ui.screens.home.professor.ClassesScreen
 import com.example.swiftlearn.ui.screens.home.professor.MapScreen
 import com.example.swiftlearn.ui.screens.home.professor.NewAdvertScreen
-import com.example.swiftlearn.ui.screens.login.LoginDestination
-import com.example.swiftlearn.ui.screens.login.LoginScreen
 import com.example.swiftlearn.ui.screens.profile.ProfileScreen
-import com.example.swiftlearn.ui.screens.register.RegisterDestination
 
 @Composable
 fun ProfessorNavigation(
@@ -26,6 +24,9 @@ fun ProfessorNavigation(
         startDestination = MenuItems.AdvertsItem.route,
         modifier = modifier
     ) {
+        composable(route = HomeDestination.route) {
+            HomeScreen()
+        }
         composable(route = MenuItems.AdvertsItem.route) {
             AdvertScreen()
         }
@@ -40,17 +41,7 @@ fun ProfessorNavigation(
         }
         composable(route = MenuItems.ProfileItem.route) {
             ProfileScreen(
-                navigateToLogin = { navController.navigate(LoginDestination.route) }
-            )
-        }
-        composable(route = LoginDestination.route) {
-            LoginScreen(
-                navigateToHome = {
-                    navController.navigate(HomeDestination.route)
-                },
-                navigateToRegister = {
-                    navController.navigate(RegisterDestination.route)
-                }
+                navigateToLogin = { navController.navigate(HomeDestination.route) }
             )
         }
     }
