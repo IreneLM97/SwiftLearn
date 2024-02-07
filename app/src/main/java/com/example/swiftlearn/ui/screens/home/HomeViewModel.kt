@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -30,8 +31,9 @@ class HomeViewModel(
             try {
                 // Obtener los datos del usuario desde el repositorio
                 val user = userRepository.getUserByAuthId(auth.currentUser?.uid.toString())
+
                 // Actualizar el estado de la pantalla con los datos del usuario obtenidos
-                _homeUiState.value = _homeUiState.value.copy(user = user ?: User())
+                _homeUiState.update { it.copy(user = user ?: User()) }
             } catch (_: Exception) {}
         }
     }

@@ -7,16 +7,20 @@
 
     <!-- Label de formularios -->
     <string name="welcome_label">Bienvenido</string>
+    <string name="profile_label">Mi perfil</string>
     <string name="new_account_label">Nueva cuenta</string>
     <string name="login_label">Iniciar sesión</string>
     <string name="register_label">Registrarme</string>
+    <string name="update_account_label">Guardar</string>
+    <string name="delete_account_label">Eliminar cuenta</string>
+    <string name="sign_out_label">Cerrar sesión</string>
     <string name="register_link_label">Regístrate</string>
     <string name="google_label">Continuar con Google</string>
     <string name="no_account_label">¿No tienes una cuenta?</string>
     <string name="remember_me_label">Recuérdame</string>
 
-    <string name="profile_label">¿Qué perfil eres?</string>
-    <string name="professor_label">Profesor</string>
+    <string name="rol_label">¿Qué perfil eres?</string>
+    <string name="tutor_label">Profesor</string>
     <string name="student_label">Alumno</string>
     <string name="username_label">Nombre de usuario</string>
     <string name="phone_label">Teléfono</string>
@@ -42,6 +46,7 @@
     <string name="title_new_advert">Nuevo</string>
     <string name="title_map">Mapa</string>
     <string name="title_profile">Perfil</string>
+    <string name="title_favorite">Favoritos</string>
 
     <!-- Descripción de iconos -->
     <string name="description_eye_icon">Icono de mostrar/ocultar</string>
@@ -53,5 +58,4 @@
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
-    <string name="title_favorite">Favoritos</string>
 </resources>

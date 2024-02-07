@@ -9,6 +9,8 @@ import com.example.swiftlearn.SwiftLearnApplication
 import com.example.swiftlearn.data.firestore.users.UserRepositoryImpl
 import com.example.swiftlearn.ui.screens.home.HomeViewModel
 import com.example.swiftlearn.ui.screens.login.LoginViewModel
+import com.example.swiftlearn.ui.screens.profile.ProfileScreen
+import com.example.swiftlearn.ui.screens.profile.ProfileViewModel
 import com.example.swiftlearn.ui.screens.register.RegisterViewModel
 
 /**
@@ -36,6 +38,14 @@ object AppViewModelProvider {
         initializer {
             // Crear e inicializar la instancia de HomeViewModel
             HomeViewModel(
+                userRepository = swiftLearnApplication().container.userRepository
+            )
+        }
+
+        // Inicialización para ProfileViewModel
+        initializer {
+            // Crear e inicializar la instancia de ProfileViewModel
+            ProfileViewModel(
                 userRepository = swiftLearnApplication().container.userRepository
             )
         }

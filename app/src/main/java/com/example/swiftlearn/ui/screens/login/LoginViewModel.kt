@@ -52,9 +52,7 @@ class LoginViewModel(
         }
     }
 
-    fun onFieldChanged(
-        loginDetails: LoginDetails
-    ) {
+    fun onFieldChanged(loginDetails: LoginDetails) {
         _loginUiState.update {it.copy(loginDetails = loginDetails, isEntryValid = validateForm(loginDetails)) }
 
         // Si está marcado el toggle de recordar, guardamos en preferencias
@@ -69,9 +67,7 @@ class LoginViewModel(
         }
     }
 
-    private fun validateForm(
-        loginDetails: LoginDetails
-    ): Boolean {
+    private fun validateForm(loginDetails: LoginDetails): Boolean {
         return ValidationUtils.isEmailValid(loginDetails.email) &&
                 ValidationUtils.isPasswordValid(loginDetails.password)
     }
@@ -81,9 +77,7 @@ class LoginViewModel(
      *
      * @param remember Valor del toggle que indica si quiere ser recordado o no.
      */
-    fun onToggleChanged(
-        remember: Boolean = false
-    ) {
+    fun onToggleChanged(remember: Boolean = false) {
         // Actualizamos el estado de la página
         _loginUiState.update { it.copy(remember = remember) }
 

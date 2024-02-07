@@ -17,9 +17,9 @@ class UserRepositoryImpl: UserRepository {
 
     override suspend fun getUserByAuthId(authId: String): User? {
         return try {
-            val querySnapshot = usersCollection.whereEqualTo("authId", authId).get().await()
-            val documentSnapshot = querySnapshot.documents.firstOrNull()
-            documentSnapshot?.toObject(User::class.java)
+            val query = usersCollection.whereEqualTo("authId", authId).get().await()
+            val document = query.documents.firstOrNull()
+            document?.toObject(User::class.java)
         } catch (e: Exception) {
             null
         }
@@ -30,14 +30,18 @@ class UserRepositoryImpl: UserRepository {
     }
 
     override suspend fun deleteUser(user: User) {
-        usersCollection.document(user.authId)
-            .delete()
-            .await()
+        try {
+            val query = usersCollection.whereEqualTo("authId", user.authId).get().await()
+            val document = query.documents.firstOrNull()
+            document?.reference?.delete()
+        } catch (_: Exception) {}
     }
 
     override suspend fun updateUser(user: User) {
-        usersCollection.document(user.authId)
-            .set(user.toMap())
-            .await()
+        try {
+            val query = usersCollection.whereEqualTo("authId", user.authId).get().await()
+            val document = query.documents.firstOrNull()
+            document?.reference?.set(user.toMap())
+        } catch (_: Exception) {}
     }
 }

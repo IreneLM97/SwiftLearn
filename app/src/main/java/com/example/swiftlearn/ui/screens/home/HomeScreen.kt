@@ -33,7 +33,7 @@ import com.example.swiftlearn.model.Rol
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.navigation.NavigationDestination
 import com.example.swiftlearn.ui.navigation.StudentNavigation
-import com.example.swiftlearn.ui.navigation.TutorNavigation
+import com.example.swiftlearn.ui.navigation.ProfessorNavigation
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -56,21 +56,25 @@ fun HomeScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         bottomBar = {
-            if(homeUiState.user.rol == Rol.Profesor) NavInfTutor(navController, tutorMenuItems)
-            else NavInfStudent(navController, studentMenuItems)
+            when (homeUiState.user.rol) {
+                Rol.Profesor -> NavInfProfessor(navController, professorMenuItems)
+                Rol.Alumno -> NavInfStudent(navController, studentMenuItems)
+            }
         },
         floatingActionButton = {
             if(homeUiState.user.rol == Rol.Profesor) FloatingButtonNavigation(navController = navController)
         },
         isFloatingActionButtonDocked = homeUiState.user.rol == Rol.Profesor
     ) {
-        if(homeUiState.user.rol == Rol.Profesor) TutorNavigation(navController = navController)
-        else StudentNavigation(navController = navController)
+        when (homeUiState.user.rol) {
+            Rol.Profesor -> ProfessorNavigation(navController = navController)
+            Rol.Alumno -> StudentNavigation(navController = navController)
+        }
     }
 }
 
 @Composable
-private fun NavInfTutor(
+private fun NavInfProfessor(
     navController: NavHostController,
     menuItems: List<MenuItems>
 ) {

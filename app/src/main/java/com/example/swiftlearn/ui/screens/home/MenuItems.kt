@@ -19,7 +19,7 @@ sealed class MenuItems(
 }
 
 // Lista de ítems del menú para profesores
-val tutorMenuItems = listOf(
+val professorMenuItems = listOf(
     MenuItems.AdvertsItem,
     MenuItems.ClassesItem,
     MenuItems.MapItem,

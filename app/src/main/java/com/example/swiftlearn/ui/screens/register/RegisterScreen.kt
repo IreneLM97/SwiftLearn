@@ -290,7 +290,7 @@ private fun RolOptions(
                     else Color.White
             ) {
                 Text(
-                    text = stringResource(R.string.professor_label),
+                    text = stringResource(R.string.tutor_label),
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     color =

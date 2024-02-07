@@ -28,9 +28,7 @@ class RegisterViewModel(
     // Variable para la autentificación de usuarios
     private val auth: FirebaseAuth = Firebase.auth
 
-    fun onFieldChanged(
-        registerDetails: RegisterDetails
-    ) {
+    fun onFieldChanged(registerDetails: RegisterDetails) {
         _registerUiState.update { it.copy(registerDetails = registerDetails, isEntryValid = validateForm(registerDetails)) }
     }
 
@@ -40,9 +38,7 @@ class RegisterViewModel(
      * @param registerDetails Datos del usuario recogidos del formulario.
      * @return true si el formulario es válido, false en caso contrario.
      */
-    private fun validateForm(
-        registerDetails: RegisterDetails
-    ): Boolean {
+    private fun validateForm(registerDetails: RegisterDetails): Boolean {
         return registerDetails.username.trim().isNotEmpty() &&
                 ValidationUtils.isPhoneValid(registerDetails.phone) &&
                 registerDetails.address.trim().isNotEmpty() &&
@@ -72,13 +68,10 @@ class RegisterViewModel(
                         _registerUiState.update { it.copy(errorMessage = context.getString(R.string.error_register_label)) }
                     }
                 }
-
         }
     }
 
-    private fun createUser(
-        user: User
-    ) {
+    private fun createUser(user: User) {
         // Recogemos el Id que se generó al autentificar al usuario
         val authId = auth.currentUser?.uid
 
