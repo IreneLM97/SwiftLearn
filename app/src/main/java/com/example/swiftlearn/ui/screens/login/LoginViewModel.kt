@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.R
 import com.example.swiftlearn.data.datastore.UserPreferencesRepository
 import com.example.swiftlearn.data.firestore.users.UserRepository
+import com.example.swiftlearn.model.Rol
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.screens.ValidationUtils
 import com.google.firebase.Firebase
@@ -129,7 +130,8 @@ class LoginViewModel(
                                 userRepository.insertUser(
                                     User(
                                         authId = auth.currentUser?.uid.toString(),
-                                        email = auth.currentUser?.email.toString()
+                                        email = auth.currentUser?.email.toString(),
+                                        rol = Rol.Alumno
                                     )
                                 )
                             }

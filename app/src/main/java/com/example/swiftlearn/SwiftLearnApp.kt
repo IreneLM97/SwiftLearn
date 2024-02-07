@@ -30,9 +30,6 @@ fun SwiftLearnApp(
     SwiftLearnNavigation(navController = navController)
 }
 
-/**
- * App bar to display title and conditionally display the back navigation.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwiftLearnTopAppBar(

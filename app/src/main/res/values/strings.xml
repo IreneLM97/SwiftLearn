@@ -40,6 +40,12 @@
     <string name="invalid_password_label">Contraseña inválida (debe incluir al menos 6 caracteres)</string>
     <string name="invalid_confirm_password_label">No coinciden las contraseñas</string>
 
+    <!-- Label del modal de confirmación de eliminar -->
+    <string name="delete_modal_label">Eliminar cuenta</string>
+    <string name="sure_label">¿Estás seguro de que deseas eliminar tu cuenta?</string>
+    <string name="no">NO</string>
+    <string name="yes">SI</string>
+
     <!-- Título de items del menu inferior -->
     <string name="title_adverts">Anuncios</string>
     <string name="title_classes">Clases</string>
@@ -58,4 +64,5 @@
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
+
 </resources>

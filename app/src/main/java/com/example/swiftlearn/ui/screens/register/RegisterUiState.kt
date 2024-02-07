@@ -21,7 +21,7 @@ data class RegisterDetails(
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",
-    val rol: Rol = Rol.Profesor
+    val rol: Rol = Rol.Alumno
 )
 
 fun RegisterDetails.toUser(): User = User(

@@ -58,7 +58,9 @@ fun SwiftLearnNavigation(
             )
         }
         composable(route = HomeDestination.route) {
-            HomeScreen()
+            HomeScreen(
+                mainNavController = navController
+            )
         }
     }
 }

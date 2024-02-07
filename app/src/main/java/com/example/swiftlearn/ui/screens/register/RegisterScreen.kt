@@ -276,6 +276,31 @@ private fun RolOptions(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            // Opción alumno
+            Surface(
+                border = BorderStroke(2.dp, Color(0xFF9C27B0)),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 8.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable { onRolSelected(Rol.Alumno) },
+                color =
+                if (registerDetails.rol == Rol.Alumno) colorResource(id = R.color.my_dark_purple)
+                else Color.White
+            ) {
+                Text(
+                    text = stringResource(R.string.student_label),
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center,
+                    color =
+                    if (registerDetails.rol == Rol.Alumno) Color.White
+                    else Color.Black,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+
             // Opción profesor
             Surface(
                 border = BorderStroke(2.dp, colorResource(id = R.color.my_dark_purple)),
@@ -295,31 +320,6 @@ private fun RolOptions(
                     textAlign = TextAlign.Center,
                     color =
                         if (registerDetails.rol == Rol.Profesor) Color.White
-                        else Color.Black,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
-
-            // Opción alumno
-            Surface(
-                border = BorderStroke(2.dp, Color(0xFF9C27B0)),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 8.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .clickable { onRolSelected(Rol.Alumno) },
-                color =
-                    if (registerDetails.rol == Rol.Alumno) colorResource(id = R.color.my_dark_purple)
-                    else Color.White
-            ) {
-                Text(
-                    text = stringResource(R.string.student_label),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
-                    color =
-                        if (registerDetails.rol == Rol.Alumno) Color.White
                         else Color.Black,
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)

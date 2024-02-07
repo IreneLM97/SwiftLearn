@@ -1,24 +1,37 @@
 package com.example.swiftlearn.ui.screens.profile
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +51,7 @@ import com.example.swiftlearn.ui.components.ButtonWithTextAndImage
 import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.screens.ValidationUtils
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ProfileScreen(
     navigateToLogin: () -> Unit = {},
@@ -69,7 +83,7 @@ fun ProfileScreen(
                 onFieldChanged = viewModel::onFieldChanged,
                 onSaveClick = { viewModel.updateUser(profileUiState.profileDetails.toUser()) },
                 onDeleteClick = {
-                    //viewModel.deleteUser(profileUiState.profileDetails.toUser())
+                    viewModel.deleteUser(profileUiState.profileDetails.toUser())
                     navigateToLogin()
                 },
                 onSignOutClick = {
@@ -115,6 +129,9 @@ private fun ProfileForm(
 ) {
     // Variable para manejar la información del usuario
     val profileDetails = profileUiState.profileDetails
+
+    // Estado booleano para controlar si el diálogo de confirmación está abierto o no
+    var showDialog by remember { mutableStateOf(false) }
 
     // Estructura del formulario
     Column(
@@ -164,8 +181,7 @@ private fun ProfileForm(
             label = stringResource(R.string.postal_code_label),
             value =  profileDetails.postal,
             onValueChange = { onFieldChanged(profileDetails.copy(postal = it.replace("\n", ""))) },
-            isValid = profileDetails.postal.trim().isEmpty()
-                    || ValidationUtils.isPostalValid(profileDetails.postal),
+            isValid = profileDetails.postal.trim().isEmpty() || ValidationUtils.isPostalValid(profileDetails.postal),
             errorMessage = stringResource(id = R.string.invalid_postal_label),
             leadingIcon = Icons.Default.LocationOn,
             keyboardType = KeyboardType.Text
@@ -187,7 +203,7 @@ private fun ProfileForm(
             label = stringResource(R.string.delete_account_label),
             buttonColor = colorResource(id = R.color.my_red),
             textColor = colorResource(id = R.color.white),
-            onClick = onDeleteClick
+            onClick = { showDialog = true }
         )
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -201,5 +217,73 @@ private fun ProfileForm(
             onClick = onSignOutClick
         )
         Spacer(modifier = Modifier.height(100.dp))
+
+        // Mostramos el modal de confirmación si showDialog es true
+        if (showDialog) {
+            DeleteConfirmationModal(
+                onDeleteConfirm = {
+                    // Si el usuario confirma, se llama a la función onDeleteClick
+                    onDeleteClick()
+                    // Se cierra el diálogo
+                    showDialog = false
+                },
+                onDeleteCancel = {
+                    // Si el usuario cancela, se cierra el diálogo
+                    showDialog = false
+                }
+            )
+        }
     }
+}
+
+@Composable
+fun DeleteConfirmationModal(
+    onDeleteConfirm: () -> Unit,
+    onDeleteCancel: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = {},
+        title = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.icon_dangerous),
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.my_red),
+                    modifier = Modifier.size(60.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.delete_modal_label),
+                    fontSize = 20.sp
+                )
+            }
+        },
+        text = {
+            Text(text = stringResource(R.string.sure_label), fontSize = 15.sp)
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDeleteCancel,
+                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_gray))
+            ) {
+                Text(text = stringResource(R.string.no), color = Color.White)
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onDeleteConfirm,
+                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_red))
+            ) {
+                Text(text = stringResource(R.string.yes), color = Color.White)
+            }
+        },
+        containerColor = Color.White,
+        titleContentColor = Color.Black,
+        textContentColor = Color.Black,
+        modifier = Modifier
+            .border(3.dp, colorResource(id = R.color.my_red), shape = RoundedCornerShape(20.dp))
+    )
 }
