@@ -1,6 +1,5 @@
 package com.example.swiftlearn.ui.screens.profile
 
-import com.example.swiftlearn.model.Role
 import com.example.swiftlearn.model.User
 
 /**

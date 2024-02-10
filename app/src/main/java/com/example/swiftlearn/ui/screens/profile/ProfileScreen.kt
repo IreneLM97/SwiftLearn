@@ -81,7 +81,7 @@ fun ProfileScreen(
                 onFieldChanged = viewModel::onFieldChanged,
                 onSaveClick = { viewModel.updateUser(profileUiState.profileDetails.updateUser(profileUiState.user)) },
                 onDeleteClick = {
-                    viewModel.deleteUser(profileUiState.profileDetails.updateUser(profileUiState.user))
+                    viewModel.deleteUser(profileUiState.user)
                     navigateToLogin()
                 },
                 onSignOutClick = {

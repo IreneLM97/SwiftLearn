@@ -50,7 +50,7 @@ class ProfileViewModel(
     }
 
     /**
-     * Función para validar el formulario de registro.
+     * Función para validar el formulario de perfil.
      *
      * @param profileDetails Datos del usuario recogidos del formulario.
      * @return true si el formulario es válido, false en caso contrario.

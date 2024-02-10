@@ -1,5 +1,6 @@
 package com.example.swiftlearn.ui.screens.register
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +53,7 @@ import com.example.swiftlearn.model.Role
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.InputField
+import com.example.swiftlearn.ui.components.Options
 import com.example.swiftlearn.ui.components.PasswordField
 import com.example.swiftlearn.ui.navigation.NavigationDestination
 import com.example.swiftlearn.ui.screens.ValidationUtils
@@ -165,7 +167,7 @@ private fun RegisterForm(
         // Opciones de role para que seleccione el usuario
         RolOptions(
             registerDetails = registerDetails,
-            onRolSelected = { onFieldChanged(registerDetails.copy(role = it)) }
+            onRoleSelected = { onFieldChanged(registerDetails.copy(role = it)) }
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
 
@@ -262,72 +264,16 @@ private fun RegisterForm(
 @Composable
 private fun RolOptions(
     registerDetails: RegisterDetails = RegisterDetails(),
-    onRolSelected: (Role) -> Unit = {}
+    onRoleSelected: (Role) -> Unit = {}
 ) {
-    // Contenedor de las dos opciones
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        // Fila contenedora de las dos opciones
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Opción alumno
-            Surface(
-                border = BorderStroke(2.dp, Color(0xFF9C27B0)),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 8.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .clickable { onRolSelected(Role.Alumno) },
-                color =
-                if (registerDetails.role == Role.Alumno) colorResource(id = R.color.my_dark_purple)
-                else Color.White
-            ) {
-                Text(
-                    text = stringResource(R.string.student_label),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
-                    color =
-                    if (registerDetails.role == Role.Alumno) Color.White
-                    else Color.Black,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
-
-            // Opción profesor
-            Surface(
-                border = BorderStroke(2.dp, colorResource(id = R.color.my_dark_purple)),
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 8.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .clickable { onRolSelected(Role.Profesor) },
-                color =
-                    if (registerDetails.role == Role.Profesor) colorResource(id = R.color.my_dark_purple)
-                    else Color.White
-            ) {
-                Text(
-                    text = stringResource(R.string.tutor_label),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
-                    color =
-                        if (registerDetails.role == Role.Profesor) Color.White
-                        else Color.Black,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
-        }
-    }
+    Options(
+        options = listOf(
+            Role.Alumno to stringResource(R.string.student_label),
+            Role.Profesor to stringResource(R.string.tutor_label)
+        ),
+        selectedOption = registerDetails.role,
+        onOptionSelected = onRoleSelected
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
