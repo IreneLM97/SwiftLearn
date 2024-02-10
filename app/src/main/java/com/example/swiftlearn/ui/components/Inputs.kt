@@ -1,7 +1,9 @@
 package com.example.swiftlearn.ui.components
 
 import android.view.KeyEvent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -67,6 +69,7 @@ fun InputField(
         modifier = Modifier
             .padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
             .fillMaxWidth()
+            .then(if (isSingleLine) Modifier else Modifier.height(150.dp))
             .onKeyEvent { e ->
                 // Maneja el evento al presionar la tecla "Enter" en el teclado
                 if (e.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -87,7 +90,15 @@ fun InputField(
             }
         ),
         leadingIcon = {
-            Icon(imageVector = leadingIcon, contentDescription = null)
+            if (isSingleLine) {
+                Icon(imageVector = leadingIcon, contentDescription = null)
+            } else {
+                Box(
+                    modifier = Modifier.height(150.dp).padding(top = 15.dp)
+                ) {
+                    Icon(imageVector = leadingIcon, contentDescription = null)
+                }
+            }
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = colorResource(id = R.color.my_dark_purple),

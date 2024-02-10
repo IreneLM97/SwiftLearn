@@ -44,7 +44,9 @@ fun HomeNavigation(
             )
         }
         composable(route = MenuItems.NewAdvertItem.route) {
-            NewAdvertScreen()
+            NewAdvertScreen(
+                navigateToAdverts = { navController.navigate(MenuItems.AdvertsItem.route) }
+            )
         }
     }
 }

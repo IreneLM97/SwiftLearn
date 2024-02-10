@@ -6,11 +6,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.swiftlearn.SwiftLearnApplication
-import com.example.swiftlearn.data.firestore.users.UserRepositoryImpl
 import com.example.swiftlearn.ui.screens.adverts.AdvertViewModel
 import com.example.swiftlearn.ui.screens.home.HomeViewModel
 import com.example.swiftlearn.ui.screens.login.LoginViewModel
-import com.example.swiftlearn.ui.screens.profile.ProfileScreen
+import com.example.swiftlearn.ui.screens.newadvert.NewAdvertViewModel
 import com.example.swiftlearn.ui.screens.profile.ProfileViewModel
 import com.example.swiftlearn.ui.screens.register.RegisterViewModel
 
@@ -43,6 +42,15 @@ object AppViewModelProvider {
             )
         }
 
+        // Inicialización para NewAdvertViewModel
+        initializer {
+            // Crear e inicializar la instancia de AdvertViewModel
+            NewAdvertViewModel(
+                userRepository = swiftLearnApplication().container.userRepository,
+                advertRepository = swiftLearnApplication().container.advertRepository
+            )
+        }
+
         // Inicialización para AdvertViewModel
         initializer {
             // Crear e inicializar la instancia de AdvertViewModel
@@ -55,7 +63,8 @@ object AppViewModelProvider {
         initializer {
             // Crear e inicializar la instancia de ProfileViewModel
             ProfileViewModel(
-                userRepository = swiftLearnApplication().container.userRepository
+                userRepository = swiftLearnApplication().container.userRepository,
+                advertRepository = swiftLearnApplication().container.advertRepository
             )
         }
     }

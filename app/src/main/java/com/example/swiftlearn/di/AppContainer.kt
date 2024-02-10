@@ -1,6 +1,8 @@
 package com.example.swiftlearn.di
 
 import android.content.Context
+import com.example.swiftlearn.data.firestore.adverts.AdvertRepository
+import com.example.swiftlearn.data.firestore.adverts.AdvertRepositoryImpl
 import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.data.firestore.users.UserRepositoryImpl
 
@@ -9,6 +11,7 @@ import com.example.swiftlearn.data.firestore.users.UserRepositoryImpl
  */
 interface AppContainer {
     val userRepository: UserRepository
+    val advertRepository: AdvertRepository
 }
 
 /**
@@ -21,5 +24,9 @@ class AppDataContainer (
 ) : AppContainer {
     override val userRepository: UserRepository by lazy {
         UserRepositoryImpl()
+    }
+
+    override val advertRepository: AdvertRepository by lazy {
+        AdvertRepositoryImpl()
     }
 }

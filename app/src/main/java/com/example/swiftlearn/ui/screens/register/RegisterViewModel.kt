@@ -32,6 +32,43 @@ class RegisterViewModel(
         _registerUiState.update { it.copy(registerDetails = registerDetails, isEntryValid = validateForm(registerDetails)) }
     }
 
+    fun createUserWithEmailAndPassword(
+        context: Context,
+        registerDetails: RegisterDetails,
+        navigateToHome: () -> Unit = {}
+    ) {
+        if(!_registerUiState.value.loadingState) {
+            // Actualizar estado de cargando a true
+            _registerUiState.update { it.copy(loadingState = true) }
+
+            auth.createUserWithEmailAndPassword(registerDetails.email, registerDetails.password)
+                .addOnCompleteListener {task ->
+                    // Actualizar estado de cargando a false
+                    _registerUiState.update { it.copy(loadingState = false) }
+
+                    if(task.isSuccessful) {
+                        insertUser(registerDetails.toUser())
+                        navigateToHome()
+                    } else {
+                        _registerUiState.update { it.copy(errorMessage = context.getString(R.string.error_register_label)) }
+                    }
+                }
+        }
+    }
+
+    private fun insertUser(user: User) {
+        // Recogemos el Id que se generó al autentificar al usuario
+        val authId = auth.currentUser?.uid
+
+        // Asignamos el Id al usuario
+        val userWithAuthId = user.copy(authId = authId.toString())
+
+        // Agregamos el usuario a la colección
+        viewModelScope.launch {
+            userRepository.insertUser(userWithAuthId)
+        }
+    }
+
     /**
      * Función para validar el formulario de registro.
      *
@@ -46,41 +83,5 @@ class RegisterViewModel(
                 ValidationUtils.isEmailValid(registerDetails.email) &&
                 ValidationUtils.isPasswordValid(registerDetails.password) &&
                 ValidationUtils.isConfirmPasswordValid(registerDetails.password, registerDetails.confirmPassword)
-    }
-
-    fun createUserWithEmailAndPassword(
-        context: Context,
-        registerDetails: RegisterDetails,
-        navigateToHome: () -> Unit = {}
-    ) {
-        if(!_registerUiState.value.loadingState) {
-            _registerUiState.update { it.copy(loadingState = true) }
-
-            auth.createUserWithEmailAndPassword(registerDetails.email, registerDetails.password)
-                .addOnCompleteListener {task ->
-                    // Termina de cargar
-                    _registerUiState.update { it.copy(loadingState = false) }
-
-                    if(task.isSuccessful) {
-                        createUser(registerDetails.toUser())
-                        navigateToHome()
-                    } else {
-                        _registerUiState.update { it.copy(errorMessage = context.getString(R.string.error_register_label)) }
-                    }
-                }
-        }
-    }
-
-    private fun createUser(user: User) {
-        // Recogemos el Id que se generó al autentificar al usuario
-        val authId = auth.currentUser?.uid
-
-        // Asignamos el Id al usuario
-        val userWithAuthId = user.copy(authId = authId.toString())
-
-        // Agregamos la información del usuario a la colección
-        viewModelScope.launch {
-            userRepository.insertUser(userWithAuthId)
-        }
     }
 }

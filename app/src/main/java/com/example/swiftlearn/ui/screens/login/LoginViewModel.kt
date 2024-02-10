@@ -68,11 +68,6 @@ class LoginViewModel(
         }
     }
 
-    private fun validateForm(loginDetails: LoginDetails): Boolean {
-        return ValidationUtils.isEmailValid(loginDetails.email) &&
-                ValidationUtils.isPasswordValid(loginDetails.password)
-    }
-
     /**
      * Función que se ejecuta cuando cambia el toggle.
      *
@@ -97,14 +92,14 @@ class LoginViewModel(
         loginDetails: LoginDetails,
         navigateToHome: () -> Unit = {}
     ) {
-        // Indicar que se está cargando
+        // Actualizar estado de cargando a true
         _loginUiState.update { it.copy(loadingState = true) }
 
         viewModelScope.launch {
             try{
                 auth.signInWithEmailAndPassword(loginDetails.email, loginDetails.password)
                     .addOnCompleteListener{task ->
-                        // Termina de cargar
+                        // Actualizar estado de cargando a false
                         _loginUiState.update { it.copy(loadingState = false) }
 
                         if(task.isSuccessful) {
@@ -140,5 +135,10 @@ class LoginViewModel(
                     }
             } catch(_: Exception) {}
         }
+    }
+
+    private fun validateForm(loginDetails: LoginDetails): Boolean {
+        return ValidationUtils.isEmailValid(loginDetails.email) &&
+                ValidationUtils.isPasswordValid(loginDetails.password)
     }
 }

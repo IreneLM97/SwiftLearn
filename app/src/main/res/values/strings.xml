@@ -5,22 +5,22 @@
     <string name="register_app_bar">Registro</string>
     <string name="login_title">Swift Learn</string>
 
-    <!-- Label de formularios -->
+    <!-- Label de formulario login -->
     <string name="welcome_label">Bienvenido</string>
-    <string name="profile_label">Mi perfil</string>
-    <string name="new_account_label">Nueva cuenta</string>
     <string name="login_label">Iniciar sesión</string>
-    <string name="register_label">Registrarme</string>
-    <string name="update_account_label">Guardar</string>
-    <string name="delete_account_label">Eliminar cuenta</string>
-    <string name="sign_out_label">Cerrar sesión</string>
-    <string name="register_link_label">Regístrate</string>
     <string name="google_label">Continuar con Google</string>
     <string name="no_account_label">¿No tienes una cuenta?</string>
+    <string name="register_link_label">Regístrate</string>
     <string name="remember_me_label">Recuérdame</string>
 
+    <!-- Label de error de formulario login -->
+    <string name="error_login_label">CORREO O CONTRASEÑA INVÁLIDOS</string>
+
+    <!-- Label de formulario registro -->
+    <string name="new_account_label">Nueva cuenta</string>
+    <string name="register_label">Registrarme</string>
     <string name="rol_label">¿Qué perfil eres?</string>
-    <string name="tutor_label">Profesor</string>
+    <string name="professor_label">Profesor</string>
     <string name="student_label">Alumno</string>
     <string name="username_label">Nombre de usuario</string>
     <string name="phone_label">Teléfono</string>
@@ -30,21 +30,48 @@
     <string name="password_label">Contraseña</string>
     <string name="confirm_password_label">Confirmar contraseña</string>
 
-    <!-- Label de errores de formulario -->
-    <string name="error_login_label">CORREO O CONTRASEÑA INVÁLIDOS</string>
+    <!-- Label de error de formulario registro -->
     <string name="error_register_label">YA EXISTE UN USUARIO CON ESE CORREO</string>
-
     <string name="invalid_phone_label">Teléfono inválido</string>
     <string name="invalid_postal_label">Código postal inválido (debe tener 5 dígitos)</string>
     <string name="invalid_email_label">Correo electrónico inválido (incluir @ y dominio correcto)</string>
     <string name="invalid_password_label">Contraseña inválida (debe incluir al menos 6 caracteres)</string>
     <string name="invalid_confirm_password_label">No coinciden las contraseñas</string>
 
+    <!-- Label de formulario perfil -->
+    <string name="profile_label">Mi perfil</string>
+    <string name="update_account_label">Guardar</string>
+    <string name="delete_account_label">Eliminar cuenta</string>
+    <string name="sign_out_label">Cerrar sesión</string>
+
     <!-- Label del modal de confirmación de eliminar -->
     <string name="delete_modal_label">Eliminar cuenta</string>
     <string name="sure_label">¿Estás seguro de que deseas eliminar tu cuenta?</string>
     <string name="no">NO</string>
     <string name="yes">SI</string>
+
+    <!-- Label de formulario nuevo anuncio -->
+    <string name="new_advert_label">Nuevo anuncio</string>
+    <string name="subject_label">Asignatura</string>
+    <string name="price_label">Precio por hora (euros)</string>
+    <string name="presencial_label">Presencial</string>
+    <string name="online_label">Online</string>
+    <string name="hibrido_label">Híbrido</string>
+    <string name="class_mode_label">¿Dónde quieres dar clase?</string>
+    <string name="levels_label">¿A qué niveles puedes enseñar?</string>
+    <string name="primaria_label">Primaria</string>
+    <string name="eso_label">ESO</string>
+    <string name="bachillerato_label">Bachillerato</string>
+    <string name="fp_label">FP</string>
+    <string name="universidad_label">Universidad</string>
+    <string name="adultos_label">Adultos</string>
+    <string name="description_text_label">Cuéntanos más sobre ti</string>
+    <string name="description_label">Descripción</string>
+    <string name="save_advert_label">Guardar</string>
+
+    <!-- Label de error de formulario nuevo anuncio -->
+    <string name="invalid_subject_label">Debe tener un máximo de 20 caracteres</string>
+    <string name="invalid_description_label">Debe tener un máximo de 300 caracteres</string>
 
     <!-- Título de items del menu inferior -->
     <string name="title_adverts">Anuncios</string>
@@ -64,6 +91,4 @@
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
-    <string name="subject_label">Asignatura</string>
-
 </resources>
