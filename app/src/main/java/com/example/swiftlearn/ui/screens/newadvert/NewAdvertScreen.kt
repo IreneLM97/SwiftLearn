@@ -40,12 +40,12 @@ import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.components.MultiOptions
-import com.example.swiftlearn.ui.screens.ValidationUtils
+import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun NewAdvertScreen(
-    navigateToAdverts: () -> Unit = {},
+    navigateToListAdverts: () -> Unit = {},
     viewModel: NewAdvertViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Guardamos el estado de la pantalla de nuevo anuncio
@@ -74,7 +74,7 @@ fun NewAdvertScreen(
                 onFieldChanged = viewModel::onFieldChanged,
                 onSaveClick = {
                     viewModel.insertAdvert(newAdvertUiState.newAdvertDetails.toAdvert())
-                    navigateToAdverts()
+                    navigateToListAdverts()
                 }
             )
         }

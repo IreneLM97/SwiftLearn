@@ -19,4 +19,8 @@
     <dimen name="padding_medium">12dp</dimen>
     <dimen name="padding_big">22dp</dimen>
     <dimen name="thickness_divider">1dp</dimen>
+
+    <dimen name="card_corner_radius">20dp</dimen>
+    <dimen name="card_image_height">128dp</dimen>
+    <dimen name="card_text_vertical_space">4dp</dimen>
 </resources>

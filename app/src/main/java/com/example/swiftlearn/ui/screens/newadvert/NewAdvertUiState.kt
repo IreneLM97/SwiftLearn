@@ -24,7 +24,7 @@ data class NewAdvertDetails(
 fun NewAdvertDetails.toAdvert(): Advert = Advert(
     subject = subject,
     price = price,
-    classModes = classModes,
-    levels = levels,
+    classModes = classModes.joinToString(","),
+    levels = levels.joinToString(","),
     description = description
 )

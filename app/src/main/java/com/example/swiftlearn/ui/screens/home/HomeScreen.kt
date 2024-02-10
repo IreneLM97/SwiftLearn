@@ -4,6 +4,7 @@ package com.example.swiftlearn.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.compose.material.Scaffold
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.collectAsState
@@ -26,6 +27,7 @@ object HomeDestination : NavigationDestination {
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
+    windowSize: WindowWidthSizeClass,
     mainNavController: NavHostController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -54,6 +56,6 @@ fun HomeScreen(
         },
         isFloatingActionButtonDocked = homeUiState.user.role == Role.Profesor
     ) {
-        HomeNavigation(navController = navController, mainNavController = mainNavController)
+        HomeNavigation(windowSize = windowSize, navController = navController, mainNavController = mainNavController)
     }
 }

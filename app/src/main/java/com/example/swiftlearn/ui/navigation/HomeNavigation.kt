@@ -1,11 +1,12 @@
 package com.example.swiftlearn.ui.navigation
 
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.swiftlearn.ui.screens.adverts.AdvertScreen
+import com.example.swiftlearn.ui.screens.adverts.AdvertsListScreen
 import com.example.swiftlearn.ui.screens.favorites.FavoriteScreen
 import com.example.swiftlearn.ui.screens.home.HomeDestination
 import com.example.swiftlearn.ui.screens.home.MenuItems
@@ -17,6 +18,7 @@ import com.example.swiftlearn.ui.screens.profile.ProfileScreen
 
 @Composable
 fun HomeNavigation(
+    windowSize: WindowWidthSizeClass,
     navController: NavHostController,
     mainNavController: NavHostController,
     modifier: Modifier = Modifier,
@@ -27,7 +29,9 @@ fun HomeNavigation(
         modifier = modifier
     ) {
         composable(route = MenuItems.AdvertsItem.route) {
-            AdvertScreen()
+            AdvertsListScreen(
+                windowSize = windowSize
+            )
         }
         composable(route = MenuItems.ClassesItem.route) {
             ClassesScreen()
@@ -45,7 +49,7 @@ fun HomeNavigation(
         }
         composable(route = MenuItems.NewAdvertItem.route) {
             NewAdvertScreen(
-                navigateToAdverts = { navController.navigate(MenuItems.AdvertsItem.route) }
+                navigateToListAdverts = { navController.navigate(MenuItems.AdvertsItem.route) }
             )
         }
     }

@@ -20,8 +20,8 @@ data class Advert(
     val profId: String = "",
     val subject: String = "",
     val price: Int = 0,
-    val classModes: Set<ClassMode> = emptySet(),
-    val levels: Set<Level> = emptySet(),
+    val classModes: String = "",
+    val levels: String = "",
     val description: String = ""
 ) {
     fun toMap(): MutableMap<String, Any> {
@@ -30,8 +30,8 @@ data class Advert(
             "profId" to this.profId,
             "subject" to this.subject,
             "price" to this.price,
-            "classModes" to this.classModes.joinToString(","),
-            "levels" to this.levels.joinToString(","),
+            "classModes" to this.classModes,
+            "levels" to this.levels,
             "description" to this.description
         )
     }

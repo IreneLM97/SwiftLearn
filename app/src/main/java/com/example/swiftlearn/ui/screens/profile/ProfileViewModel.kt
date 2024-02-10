@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.data.firestore.adverts.AdvertRepository
 import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.model.User
-import com.example.swiftlearn.ui.screens.ValidationUtils
+import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth

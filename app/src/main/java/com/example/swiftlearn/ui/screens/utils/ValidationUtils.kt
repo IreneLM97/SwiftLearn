@@ -1,6 +1,5 @@
-package com.example.swiftlearn.ui.screens
+package com.example.swiftlearn.ui.screens.utils
 
-import android.accounts.AuthenticatorDescription
 import android.util.Patterns
 import java.util.regex.Pattern
 

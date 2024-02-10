@@ -49,7 +49,7 @@ import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.components.Options
 import com.example.swiftlearn.ui.components.PasswordField
 import com.example.swiftlearn.ui.navigation.NavigationDestination
-import com.example.swiftlearn.ui.screens.ValidationUtils
+import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 
 object RegisterDestination : NavigationDestination {
     override val titleRes = R.string.register_app_bar

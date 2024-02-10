@@ -55,9 +55,8 @@ fun ButtonWithText(
             .clip(shape = CircleShape)
             .fillMaxWidth(),
         shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(color),
-
-        ) {
+        colors = ButtonDefaults.buttonColors(color)
+    ) {
         Text(
             text = label,
             modifier = Modifier

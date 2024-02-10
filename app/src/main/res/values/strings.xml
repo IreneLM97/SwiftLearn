@@ -88,7 +88,14 @@
     <string name="description_google_icon">Icono Google</string>
     <string name="description_book_icon">Imagen de libro</string>
 
+    <!-- Label para lista de anuncios -->
+    <string name="search_label">¿Qué quieres buscar?</string>
+    <string name="icon_euro_hour">%1$s €/h</string>
+    <string name="direction_professor">%1$s, %2$s</string>
+    <string name="advert_summary">Asignatura: %1$s \nPrecio: %2$s \nContacto: %3$s</string>
+
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
+
 </resources>

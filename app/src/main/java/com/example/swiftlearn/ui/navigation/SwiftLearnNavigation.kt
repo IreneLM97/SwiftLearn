@@ -2,6 +2,7 @@ package com.example.swiftlearn.ui.navigation
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -25,6 +26,7 @@ enum class SwiftLearnScreens {
  */
 @Composable
 fun SwiftLearnNavigation(
+    windowSize: WindowWidthSizeClass,
     navController: NavHostController,
     modifier: Modifier = Modifier,
     startDestination: String = SwiftLearnScreens.SplashScreen.name
@@ -59,6 +61,7 @@ fun SwiftLearnNavigation(
         }
         composable(route = HomeDestination.route) {
             HomeScreen(
+                windowSize = windowSize,
                 mainNavController = navController
             )
         }

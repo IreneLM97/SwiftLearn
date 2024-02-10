@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -25,9 +26,10 @@ import com.example.swiftlearn.ui.navigation.SwiftLearnNavigation
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SwiftLearnApp(
+    windowSize: WindowWidthSizeClass,
     navController: NavHostController = rememberNavController()
 ) {
-    SwiftLearnNavigation(navController = navController)
+    SwiftLearnNavigation(windowSize = windowSize, navController = navController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

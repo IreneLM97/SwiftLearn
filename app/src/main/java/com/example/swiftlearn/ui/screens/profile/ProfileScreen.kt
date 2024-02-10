@@ -47,7 +47,7 @@ import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.ButtonWithTextAndImage
 import com.example.swiftlearn.ui.components.InputField
-import com.example.swiftlearn.ui.screens.ValidationUtils
+import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable

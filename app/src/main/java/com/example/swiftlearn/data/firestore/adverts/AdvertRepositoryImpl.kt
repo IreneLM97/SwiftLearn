@@ -10,6 +10,7 @@ import kotlinx.coroutines.tasks.await
 class AdvertRepositoryImpl: AdvertRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val advertsCollection = firestore.collection("adverts")
+
     override fun getAllAdvert(): Flow<List<Advert>> = callbackFlow {
         val subscription = advertsCollection
             .addSnapshotListener { querySnapshot, _ ->
@@ -41,8 +42,8 @@ class AdvertRepositoryImpl: AdvertRepository {
         }
     }
 
-    override suspend fun getAllAdvertsByProfessorId(professorId: String): List<Advert> {
-        val query = advertsCollection.whereEqualTo("professorId", professorId).get().await()
+    override suspend fun getAllAdvertsByProfessorId(profId: String): List<Advert> {
+        val query = advertsCollection.whereEqualTo("profId", profId).get().await()
         return query.documents.mapNotNull { document ->
             document.toObject(Advert::class.java)
         }

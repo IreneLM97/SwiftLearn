@@ -50,7 +50,7 @@ import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.components.PasswordField
 import com.example.swiftlearn.ui.components.ToggleButton
 import com.example.swiftlearn.ui.navigation.NavigationDestination
-import com.example.swiftlearn.ui.screens.ValidationUtils
+import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException

@@ -1,7 +1,11 @@
 package com.example.swiftlearn.data.firestore.users
 
+import com.example.swiftlearn.model.Role
 import com.example.swiftlearn.model.User
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class UserRepositoryImpl: UserRepository {
@@ -35,5 +39,21 @@ class UserRepositoryImpl: UserRepository {
         try {
             usersCollection.document(user._id).delete().await()
         } catch (_: Exception) {}
+    }
+
+    override fun getAllProfessors(): Flow<List<User>> = callbackFlow {
+        val subscription = usersCollection
+            .whereEqualTo("role", Role.Profesor)
+            .addSnapshotListener { querySnapshot, _ ->
+                val professorsList = mutableListOf<User>()
+                querySnapshot?.documents?.forEach { documentSnapshot ->
+                    val professor = documentSnapshot.toObject(User::class.java)
+                    professor?.let { professorsList.add(it) }
+                }
+                trySend(professorsList).isSuccess
+            }
+        awaitClose {
+            subscription.remove()
+        }
     }
 }
