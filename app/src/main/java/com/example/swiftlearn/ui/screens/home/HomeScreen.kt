@@ -58,11 +58,3 @@ fun HomeScreen(
         HomeNavigation(navController = navController, mainNavController = mainNavController)
     }
 }
-
-fun navigateToLogin(mainNavController: NavHostController) {
-    mainNavController.navigate(LoginDestination.route) {
-        popUpTo(HomeDestination.route) {
-            inclusive = true
-        }
-    }
-}

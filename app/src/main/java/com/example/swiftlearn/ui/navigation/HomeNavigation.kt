@@ -6,12 +6,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.swiftlearn.ui.screens.adverts.AdvertScreen
-import com.example.swiftlearn.ui.screens.favorite.FavoriteScreen
+import com.example.swiftlearn.ui.screens.favorites.FavoriteScreen
+import com.example.swiftlearn.ui.screens.home.HomeDestination
 import com.example.swiftlearn.ui.screens.home.MenuItems
-import com.example.swiftlearn.ui.screens.home.navigateToLogin
 import com.example.swiftlearn.ui.screens.home.professor.ClassesScreen
 import com.example.swiftlearn.ui.screens.home.professor.MapScreen
-import com.example.swiftlearn.ui.screens.home.professor.NewAdvertScreen
+import com.example.swiftlearn.ui.screens.newadvert.NewAdvertScreen
+import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.example.swiftlearn.ui.screens.profile.ProfileScreen
 
 @Composable
@@ -44,6 +45,14 @@ fun HomeNavigation(
         }
         composable(route = MenuItems.NewAdvertItem.route) {
             NewAdvertScreen()
+        }
+    }
+}
+
+fun navigateToLogin(mainNavController: NavHostController) {
+    mainNavController.navigate(LoginDestination.route) {
+        popUpTo(HomeDestination.route) {
+            inclusive = true
         }
     }
 }

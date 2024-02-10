@@ -42,6 +42,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -150,7 +151,7 @@ private fun RegisterHeader() {
 
 @Composable
 private fun RegisterForm(
-    registerUiState: RegisterUiState,
+    registerUiState: RegisterUiState = RegisterUiState(),
     onFieldChanged: (RegisterDetails) -> Unit = {},
     onRegisterClick: () -> Unit = {}
 ) {
@@ -325,6 +326,29 @@ private fun RolOptions(
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun RegisterScreenPreview() {
+    Scaffold(
+        topBar = {
+            SwiftLearnTopAppBar(
+                title = stringResource(id = RegisterDestination.titleRes),
+                canNavigateBack = true
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+        ) {
+            RegisterHeader()
+            RegisterForm()
         }
     }
 }
