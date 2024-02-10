@@ -1,6 +1,6 @@
 package com.example.swiftlearn.ui.screens.register
 
-import com.example.swiftlearn.model.Rol
+import com.example.swiftlearn.model.Role
 import com.example.swiftlearn.model.User
 
 /**
@@ -21,7 +21,7 @@ data class RegisterDetails(
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",
-    val rol: Rol = Rol.Alumno
+    val role: Role = Role.Alumno
 )
 
 fun RegisterDetails.toUser(): User = User(
@@ -31,5 +31,5 @@ fun RegisterDetails.toUser(): User = User(
     postal = postal,
     email = email,
     password = password,
-    rol = rol
+    role = role
 )

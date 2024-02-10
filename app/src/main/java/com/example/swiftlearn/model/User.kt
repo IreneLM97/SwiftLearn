@@ -1,12 +1,13 @@
 package com.example.swiftlearn.model
 
-enum class Rol {
+enum class Role {
     Profesor,
     Alumno,
     None
 }
 
 data class User(
+    val id: String = "",
     val authId: String = "",
     val username: String = "",
     val phone: String = "",
@@ -14,17 +15,18 @@ data class User(
     val postal: String = "",
     val email: String = "",
     val password: String = "",
-    val rol: Rol = Rol.None
+    val role: Role = Role.None
 ) {
     fun toMap(): MutableMap<String, Any> {
         return mutableMapOf(
+            "_id" to this.id,
             "authId" to this.authId,
             "username" to this.username,
             "phone" to this.phone,
             "address" to this.address,
             "postal" to this.postal,
             "email" to this.email,
-            "rol" to this.rol
+            "role" to this.role
         )
     }
 }

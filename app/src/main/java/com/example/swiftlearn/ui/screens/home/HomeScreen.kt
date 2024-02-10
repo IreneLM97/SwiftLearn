@@ -10,14 +10,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.swiftlearn.R
-import com.example.swiftlearn.model.Rol
+import com.example.swiftlearn.model.Role
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.FloatingButtonNavigation
 import com.example.swiftlearn.ui.navigation.NavigationDestination
 import com.example.swiftlearn.ui.components.NavInfProfessor
 import com.example.swiftlearn.ui.components.NavInfStudent
 import com.example.swiftlearn.ui.navigation.HomeNavigation
-import com.example.swiftlearn.ui.screens.login.LoginDestination
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -38,22 +37,22 @@ fun HomeScreen(
 
     Scaffold(
         bottomBar = {
-            when (homeUiState.user.rol) {
-                Rol.Profesor -> NavInfProfessor(
+            when (homeUiState.user.role) {
+                Role.Profesor -> NavInfProfessor(
                     navController = navController,
                     menuItems = professorMenuItems
                 )
-                Rol.Alumno -> NavInfStudent(
+                Role.Alumno -> NavInfStudent(
                     navController = navController,
                     menuItems = studentMenuItems
                 )
-                Rol.None -> null
+                Role.None -> null
             }
         },
         floatingActionButton = {
-            if (homeUiState.user.rol == Rol.Profesor) FloatingButtonNavigation(navController = navController)
+            if (homeUiState.user.role == Role.Profesor) FloatingButtonNavigation(navController = navController)
         },
-        isFloatingActionButtonDocked = homeUiState.user.rol == Rol.Profesor
+        isFloatingActionButtonDocked = homeUiState.user.role == Role.Profesor
     ) {
         HomeNavigation(navController = navController, mainNavController = mainNavController)
     }

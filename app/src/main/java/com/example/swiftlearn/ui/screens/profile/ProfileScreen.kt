@@ -79,9 +79,9 @@ fun ProfileScreen(
             ProfileForm(
                 profileUiState = profileUiState,
                 onFieldChanged = viewModel::onFieldChanged,
-                onSaveClick = { viewModel.updateUser(profileUiState.profileDetails.toUser()) },
+                onSaveClick = { viewModel.updateUser(profileUiState.profileDetails.updateUser(profileUiState.user)) },
                 onDeleteClick = {
-                    viewModel.deleteUser(profileUiState.profileDetails.toUser())
+                    viewModel.deleteUser(profileUiState.profileDetails.updateUser(profileUiState.user))
                     navigateToLogin()
                 },
                 onSignOutClick = {
@@ -137,7 +137,7 @@ private fun ProfileForm(
     ) {
         // Email del usuario
         Text(
-            text = profileDetails.email,
+            text = profileUiState.user.email,
             fontSize = 20.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier

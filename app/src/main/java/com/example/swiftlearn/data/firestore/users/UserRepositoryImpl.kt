@@ -26,22 +26,24 @@ class UserRepositoryImpl: UserRepository {
     }
 
     override suspend fun insertUser(user: User) {
-        usersCollection.add(user.toMap())
+        try {
+            val document = usersCollection.add(user.toMap()).await()
+            val updatedUser = user.copy(id = document.id)
+            usersCollection.document(document.id).set(updatedUser.toMap())
+        } catch (_: Exception) {}
     }
 
     override suspend fun deleteUser(user: User) {
         try {
-            val query = usersCollection.whereEqualTo("authId", user.authId).get().await()
-            val document = query.documents.firstOrNull()
-            document?.reference?.delete()
+            val document = usersCollection.document(user.id)
+            document.delete().await()
         } catch (_: Exception) {}
     }
 
     override suspend fun updateUser(user: User) {
         try {
-            val query = usersCollection.whereEqualTo("authId", user.authId).get().await()
-            val document = query.documents.firstOrNull()
-            document?.reference?.set(user.toMap())
+            val document = usersCollection.document(user.id)
+            document.set(user.toMap()).await()
         } catch (_: Exception) {}
     }
 }

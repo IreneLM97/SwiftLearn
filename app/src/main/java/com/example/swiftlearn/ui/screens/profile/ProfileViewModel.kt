@@ -36,6 +36,7 @@ class ProfileViewModel(
                 _profileUiState.update {
                     val profileDetails = user?.toProfileDetails() ?: ProfileDetails()
                     it.copy(
+                        user = user ?: User(),
                         profileDetails = profileDetails,
                         isEntryValid = validateForm(profileDetails)
                     )
@@ -58,8 +59,7 @@ class ProfileViewModel(
         return profileDetails.username.trim().isNotEmpty() &&
                 ValidationUtils.isPhoneValid(profileDetails.phone) &&
                 profileDetails.address.trim().isNotEmpty() &&
-                ValidationUtils.isPostalValid(profileDetails.postal) &&
-                ValidationUtils.isEmailValid(profileDetails.email)
+                ValidationUtils.isPostalValid(profileDetails.postal)
     }
 
     fun updateUser(user: User) {

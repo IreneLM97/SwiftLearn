@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
 import com.example.swiftlearn.SwiftLearnTopAppBar
-import com.example.swiftlearn.model.Rol
+import com.example.swiftlearn.model.Role
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.InputField
@@ -162,10 +162,10 @@ private fun RegisterForm(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Opciones de rol para que seleccione el usuario
+        // Opciones de role para que seleccione el usuario
         RolOptions(
             registerDetails = registerDetails,
-            onRolSelected = { onFieldChanged(registerDetails.copy(rol = it)) }
+            onRolSelected = { onFieldChanged(registerDetails.copy(role = it)) }
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
 
@@ -262,7 +262,7 @@ private fun RegisterForm(
 @Composable
 private fun RolOptions(
     registerDetails: RegisterDetails = RegisterDetails(),
-    onRolSelected: (Rol) -> Unit = {}
+    onRolSelected: (Role) -> Unit = {}
 ) {
     // Contenedor de las dos opciones
     Box(
@@ -285,9 +285,9 @@ private fun RolOptions(
                     .weight(1f)
                     .padding(vertical = 8.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .clickable { onRolSelected(Rol.Alumno) },
+                    .clickable { onRolSelected(Role.Alumno) },
                 color =
-                if (registerDetails.rol == Rol.Alumno) colorResource(id = R.color.my_dark_purple)
+                if (registerDetails.role == Role.Alumno) colorResource(id = R.color.my_dark_purple)
                 else Color.White
             ) {
                 Text(
@@ -295,7 +295,7 @@ private fun RolOptions(
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     color =
-                    if (registerDetails.rol == Rol.Alumno) Color.White
+                    if (registerDetails.role == Role.Alumno) Color.White
                     else Color.Black,
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -310,9 +310,9 @@ private fun RolOptions(
                     .weight(1f)
                     .padding(vertical = 8.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .clickable { onRolSelected(Rol.Profesor) },
+                    .clickable { onRolSelected(Role.Profesor) },
                 color =
-                    if (registerDetails.rol == Rol.Profesor) colorResource(id = R.color.my_dark_purple)
+                    if (registerDetails.role == Role.Profesor) colorResource(id = R.color.my_dark_purple)
                     else Color.White
             ) {
                 Text(
@@ -320,7 +320,7 @@ private fun RolOptions(
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     color =
-                        if (registerDetails.rol == Rol.Profesor) Color.White
+                        if (registerDetails.role == Role.Profesor) Color.White
                         else Color.Black,
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
