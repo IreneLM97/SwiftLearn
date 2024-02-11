@@ -92,11 +92,9 @@
     <string name="search_label">¿Qué quieres buscar?</string>
     <string name="icon_euro_hour">%1$s €/h</string>
     <string name="direction_professor">%1$s, %2$s</string>
-    <string name="advert_summary">Asignatura: %1$s \nPrecio: %2$s \nContacto: %3$s</string>
+    <string name="advert_summary">Asignatura: %1$s \nPrecio: %2$s \nProfesor: %3$s \nTeléfono: %4$s \nEmail: %5$s</string>
 
-    <!-- Enviar información a otra aplicación -->
-    <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
-    <string name="send_info">Enviar información a otra aplicación</string>
+    <!-- Label para pantalla de detalles del anuncio -->
     <string name="no_matching_adverts">No se han encontrado anuncios con esa búsqueda.</string>
     <string name="info_contact_label">Información de contacto</string>
     <string name="info_advert_label">Información del anuncio</string>
@@ -104,4 +102,7 @@
     <string name="levels_advert">¿A qué niveles puedo dar clase?</string>
     <string name="request_class_label">Solicitar clase</string>
 
+    <!-- Enviar información a otra aplicación -->
+    <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
+    <string name="send_info">Enviar información a otra aplicación</string>
 </resources>

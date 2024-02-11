@@ -3,6 +3,7 @@ package com.example.swiftlearn.ui.screens.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.data.firestore.adverts.AdvertRepository
+import com.example.swiftlearn.data.firestore.favorites.FavoriteRepository
 import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.screens.utils.ValidationUtils
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
  */
 class ProfileViewModel(
     val userRepository: UserRepository,
-    val advertRepository: AdvertRepository
+    val advertRepository: AdvertRepository,
+    val favoriteRepository: FavoriteRepository
 ): ViewModel() {
     // Estado de la interfaz de perfil
     private val _profileUiState = MutableStateFlow(ProfileUiState())
@@ -71,8 +73,12 @@ class ProfileViewModel(
             // Eliminamos todos los anuncios de ese usuario
             advertRepository.deleteAllAdvertsByProfId(user._id)
 
+            // Eliminamos todos los favoritos de ese usuario
+            favoriteRepository.deleteAllFavoritesByUserId(user._id)
+
             // Eliminamos el usuario de la base de datos
             userRepository.deleteUser(user)
+
             // Eliminamos el usuario de la autentificación
             auth.currentUser?.delete()
 

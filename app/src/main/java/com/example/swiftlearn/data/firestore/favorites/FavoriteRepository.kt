@@ -9,4 +9,5 @@ interface FavoriteRepository {
     fun getAllFavoritesByUser(userId: String): Flow<List<Favorite>>
     suspend fun insertFavorite(favorite: Favorite)
     suspend fun deleteFavorite(favorite: Favorite)
+    suspend fun deleteAllFavoritesByUserId(userId: String)
 }

@@ -344,7 +344,9 @@ private fun AdvertItem(
         R.string.advert_summary,
         advert.subject,
         advert.price,
-        advert.description
+        professor.username,
+        professor.phone,
+        professor.email
     )
 
     // Diseño del item de la lista
@@ -495,7 +497,9 @@ private fun AdvertDetail(
         R.string.advert_summary,
         advert.subject,
         advert.price,
-        advert.description
+        professor.username,
+        professor.phone,
+        professor.email
     )
 
     // Estructura de la información detallada del anuncio

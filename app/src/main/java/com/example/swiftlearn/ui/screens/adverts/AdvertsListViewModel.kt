@@ -8,8 +8,6 @@ import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.Favorite
 import com.example.swiftlearn.model.User
-import com.example.swiftlearn.ui.screens.profile.ProfileDetails
-import com.example.swiftlearn.ui.screens.profile.toProfileDetails
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -35,11 +33,19 @@ class AdvertsListViewModel(
 
     // Inicialización del ViewModel
     init {
-        // Obtener el usuario autentificado
+        // Obtenemos el usuario que está autentificado y el flujo de datos de los favoritos
         viewModelScope.launch {
-            val user = userRepository.getUserByAuthId(auth.currentUser?.uid.toString())
-            // Actualizar el estado de la pantalla
-            _advertsListUiState.update {it.copy(user = user ?: User()) }
+            try {
+                val user = userRepository.getUserByAuthId(auth.currentUser?.uid.toString()) ?: User()
+                // Actualizar el estado de la pantalla
+                _advertsListUiState.update {it.copy(user = user) }
+
+                // Obtenemos los favoritos
+                favoriteRepository.getAllFavoritesByUser(user._id).collect { favorites ->
+                    // Actualizar el estado de la pantalla con los favoritos obtenidos
+                    _advertsListUiState.update { it.copy(favoritesList = favorites) }
+                }
+            } catch (_: Exception) {}
         }
 
         // Obtenemos flujo de datos de los anuncios
@@ -62,16 +68,6 @@ class AdvertsListViewModel(
                     _advertsListUiState.update { it.copy(professorsList = users) }
                     // Actualizamos estado de cargando
                     updateLoadingState()
-                }
-            } catch (_: Exception) {}
-        }
-
-        // Obtenemos flujo de datos de los favoritos
-        viewModelScope.launch {
-            try {
-                favoriteRepository.getAllFavoritesByUser(auth.currentUser?.uid.toString()).collect { favorites ->
-                    // Actualizar el estado de la pantalla con los favoritos obtenidos
-                    _advertsListUiState.update { it.copy(favoritesList = favorites) }
                 }
             } catch (_: Exception) {}
         }
@@ -109,9 +105,9 @@ class AdvertsListViewModel(
         viewModelScope.launch {
             // Si ese anuncio era favorito -> Se elimina el favorito
             // Si ese anuncio no era favorito (get devuelve null) -> Se inserta el favorito
-            favoriteRepository.getFavoriteByInfo(userId = advertsListUiState.value.user._id, advertId = advert._id)?.let { favorite ->
+            favoriteRepository.getFavoriteByInfo(userId = _advertsListUiState.value.user._id, advertId = advert._id)?.let { favorite ->
                 favoriteRepository.deleteFavorite(favorite)
-            } ?: favoriteRepository.insertFavorite(Favorite(userId = advertsListUiState.value.user._id, advertId = advert._id))
+            } ?: favoriteRepository.insertFavorite(Favorite(userId = _advertsListUiState.value.user._id, advertId = advert._id))
         }
     }
 

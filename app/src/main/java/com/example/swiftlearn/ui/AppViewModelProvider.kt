@@ -66,7 +66,8 @@ object AppViewModelProvider {
             // Crear e inicializar la instancia de ProfileViewModel
             ProfileViewModel(
                 userRepository = swiftLearnApplication().container.userRepository,
-                advertRepository = swiftLearnApplication().container.advertRepository
+                advertRepository = swiftLearnApplication().container.advertRepository,
+                favoriteRepository = swiftLearnApplication().container.favoriteRepository
             )
         }
     }
