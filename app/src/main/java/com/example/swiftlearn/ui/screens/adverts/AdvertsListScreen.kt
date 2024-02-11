@@ -137,7 +137,9 @@ fun AdvertsListScreen(
                     onAdvertClick = {
                         viewModel.updateCurrentPlace(it)
                     },
-                    onFavoriteButtonClick = {},
+                    onFavoriteButtonClick = {
+                        viewModel.toggleAdvertFavoriteState(it)
+                    },
                     onSendButtonClick = onSendButtonClick,
                     contentPadding = innerPadding,
                     contentType = contentType,
@@ -158,6 +160,9 @@ fun AdvertsListScreen(
                             viewModel.updateCurrentPlace(it)
                             viewModel.navigateToDetailAdvertPage()
                         },
+                        onFavoriteButtonClick = {
+                            viewModel.toggleAdvertFavoriteState(it)
+                        },
                         onSendButtonClick = onSendButtonClick,
                         contentPadding = innerPadding,
                         contentType = contentType,
@@ -172,7 +177,9 @@ fun AdvertsListScreen(
                         AdvertDetail(
                             advert = advertsListUiState.currentAdvert,
                             professor = professor,
-                            onFavoriteButtonClick = {},
+                            onFavoriteButtonClick = {
+                                viewModel.toggleAdvertFavoriteState(it)
+                            },
                             onSendButtonClick = onSendButtonClick,
                             contentPadding = innerPadding
                         )
@@ -191,7 +198,7 @@ fun AdvertsListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AdvertsListBar(
-    onBackButtonClick: () -> Unit = {}
+    onBackButtonClick: () -> Unit
 ) {
     // Barra superior personalizada
     TopAppBar(
@@ -228,9 +235,10 @@ private fun AdvertsList(
     advertsListUiState: AdvertsListUiState = AdvertsListUiState(),
     advertsList: List<Advert>,
     professorsList: List<User>,
-    onQueryChange: (String) -> Unit = {},
-    onAdvertClick: (Advert) -> Unit = {},
-    onSendButtonClick: (String) -> Unit = {},
+    onQueryChange: (String) -> Unit,
+    onAdvertClick: (Advert) -> Unit,
+    onFavoriteButtonClick: (Advert) -> Unit,
+    onSendButtonClick: (String) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     contentType: AdvertsContentType = AdvertsContentType.ListOnly
 ) {
@@ -275,14 +283,22 @@ private fun AdvertsList(
             ) {
                 items(filteredAdverts) { advert ->
                     // Obtener el profesor correspondiente al anuncio
-                    val user = professorsList.find { it._id == advert.profId }
-                    user?.let {
+                    val professor = professorsList.find { it._id == advert.profId }
+                    
+                    // Comprobamos si es favorito o no
+                    val favorite = advertsListUiState.favoritesList.find {
+                        it.userId == advertsListUiState.user._id && it.advertId == advert._id
+                    }
+
+                    professor?.let {
                         // Representa un elemento de la lista
                         AdvertItem(
                             advertsListUiState = advertsListUiState,
-                            advert = advert,
                             professor = it,
+                            advert = advert,
+                            isFavorite = favorite != null,
                             onAdvertClick = onAdvertClick,
+                            onFavoriteButtonClick = onFavoriteButtonClick,
                             onSendButtonClick = onSendButtonClick,
                             contentType = contentType
                         )
@@ -313,9 +329,9 @@ private fun AdvertItem(
     advertsListUiState: AdvertsListUiState = AdvertsListUiState(),
     professor: User,
     advert: Advert,
-    isFavorite: Boolean = false,
+    isFavorite: Boolean,
     onAdvertClick: (Advert) -> Unit = {},
-    onFavoriteButtonClick: () -> Unit = {},
+    onFavoriteButtonClick: (Advert) -> Unit = {},
     onSendButtonClick: (String) -> Unit = {},
     contentType: AdvertsContentType = AdvertsContentType.ListOnly
 ) {
@@ -343,17 +359,13 @@ private fun AdvertItem(
         Row(
             modifier = Modifier
                 .background(
-                    // Personalizamos color de fondo en función de si está seleccionado o no
-                    color = if (isSelected) {
-                        colorResource(id = R.color.my_pink)
-                    } else {
-                        colorResource(id = R.color.my_light_pink)
-                    }
+                    color = if (isSelected) colorResource(id = R.color.my_pink)
+                            else colorResource(id = R.color.my_light_pink)
                 )
                 .border(
-                    1.dp,
-                    colorResource(id = R.color.my_light_purple),
-                    RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
+                    width = 1.dp,
+                    color = colorResource(id = R.color.my_light_purple),
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
                 )
         ) {
             Column(
@@ -376,7 +388,7 @@ private fun AdvertItem(
 
                     // Botón del icono de favorito
                     IconButton(
-                        onClick = onFavoriteButtonClick,
+                        onClick = { onFavoriteButtonClick(advert) },
                         modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
                         // Icono de favorito
@@ -471,8 +483,8 @@ private fun AdvertDetail(
     advert: Advert,
     professor: User,
     modifier: Modifier = Modifier,
-    onFavoriteButtonClick: () -> Unit = {},
-    onSendButtonClick: (String) -> Unit = {},
+    onFavoriteButtonClick: (Advert) -> Unit,
+    onSendButtonClick: (String) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     // Estado del scroll
@@ -659,9 +671,9 @@ private fun AdvertsListAndDetail(
     advertsList: List<Advert>,
     professorsList: List<User>,
     onQueryChange: (String) -> Unit,
-    onAdvertClick: (Advert) -> Unit = {},
-    onFavoriteButtonClick: () -> Unit = {},
-    onSendButtonClick: (String) -> Unit = {},
+    onAdvertClick: (Advert) -> Unit,
+    onFavoriteButtonClick: (Advert) -> Unit,
+    onSendButtonClick: (String) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     contentType: AdvertsContentType = AdvertsContentType.ListOnly
 ) {
@@ -675,6 +687,8 @@ private fun AdvertsListAndDetail(
             professorsList = professorsList,
             onQueryChange = onQueryChange,
             onAdvertClick = onAdvertClick,
+            onFavoriteButtonClick = onFavoriteButtonClick,
+            onSendButtonClick = onSendButtonClick,
             contentPadding = contentPadding,
             contentType = contentType,
             modifier = Modifier
@@ -748,7 +762,11 @@ fun AdvertsListPreview() {
                 postal = "56474",
                 email = "maria@gmail.com"
             )
-        )
+        ),
+        onQueryChange = {},
+        onAdvertClick = {},
+        onFavoriteButtonClick = {},
+        onSendButtonClick = {}
     )
 }
 
@@ -769,6 +787,8 @@ fun AdvertDetailPreview() {
             address = "Calle Real",
             postal = "56474",
             email = "maria@gmail.com"
-        )
+        ),
+        onFavoriteButtonClick = {},
+        onSendButtonClick = {}
     )
 }

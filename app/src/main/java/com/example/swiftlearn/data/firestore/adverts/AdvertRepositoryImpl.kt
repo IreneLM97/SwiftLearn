@@ -40,15 +40,15 @@ class AdvertRepositoryImpl: AdvertRepository {
 
     override suspend fun insertAdvert(advert: Advert) {
         try {
-            val document = advertsCollection.add(advert.toMap()).await()
+            val document = advertsCollection.add(advert).await()
             val advertWithId = advert.copy(_id = document.id)
-            advertsCollection.document(document.id).set(advertWithId.toMap())
+            advertsCollection.document(document.id).set(advertWithId)
         } catch (_: Exception) {}
     }
 
     override suspend fun updateAdvert(advert: Advert) {
         try {
-            advertsCollection.document(advert._id).set(advert.toMap()).await()
+            advertsCollection.document(advert._id).set(advert).await()
         } catch (_: Exception) {}
     }
 
