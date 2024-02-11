@@ -98,5 +98,10 @@
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
     <string name="no_matching_adverts">No se han encontrado anuncios con esa búsqueda.</string>
+    <string name="info_contact_label">Información de contacto</string>
+    <string name="info_advert_label">Información del anuncio</string>
+    <string name="class_mode_advert">¿Dónde podemos dar las clases?</string>
+    <string name="levels_advert">¿A qué niveles puedo dar clase?</string>
+    <string name="request_class_label">Solicitar clase</string>
 
 </resources>

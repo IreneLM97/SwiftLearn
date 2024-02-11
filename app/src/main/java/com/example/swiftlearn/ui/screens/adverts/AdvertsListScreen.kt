@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,12 +23,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.House
 import androidx.compose.material.icons.outlined.Leaderboard
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +43,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,13 +57,19 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
 import com.example.swiftlearn.model.Advert
+import com.example.swiftlearn.model.ClassMode
+import com.example.swiftlearn.model.Level
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
+import com.example.swiftlearn.ui.components.ButtonWithText
+import com.example.swiftlearn.ui.components.OptionsSection
 import com.example.swiftlearn.ui.components.SearchTextField
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 
@@ -65,7 +78,6 @@ import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
  *
  * @param viewModel ViewModel que gestiona el estado de la interfaz de usuario.
  * @param windowSize Clasificación del tamaño de la ventana.
- * @param navigateToListAdverts Función lambda que se invoca cuando se pulsa el botón de retroceso.
  * @param onSendButtonClick Función lambda que se invoca cuando se hace click en el botón de enviar.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,7 +85,6 @@ import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 fun AdvertsListScreen(
     windowSize: WindowWidthSizeClass,
     viewModel: AdvertsListViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    navigateToListAdverts: () -> Unit = {},
     onSendButtonClick: (String) -> Unit = {}
 ){
     // Obtenemos administrador del foco de la aplicación
@@ -84,68 +95,88 @@ fun AdvertsListScreen(
 
     // Determinamos el tipo de contenido en función del tamaño de la ventana
     val contentType = when (windowSize) {
-        // Para ventanas compactas o de tamaño medio, mostrar solo la lista de lug-ares
+        // Para ventanas compactas o de tamaño medio, mostrar solo la lista de anuncios
         WindowWidthSizeClass.Compact,
         WindowWidthSizeClass.Medium -> AdvertsContentType.ListOnly
 
-        // Para ventanas expandidas, mostrar tanto la lista como los detalles de los lugares
+        // Para ventanas expandidas, mostrar tanto la lista como los detalles de los anuncios
         WindowWidthSizeClass.Expanded -> AdvertsContentType.ListAndDetail
         else -> AdvertsContentType.ListOnly
     }
 
-    Scaffold(
-        topBar = {
-            if (contentType == AdvertsContentType.ListOnly && !advertsListUiState.isShowingListPage) {
-                // Barra superior personalizada
-                AdvertsListBar(
-                    onBackButtonClick = { navigateToListAdverts() }
-                )
-            }
+    // Mostramos el icono cargando si está cargando
+    if(advertsListUiState.loadingState) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
-    ) { innerPadding ->
-        // Contenido principal de la pantalla en función del tamaño de la pantalla
-        if (contentType == AdvertsContentType.ListAndDetail) { // tamaño pantalla expanded
-            // Mostramos lista y detalles de anuncios
-            AdvertsListAndDetail(
-                advertsListUiState = advertsListUiState,
-                advertsList = advertsListUiState.advertsList,
-                professorsList = advertsListUiState.professorsList,
-                onAdvertClick = {},
-                onFavoriteButtonClick = {},
-                onSendButtonClick = onSendButtonClick,
-                contentPadding = innerPadding,
-                contentType = contentType,
-                modifier = Modifier.fillMaxWidth()
-            )
-        } else { // tamaño pantalla standard
-            if (advertsListUiState.isShowingListPage) {
-                // Mostramos lista de anuncios
-                AdvertsList(
+    } else {
+        Scaffold(
+            topBar = {
+                if (contentType == AdvertsContentType.ListOnly && !advertsListUiState.isShowingListPage) {
+                    // Barra superior personalizada
+                    AdvertsListBar(
+                        onBackButtonClick = { viewModel.navigateToListAdvertsPage() }
+                    )
+                }
+            }
+        ) { innerPadding ->
+            // Contenido principal de la pantalla en función del tamaño de la pantalla
+            if (contentType == AdvertsContentType.ListAndDetail) { // tamaño pantalla expanded
+                // Mostramos lista y detalles de anuncios
+                AdvertsListAndDetail(
                     advertsListUiState = advertsListUiState,
                     advertsList = advertsListUiState.advertsList,
                     professorsList = advertsListUiState.professorsList,
                     onQueryChange = {
                         viewModel.onQueryChange(it)
-                        if(it.isEmpty()) focusManager.clearFocus()
+                        if (it.isEmpty()) focusManager.clearFocus()
                     },
-                    onAdvertClick = { },
+                    onAdvertClick = {
+                        viewModel.updateCurrentPlace(it)
+                    },
+                    onFavoriteButtonClick = {},
                     onSendButtonClick = onSendButtonClick,
                     contentPadding = innerPadding,
                     contentType = contentType,
-                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
+                    modifier = Modifier.fillMaxWidth()
                 )
-            } else {
-                // Obtener el profesor correspondiente al anuncio
-                val professor = advertsListUiState.professorsList.find { it._id == advertsListUiState.currentAdvert.profId }
-                professor?.let {
-                    // Mostramos detalles de un anuncio específico
-                    AdvertDetail(
-                        advert = advertsListUiState.currentAdvert,
-                        professor = professor,
-                        onFavoriteButtonClick = {},
+            } else { // tamaño pantalla standard
+                if (advertsListUiState.isShowingListPage) {
+                    // Mostramos lista de anuncios
+                    AdvertsList(
+                        advertsListUiState = advertsListUiState,
+                        advertsList = advertsListUiState.advertsList,
+                        professorsList = advertsListUiState.professorsList,
+                        onQueryChange = {
+                            viewModel.onQueryChange(it)
+                            if (it.isEmpty()) focusManager.clearFocus()
+                        },
+                        onAdvertClick = {
+                            viewModel.updateCurrentPlace(it)
+                            viewModel.navigateToDetailAdvertPage()
+                        },
                         onSendButtonClick = onSendButtonClick,
-                        contentPadding = innerPadding
+                        contentPadding = innerPadding,
+                        contentType = contentType,
+                        modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
                     )
+                } else {
+                    // Obtener el profesor correspondiente al anuncio
+                    val professor =
+                        advertsListUiState.professorsList.find { it._id == advertsListUiState.currentAdvert.profId }
+                    professor?.let {
+                        // Mostramos detalles de un anuncio específico
+                        AdvertDetail(
+                            advert = advertsListUiState.currentAdvert,
+                            professor = professor,
+                            onFavoriteButtonClick = {},
+                            onSendButtonClick = onSendButtonClick,
+                            contentPadding = innerPadding
+                        )
+                    }
                 }
             }
         }
@@ -314,7 +345,7 @@ private fun AdvertItem(
                 .background(
                     // Personalizamos color de fondo en función de si está seleccionado o no
                     color = if (isSelected) {
-                        colorResource(id = R.color.my_light_purple)
+                        colorResource(id = R.color.my_pink)
                     } else {
                         colorResource(id = R.color.my_light_pink)
                     }
@@ -400,19 +431,25 @@ private fun AdvertItem(
                 // Información de la ubicación
                 IconWithText(
                     icon = Icons.Outlined.LocationOn,
-                    text = stringResource(id = R.string.direction_professor, professor.address, professor.postal)
+                    text = stringResource(id = R.string.direction_professor, professor.address, professor.postal),
+                    iconSize = 20.dp,
+                    textSize = 15.sp
                 )
 
                 // Información del modo de clase
                 IconWithText(
                     icon = Icons.Outlined.House,
-                    text = advert.classModes
+                    text = advert.classModes,
+                    iconSize = 20.dp,
+                    textSize = 15.sp
                 )
 
                 // Información de los niveles de clase
                 IconWithText(
                     icon = Icons.Outlined.Leaderboard,
-                    text = advert.levels
+                    text = advert.levels,
+                    iconSize = 20.dp,
+                    textSize = 15.sp
                 )
             }
         }
@@ -454,7 +491,7 @@ private fun AdvertDetail(
         modifier = modifier
             .verticalScroll(state = scrollState)
             .padding(contentPadding)
-            .background(colorResource(id = R.color.my_light_pink))
+            .background(Color.White)
     ) {
         Column(
             modifier = Modifier
@@ -462,8 +499,10 @@ private fun AdvertDetail(
         ) {
             // Nombre del profesor
             Text(
-                text = advert.subject,
+                text = professor.username,
+                textAlign = TextAlign.Center,
                 fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.my_dark_gray),
                 fontStyle = FontStyle.Italic,
                 modifier = Modifier
@@ -472,11 +511,131 @@ private fun AdvertDetail(
             )
             Spacer(Modifier.height(10.dp))
 
-            // Dirección del profesor que publicó el anuncio
+            // Mensaje información del profesor
+            Text(
+                text = stringResource(R.string.info_contact_label),
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                fontStyle = FontStyle.Italic,
+                color = colorResource(id = R.color.my_dark_gray),
+                modifier = Modifier
+                    .padding(horizontal = dimensionResource(R.dimen.padding_small))
+                    .fillMaxWidth()
+            )
+            Spacer(Modifier.height(10.dp))
+
+            // Dirección del profesor
             IconWithText(
                 icon = Icons.Outlined.LocationOn,
-                text = stringResource(id = R.string.direction_professor, professor.address, professor.postal)
+                text = stringResource(id = R.string.direction_professor, professor.address, professor.postal),
+                iconSize = 30.dp,
+                textSize = 20.sp
             )
+
+            // Teléfono del profesor
+            IconWithText(
+                icon = Icons.Outlined.Phone,
+                text = professor.phone,
+                iconSize = 30.dp,
+                textSize = 20.sp
+            )
+
+            // Email del profesor
+            IconWithText(
+                icon = Icons.Outlined.Email,
+                text = professor.email,
+                iconSize = 30.dp,
+                textSize = 20.sp
+            )
+            Spacer(Modifier.height(20.dp))
+
+            // Mensaje información del anuncio
+            Text(
+                text = stringResource(R.string.info_advert_label),
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                fontStyle = FontStyle.Italic,
+                color = colorResource(id = R.color.my_dark_gray),
+                modifier = Modifier
+                    .padding(horizontal = dimensionResource(R.dimen.padding_small))
+                    .fillMaxWidth()
+            )
+            Spacer(Modifier.height(10.dp))
+
+            // Asignatura y precio del anuncio
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = advert.subject,
+                    color = colorResource(id = R.color.my_dark_gray),
+                    fontSize = 20.sp,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = stringResource(id = R.string.icon_euro_hour, advert.price.toString()),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(id = R.color.my_dark_purple)
+                )
+            }
+            Spacer(modifier = Modifier.height(15.dp))
+
+            // Opciones de modalidad de clase
+            val classModesSet = remember {
+                mutableStateOf(advert.classModes.split(", ").mapNotNull { value ->
+                    ClassMode.values().find { it.name == value }
+                }.toSet())
+            }
+            OptionsSection(
+                title = stringResource(id = R.string.class_mode_advert),
+                options = listOf(
+                    ClassMode.Presencial to stringResource(id = R.string.presencial_label),
+                    ClassMode.Online to stringResource(id = R.string.online_label),
+                    ClassMode.Hibrido to stringResource(id = R.string.hibrido_label)
+                ),
+                selectedOptions = classModesSet.value,
+                isSelectable = false
+            )
+
+            // Opciones de niveles de clase
+            val levelsSet = remember {
+                mutableStateOf(advert.levels.split(", ").mapNotNull { value ->
+                    Level.values().find { it.name == value }
+                }.toSet())
+            }
+            OptionsSection(
+                title = stringResource(id = R.string.levels_advert),
+                options = listOf(
+                    Level.Primaria to stringResource(id = R.string.primaria_label),
+                    Level.ESO to stringResource(id = R.string.eso_label),
+                    Level.Bachillerato to stringResource(id = R.string.bachillerato_label),
+                    Level.FP to stringResource(id = R.string.fp_label),
+                    Level.Universidad to stringResource(id = R.string.universidad_label),
+                    Level.Adultos to stringResource(id = R.string.adultos_label)
+                ),
+                selectedOptions = levelsSet.value,
+                isSelectable = false
+            )
+
+            // Descripción del anuncio
+            IconWithText(
+                icon = Icons.Outlined.Description,
+                text = advert.description,
+                iconSize = 30.dp,
+                textSize = 20.sp
+            )
+            Spacer(Modifier.height(20.dp))
+
+            // Botón para solicitar una clase
+            ButtonWithText(
+                label = stringResource(R.string.request_class_label),
+                buttonColor = colorResource(id = R.color.my_dark_purple),
+                textColor = Color.White
+            )
+            Spacer(Modifier.height(100.dp))
         }
     }
 }
@@ -499,6 +658,7 @@ private fun AdvertsListAndDetail(
     advertsListUiState: AdvertsListUiState = AdvertsListUiState(),
     advertsList: List<Advert>,
     professorsList: List<User>,
+    onQueryChange: (String) -> Unit,
     onAdvertClick: (Advert) -> Unit = {},
     onFavoriteButtonClick: () -> Unit = {},
     onSendButtonClick: (String) -> Unit = {},
@@ -513,6 +673,7 @@ private fun AdvertsListAndDetail(
             advertsListUiState = advertsListUiState,
             advertsList = advertsList,
             professorsList = professorsList,
+            onQueryChange = onQueryChange,
             onAdvertClick = onAdvertClick,
             contentPadding = contentPadding,
             contentType = contentType,
@@ -540,8 +701,10 @@ private fun AdvertsListAndDetail(
 @Composable
 private fun IconWithText(
     icon: ImageVector,
-    text: String
-) {
+    text: String,
+    iconSize: Dp,
+    textSize: TextUnit
+    ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             imageVector = icon,
@@ -549,11 +712,11 @@ private fun IconWithText(
             tint = colorResource(id = R.color.my_dark_gray),
             modifier = Modifier
                 .padding(end = 4.dp)
-                .size(20.dp)
+                .size(iconSize)
         )
         Text(
             text = text,
-            fontSize = 15.sp,
+            fontSize = textSize,
             color = colorResource(id = R.color.my_dark_gray)
         )
     }
@@ -572,13 +735,6 @@ fun AdvertsListPreview() {
                 profId = "1",
                 subject = "Matematicas",
                 price = 15,
-                classModes = "Presencial,Hibrido",
-                levels = "Bachillerato"
-            ),
-            Advert(
-                profId = "1",
-                subject = "Lengua",
-                price = 12,
                 classModes = "Presencial,Hibrido",
                 levels = "Bachillerato"
             )

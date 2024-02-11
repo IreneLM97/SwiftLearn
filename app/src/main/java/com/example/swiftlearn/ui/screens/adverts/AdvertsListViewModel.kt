@@ -39,6 +39,7 @@ class AdvertsListViewModel(
                 userRepository.getAllProfessors().collect { users ->
                     // Actualizar el estado de la pantalla con los profesores obtenidos
                     _advertsListUiState.update { it.copy(professorsList = users) }
+                    updateLoadingState()
                 }
             } catch (_: Exception) {}
         }
@@ -48,9 +49,16 @@ class AdvertsListViewModel(
                 // Obtenemos flujo de datos de los anuncios
                 advertRepository.getAllAdverts().collect { adverts ->
                     // Actualizar el estado de la pantalla con los anuncios obtenidos
-                    _advertsListUiState.update { it.copy(advertsList = adverts) }
+                    _advertsListUiState.update { it.copy(advertsList = adverts, currentAdvert = adverts[0]) }
+                    updateLoadingState()
                 }
             } catch (_: Exception) {}
+        }
+    }
+
+    private fun updateLoadingState() {
+        if(_advertsListUiState.value.advertsList.isNotEmpty() && _advertsListUiState.value.professorsList.isNotEmpty()) {
+            _advertsListUiState.update { it.copy(loadingState = false) }
         }
     }
 
@@ -65,6 +73,15 @@ class AdvertsListViewModel(
     }
 
     /**
+     * Actualiza el anuncio actual en el estado de la interfaz de usuario.
+     *
+     * @param selectedAdvert lugar seleccionado por el usuario
+     */
+    fun updateCurrentPlace(selectedAdvert: Advert) {
+        _advertsListUiState.update { it.copy(currentAdvert = selectedAdvert) }
+    }
+
+    /**
      * Navega a la página que muestra la lista de anuncios.
      */
     fun navigateToListAdvertsPage() {
@@ -72,7 +89,7 @@ class AdvertsListViewModel(
     }
 
     /**
-     * Navega a la página que muestra los detalles de un lugar específico.
+     * Navega a la página que muestra los detalles de un anuncio específico.
      */
     fun navigateToDetailAdvertPage() {
         _advertsListUiState.update { it.copy(isShowingListPage = false) }

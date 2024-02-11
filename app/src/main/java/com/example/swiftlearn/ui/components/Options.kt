@@ -14,6 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,7 +71,8 @@ fun <T> MultiOptions(
     title: String = "",
     options: List<Pair<T, String>>,
     selectedOptions: Set<T>,
-    onOptionSelected: (T) -> Unit
+    onOptionSelected: (T) -> Unit = {},
+    isSelectable: Boolean = true
 ) {
     Column(
         modifier = Modifier
@@ -88,9 +91,7 @@ fun <T> MultiOptions(
         )
 
         // Dividir las opciones en filas de tres
-        val chunkedOptions = options.chunked(3)
-
-        chunkedOptions.forEach { chunk ->
+        options.chunked(3).forEach { chunk ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -106,7 +107,7 @@ fun <T> MultiOptions(
                             .weight(1f)
                             .padding(vertical = 8.dp)
                             .clip(RoundedCornerShape(16.dp))
-                            .clickable { onOptionSelected(option) }
+                            .clickable { if (isSelectable) { onOptionSelected(option) } }
                     ) {
                         Text(
                             text = label,
@@ -120,4 +121,33 @@ fun <T> MultiOptions(
             }
         }
     }
+}
+
+@Composable
+fun <T : Enum<T>> OptionsSection(
+    title: String,
+    options: List<Pair<T, String>>,
+    selectedOptions: Set<T>,
+    onOptionSelected: (Set<T>) -> Unit = {},
+    isSelectable: Boolean = true
+) {
+    val selectedModes = remember { mutableStateOf(selectedOptions) }
+
+    MultiOptions(
+        title = title,
+        options = options,
+        selectedOptions = selectedModes.value,
+        onOptionSelected = { selectedMode ->
+            val updatedModes = selectedModes.value.toMutableSet()
+            if (selectedMode in updatedModes) {
+                updatedModes.remove(selectedMode)
+            } else {
+                updatedModes.add(selectedMode)
+            }
+            selectedModes.value = updatedModes
+
+            onOptionSelected(updatedModes)
+        },
+        isSelectable = isSelectable
+    )
 }

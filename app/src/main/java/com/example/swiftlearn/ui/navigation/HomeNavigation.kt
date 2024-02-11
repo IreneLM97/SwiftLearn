@@ -37,7 +37,6 @@ fun HomeNavigation(
         composable(route = MenuItems.AdvertsItem.route) {
             AdvertsListScreen(
                 windowSize = windowSize,
-                navigateToListAdverts = { navController.popBackStack() },
                 onSendButtonClick = { shareAdvert(context, it) }
             )
         }

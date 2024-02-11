@@ -1,5 +1,9 @@
 package com.example.swiftlearn.model
 
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
+import com.example.swiftlearn.R
+
 enum class ClassMode {
     Presencial,
     Online,

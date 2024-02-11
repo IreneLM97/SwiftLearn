@@ -9,5 +9,6 @@ data class AdvertsListUiState(
     val currentAdvert: Advert = Advert(),
     val advertsList: List<Advert> = emptyList(),
     val professorsList: List<User> = emptyList(),
-    val isShowingListPage: Boolean = true
+    val isShowingListPage: Boolean = true,
+    val loadingState: Boolean = true
 )

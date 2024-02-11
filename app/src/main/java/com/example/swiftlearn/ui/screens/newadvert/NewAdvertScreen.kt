@@ -40,6 +40,7 @@ import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.components.MultiOptions
+import com.example.swiftlearn.ui.components.OptionsSection
 import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -161,7 +162,7 @@ private fun NewAdvertForm(
                 Level.Bachillerato to stringResource(id = R.string.bachillerato_label),
                 Level.FP to stringResource(id = R.string.fp_label),
                 Level.Universidad to stringResource(id = R.string.universidad_label),
-                Level.Adultos to stringResource(id = R.string.adultos_label),
+                Level.Adultos to stringResource(id = R.string.adultos_label)
             ),
             selectedOptions = newAdvertDetails.levels,
             onOptionSelected = {
@@ -204,33 +205,6 @@ private fun NewAdvertForm(
         )
         Spacer(modifier = Modifier.height(100.dp))
     }
-}
-
-@Composable
-private fun <T : Enum<T>> OptionsSection(
-    title: String,
-    options: List<Pair<T, String>>,
-    selectedOptions: Set<T>,
-    onOptionSelected: (Set<T>) -> Unit
-) {
-    val selectedModes = remember { mutableStateOf(selectedOptions) }
-
-    MultiOptions(
-        title = title,
-        options = options,
-        selectedOptions = selectedModes.value,
-        onOptionSelected = { selectedMode ->
-            val updatedModes = selectedModes.value.toMutableSet()
-            if (selectedMode in updatedModes) {
-                updatedModes.remove(selectedMode)
-            } else {
-                updatedModes.add(selectedMode)
-            }
-            selectedModes.value = updatedModes
-
-            onOptionSelected(updatedModes)
-        }
-    )
 }
 
 @Preview
