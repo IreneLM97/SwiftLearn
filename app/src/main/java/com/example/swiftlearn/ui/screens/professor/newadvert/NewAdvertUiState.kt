@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.screens.newadvert
+package com.example.swiftlearn.ui.screens.professor.newadvert
 
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.ClassMode

@@ -10,15 +10,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.swiftlearn.R
-import com.example.swiftlearn.ui.screens.adverts.AdvertsListScreen
-import com.example.swiftlearn.ui.screens.favorites.FavoriteScreen
+import com.example.swiftlearn.ui.screens.student.adverts.AdvertsListScreen
 import com.example.swiftlearn.ui.screens.home.HomeDestination
 import com.example.swiftlearn.ui.screens.home.MenuItems
 import com.example.swiftlearn.ui.screens.home.professor.ClassesScreen
 import com.example.swiftlearn.ui.screens.home.professor.MapScreen
-import com.example.swiftlearn.ui.screens.newadvert.NewAdvertScreen
+import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertScreen
 import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.example.swiftlearn.ui.screens.profile.ProfileScreen
+import com.example.swiftlearn.ui.screens.student.favorites.FavoritesListScreen
 
 @Composable
 fun HomeNavigation(
@@ -44,7 +44,10 @@ fun HomeNavigation(
             ClassesScreen()
         }
         composable(route = MenuItems.FavoritesItem.route) {
-            FavoriteScreen()
+            FavoritesListScreen(
+                windowSize = windowSize,
+                onSendButtonClick = { shareAdvert(context, it) }
+            )
         }
         composable(route = MenuItems.MapItem.route) {
             MapScreen()

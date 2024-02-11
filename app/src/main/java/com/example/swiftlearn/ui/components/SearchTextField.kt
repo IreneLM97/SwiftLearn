@@ -49,6 +49,7 @@ fun SearchTextField(
             // Maneja evento al pulsar el icono Search del teclado
             onSearch = {
                 focusManager.clearFocus()
+                onQueryChange(query.replace("\n", ""))
             }
         ),
         leadingIcon = {
@@ -62,6 +63,7 @@ fun SearchTextField(
                 // Maneja el evento al presionar la tecla "Enter" en el teclado
                 if (e.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
                     focusManager.clearFocus()
+                    onQueryChange(query.replace("\n", ""))
                 }
                 false
             }

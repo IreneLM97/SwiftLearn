@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.screens.newadvert
+package com.example.swiftlearn.ui.screens.professor.newadvert
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -39,8 +37,7 @@ import com.example.swiftlearn.model.Level
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.InputField
-import com.example.swiftlearn.ui.components.MultiOptions
-import com.example.swiftlearn.ui.components.OptionsSection
+import com.example.swiftlearn.ui.components.MultiOptionsSection
 import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -140,7 +137,7 @@ private fun NewAdvertForm(
         )
 
         // Opciones de modo de clase
-        OptionsSection(
+        MultiOptionsSection(
             title = stringResource(id = R.string.class_mode_label),
             options = listOf(
                 ClassMode.Presencial to stringResource(id = R.string.presencial_label),
@@ -154,7 +151,7 @@ private fun NewAdvertForm(
         )
 
         // Opciones de niveles
-        OptionsSection(
+        MultiOptionsSection(
             title = stringResource(id = R.string.levels_label),
             options = listOf(
                 Level.Primaria to stringResource(id = R.string.primaria_label),

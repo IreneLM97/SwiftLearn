@@ -124,12 +124,11 @@ fun <T> MultiOptions(
 }
 
 @Composable
-fun <T : Enum<T>> OptionsSection(
+fun <T : Enum<T>> MultiOptionsSection(
     title: String,
     options: List<Pair<T, String>>,
     selectedOptions: Set<T>,
-    onOptionSelected: (Set<T>) -> Unit = {},
-    isSelectable: Boolean = true
+    onOptionSelected: (Set<T>) -> Unit = {}
 ) {
     val selectedModes = remember { mutableStateOf(selectedOptions) }
 
@@ -147,7 +146,20 @@ fun <T : Enum<T>> OptionsSection(
             selectedModes.value = updatedModes
 
             onOptionSelected(updatedModes)
-        },
-        isSelectable = isSelectable
+        }
+    )
+}
+
+@Composable
+fun <T : Enum<T>> MultiOptionsSectionImmutable(
+    title: String,
+    options: List<Pair<T, String>>,
+    selectedOptions: Set<T>
+) {
+    MultiOptions(
+        title = title,
+        options = options,
+        selectedOptions = selectedOptions,
+        isSelectable = false
     )
 }

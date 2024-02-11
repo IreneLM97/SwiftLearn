@@ -7,6 +7,7 @@ import com.example.swiftlearn.data.firestore.favorites.FavoriteRepository
 import com.example.swiftlearn.data.firestore.favorites.FavoriteRepositoryImpl
 import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.data.firestore.users.UserRepositoryImpl
+import com.example.swiftlearn.ui.screens.student.SessionViewModel
 
 /**
  * Interfaz que define las dependencias de la aplicación.
@@ -15,6 +16,7 @@ interface AppContainer {
     val userRepository: UserRepository
     val advertRepository: AdvertRepository
     val favoriteRepository: FavoriteRepository
+    val sessionViewModel: SessionViewModel
 }
 
 /**
@@ -35,5 +37,13 @@ class AppDataContainer (
 
     override val favoriteRepository: FavoriteRepository by lazy {
         FavoriteRepositoryImpl()
+    }
+
+    override val sessionViewModel: SessionViewModel by lazy {
+        SessionViewModel(
+            userRepository = userRepository,
+            advertRepository = advertRepository,
+            favoriteRepository = favoriteRepository
+        )
     }
 }

@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.screens.newadvert
+package com.example.swiftlearn.ui.screens.professor.newadvert
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
