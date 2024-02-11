@@ -42,11 +42,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,8 +74,11 @@ fun AdvertsListScreen(
     windowSize: WindowWidthSizeClass,
     viewModel: AdvertsListViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToListAdverts: () -> Unit = {},
-    onSendButtonClick: () -> Unit = {}
+    onSendButtonClick: (String) -> Unit = {}
 ){
+    // Obtenemos administrador del foco de la aplicación
+    val focusManager = LocalFocusManager.current
+
     // Guardamos el estado de la pantalla de anuncios
     val advertsListUiState = viewModel.advertsListUiState.collectAsState().value
 
@@ -107,7 +112,7 @@ fun AdvertsListScreen(
                 professorsList = advertsListUiState.professorsList,
                 onAdvertClick = {},
                 onFavoriteButtonClick = {},
-                onSendButtonClick = {},
+                onSendButtonClick = onSendButtonClick,
                 contentPadding = innerPadding,
                 contentType = contentType,
                 modifier = Modifier.fillMaxWidth()
@@ -119,7 +124,12 @@ fun AdvertsListScreen(
                     advertsListUiState = advertsListUiState,
                     advertsList = advertsListUiState.advertsList,
                     professorsList = advertsListUiState.professorsList,
+                    onQueryChange = {
+                        viewModel.onQueryChange(it)
+                        if(it.isEmpty()) focusManager.clearFocus()
+                    },
                     onAdvertClick = { },
+                    onSendButtonClick = onSendButtonClick,
                     contentPadding = innerPadding,
                     contentType = contentType,
                     modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
@@ -188,8 +198,8 @@ private fun AdvertsList(
     advertsList: List<Advert>,
     professorsList: List<User>,
     onQueryChange: (String) -> Unit = {},
-    onSearch: (String) -> Unit = {},
     onAdvertClick: (Advert) -> Unit = {},
+    onSendButtonClick: (String) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(0.dp),
     contentType: AdvertsContentType = AdvertsContentType.ListOnly
 ) {
@@ -198,40 +208,63 @@ private fun AdvertsList(
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = modifier.height(20.dp))
-        
+
         // Mostramos campo de búsqueda de clases en función de la asignatura
         SearchTextField(
-            query = advertsListUiState.query,
-            onQueryChange = onQueryChange,
-            onSearch = onSearch
+            query = advertsListUiState.searchQuery,
+            onQueryChange = onQueryChange
         )
         Spacer(modifier = modifier.height(10.dp))
 
-        // Muestra la lista de anuncios
-        LazyColumn(
-            contentPadding = contentPadding,
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
-            modifier = Modifier
-                .padding(top = dimensionResource(R.dimen.padding_small))
-                .padding(bottom = dimensionResource(R.dimen.padding_small)),
-        ) {
-            items(advertsList) { advert ->
-                // Obtener el usuario correspondiente al anuncio
-                val user = professorsList.find { it._id == advert.profId }
-                user?.let {
-                    // Representa un elemento de la lista
-                    AdvertItem(
-                        advertsListUiState = advertsListUiState,
-                        advert = advert,
-                        professor = it, // Pasar el usuario como parámetro
-                        onAdvertClick = onAdvertClick,
-                        contentType = contentType
-                    )
+        // Filtramos la lista de anuncios por la asignatura del anuncio
+        val filteredAdverts = if (advertsListUiState.searchQuery.isNotEmpty()) {
+            advertsList.filter { it.subject.contains(advertsListUiState.searchQuery, ignoreCase = true) }
+        } else {
+            advertsList
+        }
+
+        if (filteredAdverts.isEmpty()) {
+            // Mostrar mensaje cuando no se encuentran anuncios que coincidan con la asignatura
+            Text(
+                text = stringResource(id = R.string.no_matching_adverts),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                    .padding(top = dimensionResource(R.dimen.padding_medium))
+                    .fillMaxWidth()
+            )
+        } else {
+            // Mostrar la lista de anuncios filtrada
+            LazyColumn(
+                contentPadding = contentPadding,
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                modifier = Modifier
+                    .padding(top = dimensionResource(R.dimen.padding_small))
+                    .padding(bottom = 62.dp)
+            ) {
+                items(filteredAdverts) { advert ->
+                    // Obtener el profesor correspondiente al anuncio
+                    val user = professorsList.find { it._id == advert.profId }
+                    user?.let {
+                        // Representa un elemento de la lista
+                        AdvertItem(
+                            advertsListUiState = advertsListUiState,
+                            advert = advert,
+                            professor = it,
+                            onAdvertClick = onAdvertClick,
+                            onSendButtonClick = onSendButtonClick,
+                            contentType = contentType
+                        )
+                    }
                 }
             }
         }
+
+        // Agrega margen al final de la lista de anuncios
+        Spacer(modifier = modifier.height(20.dp))
     }
 }
+
 
 /**
  * Función que representa un elemento individual en la lista de lugares.
@@ -252,12 +285,20 @@ private fun AdvertItem(
     isFavorite: Boolean = false,
     onAdvertClick: (Advert) -> Unit = {},
     onFavoriteButtonClick: () -> Unit = {},
-    onSendButtonClick: () -> Unit = {},
+    onSendButtonClick: (String) -> Unit = {},
     contentType: AdvertsContentType = AdvertsContentType.ListOnly
 ) {
     // Comprobamos si está seleccionado el item y estamos en vista ListAndDetail
     // para personalizar el fondo del item cuando esté seleccionado
     val isSelected = advertsListUiState.currentAdvert._id == advert._id && contentType == AdvertsContentType.ListAndDetail
+
+    // Resumen de la información del anuncio
+    val advertSummary = stringResource(
+        R.string.advert_summary,
+        advert.subject,
+        advert.price,
+        advert.description
+    )
 
     // Diseño del item de la lista
     Card(
@@ -278,10 +319,15 @@ private fun AdvertItem(
                         colorResource(id = R.color.my_light_pink)
                     }
                 )
-                .border(1.dp, colorResource(id = R.color.my_light_purple), RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)))
+                .border(
+                    1.dp,
+                    colorResource(id = R.color.my_light_purple),
+                    RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
+                )
         ) {
             Column(
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier
+                    .padding(10.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -313,7 +359,7 @@ private fun AdvertItem(
 
                     // Botón del icono de compartir
                     IconButton(
-                        onClick = onSendButtonClick,
+                        onClick = { onSendButtonClick(advertSummary) },
                         modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
                         // Icono de compartir
@@ -389,7 +435,7 @@ private fun AdvertDetail(
     professor: User,
     modifier: Modifier = Modifier,
     onFavoriteButtonClick: () -> Unit = {},
-    onSendButtonClick: () -> Unit = {},
+    onSendButtonClick: (String) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     // Estado del scroll
@@ -455,7 +501,7 @@ private fun AdvertsListAndDetail(
     professorsList: List<User>,
     onAdvertClick: (Advert) -> Unit = {},
     onFavoriteButtonClick: () -> Unit = {},
-    onSendButtonClick: () -> Unit = {},
+    onSendButtonClick: (String) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(0.dp),
     contentType: AdvertsContentType = AdvertsContentType.ListOnly
 ) {

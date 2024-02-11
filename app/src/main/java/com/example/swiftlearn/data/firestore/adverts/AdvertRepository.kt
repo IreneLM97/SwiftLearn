@@ -4,8 +4,7 @@ import com.example.swiftlearn.model.Advert
 import kotlinx.coroutines.flow.Flow
 
 interface AdvertRepository {
-    fun getAllAdvert(): Flow<List<Advert>>
-    fun getAllAdvertByFilterSubject(subject: String): Flow<List<Advert>>
+    fun getAllAdverts(): Flow<List<Advert>>
     suspend fun getAllAdvertsByProfessorId(professorId: String): List<Advert>
     suspend fun getAdvertById(advertId: String): Advert?
     suspend fun insertAdvert(advert: Advert)

@@ -5,7 +5,7 @@ import com.example.swiftlearn.model.User
 import kotlinx.coroutines.flow.Flow
 
 data class AdvertsListUiState(
-    val query: String = "",
+    val searchQuery: String = "",
     val currentAdvert: Advert = Advert(),
     val advertsList: List<Advert> = emptyList(),
     val professorsList: List<User> = emptyList(),

@@ -11,24 +11,8 @@ class AdvertRepositoryImpl: AdvertRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val advertsCollection = firestore.collection("adverts")
 
-    override fun getAllAdvert(): Flow<List<Advert>> = callbackFlow {
+    override fun getAllAdverts(): Flow<List<Advert>> = callbackFlow {
         val subscription = advertsCollection
-            .addSnapshotListener { querySnapshot, _ ->
-                val advertList = mutableListOf<Advert>()
-                querySnapshot?.documents?.forEach { documentSnapshot ->
-                    val advert = documentSnapshot.toObject(Advert::class.java)
-                    advert?.let { advertList.add(it) }
-                }
-                trySend(advertList).isSuccess
-            }
-        awaitClose {
-            subscription.remove()
-        }
-    }
-
-    override fun getAllAdvertByFilterSubject(subject: String): Flow<List<Advert>> = callbackFlow {
-        val subscription = advertsCollection
-            .whereArrayContains("subject", subject)
             .addSnapshotListener { querySnapshot, _ ->
                 val advertList = mutableListOf<Advert>()
                 querySnapshot?.documents?.forEach { documentSnapshot ->

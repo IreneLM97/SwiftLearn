@@ -31,8 +31,7 @@ import com.example.swiftlearn.R
 @Composable
 fun SearchTextField(
     query: String = "",
-    onQueryChange: (String) -> Unit = {},
-    onSearch: (String) -> Unit = {}
+    onQueryChange: (String) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -50,7 +49,6 @@ fun SearchTextField(
             // Maneja evento al pulsar el icono Search del teclado
             onSearch = {
                 focusManager.clearFocus()
-                onSearch(query)
             }
         ),
         leadingIcon = {
@@ -64,7 +62,6 @@ fun SearchTextField(
                 // Maneja el evento al presionar la tecla "Enter" en el teclado
                 if (e.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
                     focusManager.clearFocus()
-                    onSearch(query)
                 }
                 false
             }

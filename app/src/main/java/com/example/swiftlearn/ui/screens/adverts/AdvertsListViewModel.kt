@@ -1,20 +1,19 @@
 package com.example.swiftlearn.ui.screens.adverts
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.data.firestore.adverts.AdvertRepository
 import com.example.swiftlearn.data.firestore.users.UserRepository
+import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.User
-import com.example.swiftlearn.ui.screens.profile.ProfileDetails
-import com.example.swiftlearn.ui.screens.profile.toProfileDetails
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -47,12 +46,22 @@ class AdvertsListViewModel(
         viewModelScope.launch {
             try {
                 // Obtenemos flujo de datos de los anuncios
-                advertRepository.getAllAdvert().collect { adverts ->
+                advertRepository.getAllAdverts().collect { adverts ->
                     // Actualizar el estado de la pantalla con los anuncios obtenidos
                     _advertsListUiState.update { it.copy(advertsList = adverts) }
                 }
             } catch (_: Exception) {}
         }
+    }
+
+    /**
+     * Función que se ejecuta cuando cambia la consulta de búsqueda.
+     *
+     * @param searchQuery Consulta de búsqueda actual.
+     */
+    fun onQueryChange(searchQuery: String) {
+        // Actualizamos el texto de búsqueda
+        _advertsListUiState.update { it.copy(searchQuery = searchQuery) }
     }
 
     /**
