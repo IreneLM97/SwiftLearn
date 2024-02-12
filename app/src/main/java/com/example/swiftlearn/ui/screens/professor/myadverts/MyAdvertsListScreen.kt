@@ -57,7 +57,7 @@ import com.example.swiftlearn.ui.screens.student.adverts.IconWithText
 
 @Composable
 fun MyAdvertsListScreen(
-    navigateToEditAdvert: (Advert) -> Unit,
+    navigateToEditAdvert: (String) -> Unit,
     onSendButtonClick: (String) -> Unit,
     viewModel: MyAdvertsListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -84,7 +84,7 @@ fun MyAdvertsListScreen(
                 advertsList = myAdvertsListUiState.myAdvertsList,
                 notFoundMessage = stringResource(R.string.not_adverts_yet),
                 onEditButtonClick = {
-                    navigateToEditAdvert(it)
+                    navigateToEditAdvert(it._id)
                 },
                 onDeleteButtonClick = {
                     viewModel.deleteAdvert(it)

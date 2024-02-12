@@ -9,8 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.swiftlearn.R
 import com.example.swiftlearn.model.Role
 import com.example.swiftlearn.ui.screens.student.adverts.AdvertsListScreen
@@ -21,6 +23,8 @@ import com.example.swiftlearn.ui.screens.home.professor.ClassesScreen
 import com.example.swiftlearn.ui.screens.home.professor.MapScreen
 import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertScreen
 import com.example.swiftlearn.ui.screens.login.LoginDestination
+import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertDestination
+import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertScreen
 import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsListScreen
 import com.example.swiftlearn.ui.screens.profile.ProfileScreen
 import com.example.swiftlearn.ui.screens.student.favorites.FavoritesListScreen
@@ -44,7 +48,7 @@ fun HomeNavigation(
             when(homeUiState.role) {
                 Role.Profesor -> {
                     MyAdvertsListScreen(
-                        navigateToEditAdvert = {},
+                        navigateToEditAdvert = { navController.navigate("${EditAdvertDestination.route}/$it") },
                         onSendButtonClick = { sendAdvert(context, it) }
                     )
                 }
@@ -77,6 +81,14 @@ fun HomeNavigation(
         }
         composable(route = MenuItems.NewAdvertItem.route) {
             NewAdvertScreen(
+                navigateToListAdverts = { navController.navigate(MenuItems.AdvertsItem.route) }
+            )
+        }
+        composable(
+            route = EditAdvertDestination.routeWithArgs,
+            arguments = listOf(navArgument(EditAdvertDestination.advertIdArg) { type = NavType.StringType })
+        ) {
+            EditAdvertScreen(
                 navigateToListAdverts = { navController.navigate(MenuItems.AdvertsItem.route) }
             )
         }

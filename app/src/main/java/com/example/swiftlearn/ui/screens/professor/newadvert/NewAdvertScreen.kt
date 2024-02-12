@@ -47,7 +47,7 @@ fun NewAdvertScreen(
     viewModel: NewAdvertViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Guardamos el estado de la pantalla de nuevo anuncio
-    val newAdvertUiState = viewModel.newAdvertUiState.collectAsState().value
+    val newAdvertUiState = viewModel.advertUiState.collectAsState().value
 
     // Mostramos el icono cargando si está cargando
     if(newAdvertUiState.isLoading) {
@@ -66,12 +66,12 @@ fun NewAdvertScreen(
             // Cabecera de la pantalla
             NewAdvertHeader()
 
-            // Formulario de nuevo anuncio
-            NewAdvertForm(
-                newAdvertUiState = newAdvertUiState,
+            // Formulario de anuncio
+            AdvertForm(
+                advertUiState = newAdvertUiState,
                 onFieldChanged = viewModel::onFieldChanged,
                 onSaveClick = {
-                    viewModel.insertAdvert(newAdvertUiState.newAdvertDetails.toAdvert())
+                    viewModel.insertAdvert(newAdvertUiState.advertDetails.toAdvert())
                     navigateToListAdverts()
                 }
             )
@@ -104,13 +104,13 @@ private fun NewAdvertHeader() {
 }
 
 @Composable
-private fun NewAdvertForm(
-    newAdvertUiState: NewAdvertUiState = NewAdvertUiState(),
-    onFieldChanged: (NewAdvertDetails) -> Unit = {},
-    onSaveClick: () -> Unit = {}
+fun AdvertForm(
+    advertUiState: AdvertUiState,
+    onFieldChanged: (AdvertDetails) -> Unit,
+    onSaveClick: () -> Unit
 ) {
     // Variable para manejar la información del anuncio
-    val newAdvertDetails = newAdvertUiState.newAdvertDetails
+    val advertDetails = advertUiState.advertDetails
 
     // Estructura del formulario
     Column(
@@ -119,9 +119,9 @@ private fun NewAdvertForm(
         // Campo asignatura
         InputField(
             label = stringResource(R.string.subject_label),
-            value = newAdvertDetails.subject,
-            onValueChange = { onFieldChanged(newAdvertDetails.copy(subject = it.replace("\n", ""))) },
-            isValid = newAdvertDetails.subject.trim().isEmpty() || ValidationUtils.isSubjectValid(newAdvertDetails.subject),
+            value = advertDetails.subject,
+            onValueChange = { onFieldChanged(advertDetails.copy(subject = it.replace("\n", ""))) },
+            isValid = advertDetails.subject.trim().isEmpty() || ValidationUtils.isSubjectValid(advertDetails.subject),
             errorMessage = stringResource(id = R.string.invalid_subject_label),
             leadingIcon = Icons.Outlined.MenuBook,
             keyboardType = KeyboardType.Text
@@ -130,8 +130,8 @@ private fun NewAdvertForm(
         // Campo precio
         InputField(
             label = stringResource(R.string.price_label),
-            value =  if(newAdvertDetails.price == 0) "" else newAdvertDetails.price.toString(),
-            onValueChange = { onFieldChanged(newAdvertDetails.copy(price = it.toIntOrNull() ?: 0)) },
+            value =  if(advertDetails.price == 0) "" else advertDetails.price.toString(),
+            onValueChange = { onFieldChanged(advertDetails.copy(price = it.replace("\n", "").toIntOrNull() ?: 0)) },
             leadingIcon = Icons.Filled.EuroSymbol,
             keyboardType = KeyboardType.Number
         )
@@ -144,9 +144,9 @@ private fun NewAdvertForm(
                 ClassMode.Online to stringResource(id = R.string.online_label),
                 ClassMode.Hibrido to stringResource(id = R.string.hibrido_label)
             ),
-            selectedOptions = newAdvertDetails.classModes,
+            selectedOptions = advertDetails.classModes,
             onOptionSelected = {
-                onFieldChanged(newAdvertDetails.copy(classModes = it.toMutableSet()))
+                onFieldChanged(advertDetails.copy(classModes = it.toMutableSet()))
             }
         )
 
@@ -161,9 +161,9 @@ private fun NewAdvertForm(
                 Level.Universidad to stringResource(id = R.string.universidad_label),
                 Level.Adultos to stringResource(id = R.string.adultos_label)
             ),
-            selectedOptions = newAdvertDetails.levels,
+            selectedOptions = advertDetails.levels,
             onOptionSelected = {
-                onFieldChanged(newAdvertDetails.copy(levels = it.toMutableSet()))
+                onFieldChanged(advertDetails.copy(levels = it.toMutableSet()))
             }
         )
         Spacer(modifier = Modifier.height(10.dp))
@@ -182,9 +182,9 @@ private fun NewAdvertForm(
         // Campo descripción
         InputField(
             label = stringResource(R.string.description_label),
-            value =  newAdvertDetails.description,
-            onValueChange = { onFieldChanged(newAdvertDetails.copy(description = it.replace("\n", ""))) },
-            isValid = newAdvertDetails.description.trim().isEmpty() || ValidationUtils.isDescriptionValid(newAdvertDetails.description),
+            value =  advertDetails.description,
+            onValueChange = { onFieldChanged(advertDetails.copy(description = it.replace("\n", ""))) },
+            isValid = advertDetails.description.trim().isEmpty() || ValidationUtils.isDescriptionValid(advertDetails.description),
             errorMessage = stringResource(id = R.string.invalid_description_label),
             isSingleLine = false,
             leadingIcon = Icons.Default.Description,
@@ -197,7 +197,7 @@ private fun NewAdvertForm(
             label = stringResource(R.string.save_advert_label),
             buttonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
-            isEnabled = newAdvertUiState.isEntryValid,
+            isEnabled = advertUiState.isEntryValid,
             onClick = onSaveClick
         )
         Spacer(modifier = Modifier.height(100.dp))
@@ -212,6 +212,10 @@ fun NewAdvertScreenPreview() {
             .verticalScroll(rememberScrollState())
     ) {
         NewAdvertHeader()
-        NewAdvertForm()
+        AdvertForm(
+            advertUiState = AdvertUiState(),
+            onFieldChanged = {},
+            onSaveClick = {}
+        )
     }
 }

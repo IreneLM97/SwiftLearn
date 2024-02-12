@@ -53,7 +53,6 @@
     <string name="yes">SI</string>
 
     <!-- Label de formulario nuevo anuncio -->
-    <string name="new_advert_label">Nuevo anuncio</string>
     <string name="subject_label">Asignatura</string>
     <string name="price_label">Precio por hora (euros)</string>
     <string name="presencial_label">Presencial</string>
@@ -91,7 +90,7 @@
     <string name="description_book_icon">Imagen de libro</string>
 
     <!-- Label para lista de anuncios y anuncios favoritos -->
-    <string name="search_label">¿Qué quieres buscar?</string>
+    <string name="search_label">¿Qué asignatura quieres buscar?</string>
     <string name="icon_euro_hour">%1$s €/h</string>
     <string name="direction_professor">%1$s, %2$s</string>
     <string name="advert_summary">Asignatura: %1$s \nPrecio: %2$s \nProfesor: %3$s \nTeléfono: %4$s \nEmail: %5$s</string>
@@ -106,8 +105,12 @@
     <string name="levels_advert">¿A qué niveles puedo dar clase?</string>
     <string name="request_class_label">Solicitar clase</string>
 
+    <!-- Label para pantallas de profesor -->
+    <string name="my_adverts_label">Mis anuncios</string>
+    <string name="new_advert_label">Nuevo anuncio</string>
+    <string name="edit_advert_label">Editar anuncio</string>
+
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
-    <string name="my_adverts_label">Mis anuncios</string>
 </resources>

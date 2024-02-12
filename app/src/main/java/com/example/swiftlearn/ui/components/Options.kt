@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -130,20 +131,25 @@ fun <T : Enum<T>> MultiOptionsSection(
     selectedOptions: Set<T>,
     onOptionSelected: (Set<T>) -> Unit = {}
 ) {
-    val selectedModes = remember { mutableStateOf(selectedOptions) }
+    val selectedOptionsState = remember { mutableStateOf(selectedOptions) }
+
+    // Observamos el valor de selectedOptions y actualizamos selectedOptionsState
+    LaunchedEffect(selectedOptions) {
+        selectedOptionsState.value = selectedOptions
+    }
 
     MultiOptions(
         title = title,
         options = options,
-        selectedOptions = selectedModes.value,
+        selectedOptions = selectedOptionsState.value,
         onOptionSelected = { selectedMode ->
-            val updatedModes = selectedModes.value.toMutableSet()
+            val updatedModes = selectedOptionsState.value.toMutableSet()
             if (selectedMode in updatedModes) {
                 updatedModes.remove(selectedMode)
             } else {
                 updatedModes.add(selectedMode)
             }
-            selectedModes.value = updatedModes
+            selectedOptionsState.value = updatedModes
 
             onOptionSelected(updatedModes)
         }

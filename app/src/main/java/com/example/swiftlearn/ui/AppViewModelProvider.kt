@@ -2,6 +2,7 @@ package com.example.swiftlearn.ui
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -9,6 +10,7 @@ import com.example.swiftlearn.SwiftLearnApplication
 import com.example.swiftlearn.ui.screens.student.adverts.AdvertsListViewModel
 import com.example.swiftlearn.ui.screens.home.HomeViewModel
 import com.example.swiftlearn.ui.screens.login.LoginViewModel
+import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertViewModel
 import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsListViewModel
 import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertViewModel
 import com.example.swiftlearn.ui.screens.profile.ProfileViewModel
@@ -73,6 +75,14 @@ object AppViewModelProvider {
         initializer {
             NewAdvertViewModel(
                 userRepository = swiftLearnApplication().container.userRepository,
+                advertRepository = swiftLearnApplication().container.advertRepository
+            )
+        }
+
+        // Inicialización para EditAdvertViewModel
+        initializer {
+            EditAdvertViewModel(
+                savedStateHandle = this.createSavedStateHandle(),
                 advertRepository = swiftLearnApplication().container.advertRepository
             )
         }
