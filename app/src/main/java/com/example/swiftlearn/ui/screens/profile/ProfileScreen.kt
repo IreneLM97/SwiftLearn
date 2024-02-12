@@ -1,7 +1,6 @@
 package com.example.swiftlearn.ui.screens.profile
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,19 +9,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,6 +41,7 @@ import com.example.swiftlearn.R
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.ButtonWithTextAndImage
+import com.example.swiftlearn.ui.components.DeleteConfirmationModal
 import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 
@@ -59,7 +55,7 @@ fun ProfileScreen(
     val profileUiState = viewModel.profileUiState.collectAsState().value
 
     // Mostramos el icono cargando si está cargando
-    if(profileUiState.loadingState) {
+    if(profileUiState.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -219,6 +215,8 @@ private fun ProfileForm(
         // Mostramos el modal de confirmación si showDialog es true
         if (showDialog) {
             DeleteConfirmationModal(
+                title = stringResource(id = R.string.delete_account_title),
+                textMessage = stringResource(id = R.string.sure_delete_account_label),
                 onDeleteConfirm = {
                     // Si el usuario confirma, se llama a la función onDeleteClick
                     onDeleteClick()
@@ -232,51 +230,6 @@ private fun ProfileForm(
             )
         }
     }
-}
-
-@Composable
-fun DeleteConfirmationModal(
-    onDeleteConfirm: () -> Unit,
-    onDeleteCancel: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = {},
-        title = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(R.string.delete_modal_label),
-                    fontSize = 20.sp
-                )
-            }
-        },
-        text = {
-            Text(text = stringResource(R.string.sure_label), fontSize = 15.sp)
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDeleteCancel,
-                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_gray))
-            ) {
-                Text(text = stringResource(R.string.no), color = Color.White)
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = onDeleteConfirm,
-                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_red))
-            ) {
-                Text(text = stringResource(R.string.yes), color = Color.White)
-            }
-        },
-        containerColor = Color.White,
-        titleContentColor = Color.Black,
-        textContentColor = Color.Black,
-        modifier = Modifier
-            .border(3.dp, colorResource(id = R.color.my_red), shape = RoundedCornerShape(20.dp))
-    )
 }
 
 @Preview

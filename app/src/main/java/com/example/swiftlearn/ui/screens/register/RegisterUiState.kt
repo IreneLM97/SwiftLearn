@@ -10,7 +10,7 @@ data class RegisterUiState(
     val registerDetails: RegisterDetails = RegisterDetails(),
     val isEntryValid: Boolean = false,
     val errorMessage: String? = null,
-    val loadingState: Boolean = false
+    val isLoading: Boolean = false
 )
 
 data class RegisterDetails(

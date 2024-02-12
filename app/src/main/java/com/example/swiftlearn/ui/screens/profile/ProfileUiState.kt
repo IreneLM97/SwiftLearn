@@ -9,7 +9,7 @@ data class ProfileUiState(
     val user: User = User(),
     val profileDetails: ProfileDetails = ProfileDetails(),
     val isEntryValid: Boolean = false,
-    val loadingState: Boolean = false
+    val isLoading: Boolean = false
 )
 
 data class ProfileDetails(

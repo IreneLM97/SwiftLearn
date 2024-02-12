@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.components
+package com.example.swiftlearn.ui.screens.student.adverts
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -59,7 +59,10 @@ import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.ClassMode
 import com.example.swiftlearn.model.Level
 import com.example.swiftlearn.model.User
-import com.example.swiftlearn.ui.screens.student.SessionUiState
+import com.example.swiftlearn.ui.components.ButtonWithText
+import com.example.swiftlearn.ui.components.MultiOptionsSectionImmutable
+import com.example.swiftlearn.ui.components.SearchTextField
+import com.example.swiftlearn.ui.screens.student.favorites.FavoritesListUiState
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 
 /**
@@ -95,17 +98,12 @@ fun AdvertsListBar(
  * Función que representa la lista de anuncios.
  *
  * @param modifier Modificador opcional para aplicar al diseño de la lista.
- * @param advertsList Lista de anuncios a mostrar.
  * @param onAdvertClick Función lambda que se invoca cuando se hace click en un anuncio.
  * @param contentPadding Espaciado alrededor del contenido de la lista.
  * @param contentType Indica tipo de contenido de la pantalla (ListOnly o ListAndDetail).
  */
 @Composable
 fun AdvertsList(
-    sessionUiState: SessionUiState,
-    searchQuery: String,
-    currentAdvert: Advert,
-    advertsList: List<Advert>,
     notFoundMessage: String,
     onQueryChange: (String) -> Unit,
     onAdvertClick: (Advert) -> Unit,
@@ -113,7 +111,9 @@ fun AdvertsList(
     onSendButtonClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    contentType: AdvertsContentType = AdvertsContentType.ListOnly
+    contentType: AdvertsContentType = AdvertsContentType.ListOnly,
+    advertsListUiState: AdvertsListUiState? = null,
+    favoritesListUiState: FavoritesListUiState? = null
 ) {
     Column(
         modifier = modifier
@@ -121,6 +121,7 @@ fun AdvertsList(
         Spacer(modifier = modifier.height(20.dp))
 
         // Mostramos campo de búsqueda de clases en función de la asignatura
+        val searchQuery = advertsListUiState?.searchQuery ?: favoritesListUiState?.searchQuery ?: ""
         SearchTextField(
             query = searchQuery,
             onQueryChange = onQueryChange
@@ -128,6 +129,7 @@ fun AdvertsList(
         Spacer(modifier = modifier.height(10.dp))
 
         // Filtramos la lista de anuncios por la asignatura del anuncio
+        val advertsList = advertsListUiState?.advertsList ?: favoritesListUiState?.advertsList ?: emptyList()
         val filteredAdverts = if (searchQuery.isNotEmpty()) {
             advertsList.filter { it.subject.contains(searchQuery, ignoreCase = true) }
         } else {
@@ -141,8 +143,9 @@ fun AdvertsList(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(horizontal = dimensionResource(R.dimen.padding_medium))
-                    .padding(top = dimensionResource(R.dimen.padding_medium))
+                    .padding(top = dimensionResource(R.dimen.padding_small))
                     .fillMaxWidth()
+                    .height(670.dp)
             )
         } else {
             // Mostrar la lista de anuncios filtrada
@@ -152,19 +155,23 @@ fun AdvertsList(
                 modifier = Modifier
                     .padding(top = dimensionResource(R.dimen.padding_small))
                     .padding(bottom = 62.dp)
-                    .fillMaxHeight()
+                    .height(620.dp)
             ) {
                 items(filteredAdverts) { advert ->
                     // Obtener el profesor correspondiente al anuncio
-                    val professor = sessionUiState.professorsList.find { it._id == advert.profId }
+                    val professorsList = advertsListUiState?.professorsList ?: favoritesListUiState?.professorsList ?: emptyList()
+                    val professor = professorsList.find { it._id == advert.profId }
 
                     // Comprobamos si es favorito o no
-                    val isFavorite = sessionUiState.favoritesList.any {
-                        it.userId == sessionUiState.user._id && it.advertId == advert._id
+                    val favoritesList = advertsListUiState?.favoritesList ?: favoritesListUiState?.favoritesList ?: emptyList()
+                    val user = advertsListUiState?.user ?: favoritesListUiState?.user ?: User()
+                    val isFavorite = favoritesList.any {
+                        it.userId == user._id && it.advertId == advert._id
                     }
 
                     // Comprobamos si está seleccionado el item y estamos en vista ListAndDetail
                     // para personalizar el fondo del item cuando esté seleccionado
+                    val currentAdvert = advertsListUiState?.currentAdvert ?: favoritesListUiState?.currentAdvert ?: Advert()
                     val isSelected = currentAdvert._id == advert._id && contentType == AdvertsContentType.ListAndDetail
 
                     professor?.let {
@@ -524,7 +531,6 @@ fun AdvertDetail(
  * Función que representa la pantalla de lista de anuncios y detalles de un anuncio.
  *
  * @param modifier Modificador opcional para aplicar al diseño.
- * @param advertsList Lista de anuncios a mostrar.
  * @param onAdvertClick Función lambda que se invoca cuando se hace click en un anuncio de la lista.
  * @param onFavoriteButtonClick Función lambda que se ejecuta cuando se marca como favorito un anuncio.
  * @param onSendButtonClick Función lambda que se invoca cuando se hace click en el botón de enviar.
@@ -533,10 +539,6 @@ fun AdvertDetail(
  */
 @Composable
 fun AdvertsListAndDetail(
-    sessionUiState: SessionUiState,
-    searchQuery: String,
-    currentAdvert: Advert,
-    advertsList: List<Advert>,
     notFoundMessage: String,
     onQueryChange: (String) -> Unit,
     onAdvertClick: (Advert) -> Unit,
@@ -544,17 +546,17 @@ fun AdvertsListAndDetail(
     onSendButtonClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    contentType: AdvertsContentType = AdvertsContentType.ListOnly
+    contentType: AdvertsContentType = AdvertsContentType.ListOnly,
+    advertsListUiState: AdvertsListUiState? = null,
+    favoritesListUiState: FavoritesListUiState? = null
 ) {
     Row(
         modifier = modifier
     ) {
         // Representa la lista de anuncios
         AdvertsList(
-            sessionUiState = sessionUiState,
-            searchQuery = searchQuery,
-            currentAdvert = currentAdvert,
-            advertsList = advertsList,
+            advertsListUiState = advertsListUiState,
+            favoritesListUiState = favoritesListUiState,
             notFoundMessage = notFoundMessage,
             onQueryChange = onQueryChange,
             onAdvertClick = onAdvertClick,
@@ -568,7 +570,9 @@ fun AdvertsListAndDetail(
         )
 
         // Obtener el usuario correspondiente al anuncio
-        val professor = sessionUiState.professorsList.find { it._id == currentAdvert.profId }
+        val professorsList = advertsListUiState?.professorsList ?: favoritesListUiState?.professorsList ?: emptyList()
+        val currentAdvert = advertsListUiState?.currentAdvert ?: favoritesListUiState?.currentAdvert ?: Advert()
+        val professor = professorsList.find { it._id == currentAdvert.profId }
         professor?.let {
             // Representa los detalles de un anuncio específico
             AdvertDetail(
@@ -584,7 +588,7 @@ fun AdvertsListAndDetail(
 }
 
 @Composable
-private fun IconWithText(
+fun IconWithText(
     icon: ImageVector,
     text: String,
     iconSize: Dp,

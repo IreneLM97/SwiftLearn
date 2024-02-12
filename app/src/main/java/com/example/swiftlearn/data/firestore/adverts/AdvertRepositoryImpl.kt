@@ -26,16 +26,36 @@ class AdvertRepositoryImpl: AdvertRepository {
         }
     }
 
-    override suspend fun getAllAdvertsByProfessorId(profId: String): List<Advert> {
-        val query = advertsCollection.whereEqualTo("profId", profId).get().await()
-        return query.documents.mapNotNull { document ->
-            document.toObject(Advert::class.java)
+    override fun getAllAdvertsByProfId(profId: String): Flow<List<Advert>> = callbackFlow {
+        val subscription = advertsCollection
+            .whereEqualTo("profId", profId)
+            .addSnapshotListener { querySnapshot, _ ->
+                val advertsList = mutableListOf<Advert>()
+                querySnapshot?.documents?.forEach { documentSnapshot ->
+                    val advert = documentSnapshot.toObject(Advert::class.java)
+                    advert?.let { advertsList.add(it) }
+                }
+                trySend(advertsList).isSuccess
+            }
+        awaitClose {
+            subscription.remove()
         }
     }
 
     override suspend fun getAdvertById(advertId: String): Advert? {
         val document = advertsCollection.document(advertId).get().await()
         return document.toObject(Advert::class.java)
+    }
+
+    override suspend fun getAdvertsIdsByProfId(profId: String): List<String> {
+        return try {
+            val query = advertsCollection.whereEqualTo("profId", profId).get().await()
+            query.documents.mapNotNull { document ->
+                document.id
+            }
+        } catch (e: Exception) {
+            emptyList() // Manejar el caso de error devolviendo una lista vacía
+        }
     }
 
     override suspend fun insertAdvert(advert: Advert) {
@@ -61,11 +81,7 @@ class AdvertRepositoryImpl: AdvertRepository {
     override suspend fun deleteAllAdvertsByProfId(profId: String) {
         try {
             val query = advertsCollection.whereEqualTo("profId", profId).get().await()
-            val batch = firestore.batch()
-            query.documents.forEach { document ->
-                batch.delete(document.reference)
-            }
-            batch.commit().await()
+            query.documents.forEach { advertsCollection.document(it.id).delete() }
         } catch (_: Exception) {}
     }
 }

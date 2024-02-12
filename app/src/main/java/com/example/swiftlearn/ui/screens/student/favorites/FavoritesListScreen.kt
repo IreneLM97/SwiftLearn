@@ -18,10 +18,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
 import com.example.swiftlearn.ui.AppViewModelProvider
-import com.example.swiftlearn.ui.components.AdvertDetail
-import com.example.swiftlearn.ui.components.AdvertsList
-import com.example.swiftlearn.ui.components.AdvertsListAndDetail
-import com.example.swiftlearn.ui.components.AdvertsListBar
+import com.example.swiftlearn.ui.screens.student.adverts.AdvertDetail
+import com.example.swiftlearn.ui.screens.student.adverts.AdvertsList
+import com.example.swiftlearn.ui.screens.student.adverts.AdvertsListAndDetail
+import com.example.swiftlearn.ui.screens.student.adverts.AdvertsListBar
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 
 /**
@@ -43,7 +43,6 @@ fun FavoritesListScreen(
 
     // Guardamos el estado de la pantalla de anuncios
     val favoritesListUiState = viewModel.favoritesListUiState.collectAsState().value
-    val sessionUiState = favoritesListUiState.sessionUiState
 
     // Determinamos el tipo de contenido en función del tamaño de la ventana
     val contentType = when (windowSize) {
@@ -79,10 +78,7 @@ fun FavoritesListScreen(
             if (contentType == AdvertsContentType.ListAndDetail) { // tamaño pantalla expanded
                 // Mostramos lista y detalles de anuncios
                 AdvertsListAndDetail(
-                    sessionUiState = sessionUiState,
-                    searchQuery = favoritesListUiState.searchQuery,
-                    currentAdvert = favoritesListUiState.currentAdvert,
-                    advertsList = favoritesListUiState.advertsList,
+                    favoritesListUiState = favoritesListUiState,
                     notFoundMessage =
                         if(favoritesListUiState.searchQuery == "") stringResource(id = R.string.not_found_favorites)
                         else stringResource(id = R.string.not_found_adverts),
@@ -105,10 +101,7 @@ fun FavoritesListScreen(
                 if (favoritesListUiState.isShowingListPage) {
                     // Mostramos lista de anuncios
                     AdvertsList(
-                        sessionUiState = sessionUiState,
-                        searchQuery = favoritesListUiState.searchQuery,
-                        currentAdvert = favoritesListUiState.currentAdvert,
-                        advertsList = favoritesListUiState.advertsList,
+                        favoritesListUiState = favoritesListUiState,
                         notFoundMessage =
                             if(favoritesListUiState.searchQuery == "") stringResource(id = R.string.not_found_favorites)
                             else stringResource(id = R.string.not_found_adverts),
@@ -130,7 +123,7 @@ fun FavoritesListScreen(
                     )
                 } else {
                     // Obtener el profesor correspondiente al anuncio
-                    val professor = sessionUiState.professorsList.find { it._id == favoritesListUiState.currentAdvert.profId }
+                    val professor = favoritesListUiState.professorsList.find { it._id == favoritesListUiState.currentAdvert.profId }
                     professor?.let {
                         // Mostramos detalles de un anuncio específico
                         AdvertDetail(

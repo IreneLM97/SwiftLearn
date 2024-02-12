@@ -2,13 +2,18 @@ package com.example.swiftlearn.ui.screens.student.adverts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.swiftlearn.data.firestore.adverts.AdvertRepository
 import com.example.swiftlearn.data.firestore.favorites.FavoriteRepository
+import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.Favorite
-import com.example.swiftlearn.ui.screens.student.SessionViewModel
+import com.example.swiftlearn.model.User
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -16,7 +21,8 @@ import kotlinx.coroutines.launch
  * [ViewModel] para gestionar el estado y la lógica de la pantalla de anuncios.
  */
 class AdvertsListViewModel(
-    val sessionViewModel: SessionViewModel,
+    val userRepository: UserRepository,
+    val advertRepository: AdvertRepository,
     val favoriteRepository: FavoriteRepository
 ): ViewModel() {
     // Estado de la interfaz de anuncios
@@ -27,26 +33,33 @@ class AdvertsListViewModel(
     init {
         viewModelScope.launch {
             try {
-                // Recolecta el estado de la sesión y actualiza el estado de pantalla
-                sessionViewModel.sessionUiState.collect { sessionUiState ->
+                // Obtenemos el usuario autentificado
+                val user = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
+                // Actualizar el estado de la pantalla con el usuario
+                _advertsListUiState.update { it.copy(user = user) }
+
+                // Combina los flujos de datos de profesores, anuncios y favoritos
+                combine(
+                    userRepository.getAllProfessors(),
+                    advertRepository.getAllAdverts(),
+                    favoriteRepository.getAllFavoritesByUser(user._id)
+                ) { professors, adverts, favorites  ->
+                    Triple(professors, adverts, favorites)
+                }.collect { (professors, adverts, favorites) ->
+                    // Actualiza el estado de sesión con los flujos obtenidos
                     _advertsListUiState.update {
-                        it.copy(sessionUiState = sessionUiState, advertsList = sessionUiState.advertsList)
+                        it.copy(
+                            professorsList = professors,
+                            advertsList = adverts,
+                            favoritesList = favorites,
+                            currentAdvert = adverts.firstOrNull() ?: Advert()
+                        )
                     }
 
-                    delay(600)
-                    updateLoadingState()
+                    delay(1000)
+                    _advertsListUiState.update { it.copy(isLoading = false) }
                 }
             } catch (_: Exception) {}
-        }
-    }
-
-    private fun updateLoadingState() {
-        // Actualizamos el estado con el primer elemento de la lista de anuncios seleccionado
-        _advertsListUiState.update {
-            it.copy(
-                currentAdvert = _advertsListUiState.value.advertsList.firstOrNull() ?: Advert(),
-                isLoading = false
-            )
         }
     }
 
@@ -76,7 +89,7 @@ class AdvertsListViewModel(
         viewModelScope.launch {
             // Si ese anuncio era favorito -> Se elimina el favorito
             // Si ese anuncio no era favorito (get devuelve null) -> Se inserta el favorito
-            val userId = _advertsListUiState.value.sessionUiState.user._id
+            val userId = _advertsListUiState.value.user._id
             favoriteRepository.getFavoriteByInfo(userId = userId, advertId = advert._id)?.let { favorite ->
                 favoriteRepository.deleteFavorite(favorite)
             } ?: favoriteRepository.insertFavorite(Favorite(userId = userId, advertId = advert._id))

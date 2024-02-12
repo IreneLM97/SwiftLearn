@@ -64,4 +64,21 @@ class FavoriteRepositoryImpl: FavoriteRepository {
             batch.commit().await()
         } catch (_: Exception) {}
     }
+
+    override suspend fun deleteAllFavoritesByAdvertId(advertId: String) {
+        try {
+            val query = favoritesCollection.whereEqualTo("advertId", advertId).get().await()
+            val batch = firestore.batch()
+            query.documents.forEach { document ->
+                batch.delete(document.reference)
+            }
+            batch.commit().await()
+        } catch (_: Exception) {}
+    }
+
+    override suspend fun deleteAllFavoritesByAdvertIds(advertsIds: List<String>) {
+        for (advertId in advertsIds) {
+            deleteAllFavoritesByAdvertId(advertId)
+        }
+    }
 }

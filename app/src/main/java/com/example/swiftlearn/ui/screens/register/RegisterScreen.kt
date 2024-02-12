@@ -80,7 +80,7 @@ fun RegisterScreen(
             )
         }
     ) { innerPadding ->
-        if(registerUiState.loadingState) {
+        if(registerUiState.isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center

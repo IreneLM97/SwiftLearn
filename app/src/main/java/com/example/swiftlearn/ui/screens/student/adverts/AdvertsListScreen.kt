@@ -21,11 +21,6 @@ import com.example.swiftlearn.R
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
-import com.example.swiftlearn.ui.components.AdvertDetail
-import com.example.swiftlearn.ui.components.AdvertsList
-import com.example.swiftlearn.ui.components.AdvertsListAndDetail
-import com.example.swiftlearn.ui.components.AdvertsListBar
-import com.example.swiftlearn.ui.screens.student.SessionUiState
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 
 /**
@@ -47,7 +42,6 @@ fun AdvertsListScreen(
 
     // Guardamos el estado de la pantalla de anuncios
     val advertsListUiState = viewModel.advertsListUiState.collectAsState().value
-    val sessionUiState = advertsListUiState.sessionUiState
 
     // Determinamos el tipo de contenido en función del tamaño de la ventana
     val contentType = when (windowSize) {
@@ -83,10 +77,7 @@ fun AdvertsListScreen(
             if (contentType == AdvertsContentType.ListAndDetail) { // tamaño pantalla expanded
                 // Mostramos lista y detalles de anuncios
                 AdvertsListAndDetail(
-                    sessionUiState = sessionUiState,
-                    searchQuery = advertsListUiState.searchQuery,
-                    currentAdvert = advertsListUiState.currentAdvert,
-                    advertsList = sessionUiState.advertsList,
+                    advertsListUiState = advertsListUiState,
                     notFoundMessage = stringResource(id = R.string.not_found_adverts),
                     onQueryChange = {
                         viewModel.onQueryChange(it)
@@ -107,10 +98,7 @@ fun AdvertsListScreen(
                 if (advertsListUiState.isShowingListPage) {
                     // Mostramos lista de anuncios
                     AdvertsList(
-                        sessionUiState = sessionUiState,
-                        searchQuery = advertsListUiState.searchQuery,
-                        currentAdvert = advertsListUiState.currentAdvert,
-                        advertsList = sessionUiState.advertsList,
+                        advertsListUiState = advertsListUiState,
                         notFoundMessage = stringResource(id = R.string.not_found_adverts),
                         onQueryChange = {
                             viewModel.onQueryChange(it)
@@ -130,7 +118,7 @@ fun AdvertsListScreen(
                     )
                 } else {
                     // Obtener el profesor correspondiente al anuncio
-                    val professor = sessionUiState.professorsList.find { it._id == advertsListUiState.currentAdvert.profId }
+                    val professor = advertsListUiState.professorsList.find { it._id == advertsListUiState.currentAdvert.profId }
                     professor?.let {
                         // Mostramos detalles de un anuncio específico
                         AdvertDetail(
@@ -154,22 +142,17 @@ fun AdvertsListScreen(
  */
 @Preview
 @Composable
-fun AdvertsListPreview() {
-    val advert = Advert(
-        profId = "1",
-        subject = "Matematicas",
-        price = 15,
-        classModes = "Presencial,Hibrido",
-        levels = "Bachillerato"
-    )
-
-    AdvertsList(
-        sessionUiState = SessionUiState(),
-        searchQuery = "",
-        currentAdvert = advert,
-        advertsList = listOf(advert),
-        notFoundMessage = "",
-        onQueryChange = {},
+fun AdvertItemPreview() {
+    AdvertItem(
+        professor = User(username = "Pepe"),
+        advert = Advert(
+            subject = "Lengua",
+            price = 12,
+            classModes = "Presencial,Hibrido",
+            levels = "Bachillerato"
+        ),
+        isFavorite = true,
+        isSelected = false,
         onAdvertClick = {},
         onFavoriteButtonClick = {},
         onSendButtonClick = {}

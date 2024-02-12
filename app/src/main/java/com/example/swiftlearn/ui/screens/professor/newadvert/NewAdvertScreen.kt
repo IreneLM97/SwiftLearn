@@ -50,7 +50,7 @@ fun NewAdvertScreen(
     val newAdvertUiState = viewModel.newAdvertUiState.collectAsState().value
 
     // Mostramos el icono cargando si está cargando
-    if(newAdvertUiState.loadingState) {
+    if(newAdvertUiState.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center

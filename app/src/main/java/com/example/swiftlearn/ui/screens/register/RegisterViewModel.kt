@@ -37,14 +37,14 @@ class RegisterViewModel(
         registerDetails: RegisterDetails,
         navigateToHome: () -> Unit = {}
     ) {
-        if(!_registerUiState.value.loadingState) {
+        if(!_registerUiState.value.isLoading) {
             // Actualizar estado de cargando a true
-            _registerUiState.update { it.copy(loadingState = true) }
+            _registerUiState.update { it.copy(isLoading = true) }
 
             auth.createUserWithEmailAndPassword(registerDetails.email, registerDetails.password)
                 .addOnCompleteListener {task ->
                     // Actualizar estado de cargando a false
-                    _registerUiState.update { it.copy(loadingState = false) }
+                    _registerUiState.update { it.copy(isLoading = false) }
 
                     if(task.isSuccessful) {
                         insertUser(registerDetails.toUser())

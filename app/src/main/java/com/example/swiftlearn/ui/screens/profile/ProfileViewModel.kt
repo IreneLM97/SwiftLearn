@@ -12,6 +12,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMap
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -55,35 +58,41 @@ class ProfileViewModel(
 
     fun updateUser(user: User) {
         // Actualizar estado de cargando a true
-        _profileUiState.update { it.copy(loadingState = true) }
+        _profileUiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
             userRepository.updateUser(user)
 
             // Actualizar estado de cargando a false
-            _profileUiState.update { it.copy(loadingState = false) }
+            _profileUiState.update { it.copy(isLoading = false) }
         }
     }
 
     fun deleteUser(user: User) {
         // Actualizar estado de cargando a true
-        _profileUiState.update { it.copy(loadingState = true) }
+        _profileUiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
-            // Eliminamos todos los anuncios de ese usuario
-            advertRepository.deleteAllAdvertsByProfId(user._id)
+            try {
+                // Eliminamos todos los favoritos asociados a los anuncios de este usuario
+                val advertsIds = advertRepository.getAdvertsIdsByProfId(user._id)
+                favoriteRepository.deleteAllFavoritesByAdvertIds(advertsIds)
 
-            // Eliminamos todos los favoritos de ese usuario
-            favoriteRepository.deleteAllFavoritesByUserId(user._id)
+                // Eliminamos todos los anuncios de ese usuario
+                advertRepository.deleteAllAdvertsByProfId(user._id)
 
-            // Eliminamos el usuario de la base de datos
-            userRepository.deleteUser(user)
+                // Eliminamos todos los favoritos de ese usuario
+                favoriteRepository.deleteAllFavoritesByUserId(user._id)
 
-            // Eliminamos el usuario de la autentificación
-            auth.currentUser?.delete()
+                // Eliminamos el usuario de la base de datos
+                userRepository.deleteUser(user)
 
-            // Actualizar estado de cargando a false
-            _profileUiState.update { it.copy(loadingState = false) }
+                // Eliminamos el usuario de la autentificación
+                auth.currentUser?.delete()
+
+                // Actualizar estado de cargando a false
+                _profileUiState.update { it.copy(isLoading = false) }
+            } catch (_: Exception) {}
         }
     }
 

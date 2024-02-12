@@ -39,7 +39,7 @@ fun HomeScreen(
 
     Scaffold(
         bottomBar = {
-            when (homeUiState.user.role) {
+            when (homeUiState.role) {
                 Role.Profesor -> NavInfProfessor(
                     navController = navController,
                     menuItems = professorMenuItems
@@ -52,10 +52,15 @@ fun HomeScreen(
             }
         },
         floatingActionButton = {
-            if (homeUiState.user.role == Role.Profesor) FloatingButtonNavigation(navController = navController)
+            if (homeUiState.role == Role.Profesor) FloatingButtonNavigation(navController = navController)
         },
-        isFloatingActionButtonDocked = homeUiState.user.role == Role.Profesor
+        isFloatingActionButtonDocked = homeUiState.role == Role.Profesor
     ) {
-        HomeNavigation(windowSize = windowSize, navController = navController, mainNavController = mainNavController)
+        HomeNavigation(
+            homeUiState = homeUiState,
+            windowSize = windowSize,
+            navController = navController,
+            mainNavController = mainNavController
+        )
     }
 }

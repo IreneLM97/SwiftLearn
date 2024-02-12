@@ -8,7 +8,7 @@ data class LoginUiState(
     val remember: Boolean = false,
     val isEntryValid: Boolean = false,
     val errorMessage: String? = null,
-    val loadingState: Boolean = false
+    val isLoading: Boolean = false
 )
 data class LoginDetails(
     val email: String = "",

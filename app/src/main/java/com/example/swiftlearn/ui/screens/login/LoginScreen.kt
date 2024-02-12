@@ -100,7 +100,7 @@ fun LoginScreen(
             )
         }
     ) { innerPadding ->
-        if(loginUiState.loadingState) {
+        if(loginUiState.isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center

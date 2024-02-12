@@ -34,7 +34,7 @@ class NewAdvertViewModel(
 
     fun insertAdvert(advert: Advert) {
         // Actualizar estado de cargando a true
-        _newAdvertUiState.update { it.copy(loadingState = true) }
+        _newAdvertUiState.update { it.copy(isLoading = true) }
 
         // Agregamos el anuncio a la colección
         viewModelScope.launch {
@@ -46,7 +46,7 @@ class NewAdvertViewModel(
             advertRepository.insertAdvert(advertWithProfId)
 
             // Actualizar estado de cargando a false
-            _newAdvertUiState.update { it.copy(loadingState = false) }
+            _newAdvertUiState.update { it.copy(isLoading = false) }
         }
     }
 

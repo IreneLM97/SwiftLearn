@@ -3,7 +3,7 @@ package com.example.swiftlearn.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.data.firestore.users.UserRepository
-import com.example.swiftlearn.model.User
+import com.example.swiftlearn.model.Role
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -30,10 +30,10 @@ class HomeViewModel(
         viewModelScope.launch {
             try {
                 // Obtener los datos del usuario desde el repositorio
-                val user = userRepository.getUserByAuthId(auth.currentUser?.uid.toString())
+                val role = userRepository.getUserByAuthId(auth.currentUser?.uid.toString())?.role
 
                 // Actualizar el estado de la pantalla con los datos del usuario obtenidos
-                _homeUiState.update { it.copy(user = user ?: User()) }
+                _homeUiState.update { it.copy(role = role ?: Role.None) }
             } catch (_: Exception) {}
         }
     }

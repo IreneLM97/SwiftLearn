@@ -93,14 +93,14 @@ class LoginViewModel(
         navigateToHome: () -> Unit = {}
     ) {
         // Actualizar estado de cargando a true
-        _loginUiState.update { it.copy(loadingState = true) }
+        _loginUiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
             try{
                 auth.signInWithEmailAndPassword(loginDetails.email, loginDetails.password)
                     .addOnCompleteListener{task ->
                         // Actualizar estado de cargando a false
-                        _loginUiState.update { it.copy(loadingState = false) }
+                        _loginUiState.update { it.copy(isLoading = false) }
 
                         if(task.isSuccessful) {
                             navigateToHome()

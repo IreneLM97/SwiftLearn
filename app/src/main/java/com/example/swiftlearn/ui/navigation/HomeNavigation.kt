@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_EXPRESSION")
+
 package com.example.swiftlearn.ui.navigation
 
 import android.content.Context
@@ -10,18 +12,22 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.swiftlearn.R
+import com.example.swiftlearn.model.Role
 import com.example.swiftlearn.ui.screens.student.adverts.AdvertsListScreen
 import com.example.swiftlearn.ui.screens.home.HomeDestination
+import com.example.swiftlearn.ui.screens.home.HomeUiState
 import com.example.swiftlearn.ui.screens.home.MenuItems
 import com.example.swiftlearn.ui.screens.home.professor.ClassesScreen
 import com.example.swiftlearn.ui.screens.home.professor.MapScreen
 import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertScreen
 import com.example.swiftlearn.ui.screens.login.LoginDestination
+import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsListScreen
 import com.example.swiftlearn.ui.screens.profile.ProfileScreen
 import com.example.swiftlearn.ui.screens.student.favorites.FavoritesListScreen
 
 @Composable
 fun HomeNavigation(
+    homeUiState: HomeUiState,
     windowSize: WindowWidthSizeClass,
     navController: NavHostController,
     mainNavController: NavHostController,
@@ -35,10 +41,22 @@ fun HomeNavigation(
         modifier = modifier
     ) {
         composable(route = MenuItems.AdvertsItem.route) {
-            AdvertsListScreen(
-                windowSize = windowSize,
-                onSendButtonClick = { shareAdvert(context, it) }
-            )
+            when(homeUiState.role) {
+                Role.Profesor -> {
+                    MyAdvertsListScreen(
+                        navigateToEditAdvert = {},
+                        onSendButtonClick = { sendAdvert(context, it) }
+                    )
+                }
+                Role.Alumno -> {
+                    AdvertsListScreen(
+                        windowSize = windowSize,
+                        onSendButtonClick = { sendAdvert(context, it) }
+                    )
+                }
+                Role.None -> null
+            }
+
         }
         composable(route = MenuItems.ClassesItem.route) {
             ClassesScreen()
@@ -46,7 +64,7 @@ fun HomeNavigation(
         composable(route = MenuItems.FavoritesItem.route) {
             FavoritesListScreen(
                 windowSize = windowSize,
-                onSendButtonClick = { shareAdvert(context, it) }
+                onSendButtonClick = { sendAdvert(context, it) }
             )
         }
         composable(route = MenuItems.MapItem.route) {
@@ -79,7 +97,7 @@ fun navigateToLogin(mainNavController: NavHostController) {
  * @param context Contexto de la aplicación.
  * @param summary Resumen del anuncio que se quiere compartir.
  */
-private fun shareAdvert(
+private fun sendAdvert(
     context: Context,
     summary: String
 ) {

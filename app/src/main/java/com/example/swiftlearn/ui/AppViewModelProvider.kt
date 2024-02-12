@@ -9,10 +9,10 @@ import com.example.swiftlearn.SwiftLearnApplication
 import com.example.swiftlearn.ui.screens.student.adverts.AdvertsListViewModel
 import com.example.swiftlearn.ui.screens.home.HomeViewModel
 import com.example.swiftlearn.ui.screens.login.LoginViewModel
+import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsListViewModel
 import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertViewModel
 import com.example.swiftlearn.ui.screens.profile.ProfileViewModel
 import com.example.swiftlearn.ui.screens.register.RegisterViewModel
-import com.example.swiftlearn.ui.screens.student.SessionViewModel
 import com.example.swiftlearn.ui.screens.student.favorites.FavoritesListViewModel
 
 /**
@@ -42,9 +42,9 @@ object AppViewModelProvider {
             )
         }
 
-        // Inicialización para SessionViewModel
+        // Inicialización para MyAdvertsListViewModel
         initializer {
-            SessionViewModel(
+            MyAdvertsListViewModel(
                 userRepository = swiftLearnApplication().container.userRepository,
                 advertRepository = swiftLearnApplication().container.advertRepository,
                 favoriteRepository = swiftLearnApplication().container.favoriteRepository
@@ -54,7 +54,8 @@ object AppViewModelProvider {
         // Inicialización para AdvertsListViewModel
         initializer {
             AdvertsListViewModel(
-                sessionViewModel = swiftLearnApplication().container.sessionViewModel,
+                userRepository = swiftLearnApplication().container.userRepository,
+                advertRepository = swiftLearnApplication().container.advertRepository,
                 favoriteRepository = swiftLearnApplication().container.favoriteRepository
             )
         }
@@ -62,7 +63,8 @@ object AppViewModelProvider {
         // Inicialización para FavoritesListViewModel
         initializer {
             FavoritesListViewModel(
-                sessionViewModel = swiftLearnApplication().container.sessionViewModel,
+                userRepository = swiftLearnApplication().container.userRepository,
+                advertRepository = swiftLearnApplication().container.advertRepository,
                 favoriteRepository = swiftLearnApplication().container.favoriteRepository
             )
         }

@@ -10,7 +10,7 @@ import com.example.swiftlearn.model.Level
 data class NewAdvertUiState(
     val newAdvertDetails: NewAdvertDetails = NewAdvertDetails(),
     val isEntryValid: Boolean = false,
-    val loadingState: Boolean = false
+    val isLoading: Boolean = false
 )
 
 data class NewAdvertDetails(

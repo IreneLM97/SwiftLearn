@@ -44,9 +44,11 @@
     <string name="delete_account_label">Eliminar cuenta</string>
     <string name="sign_out_label">Cerrar sesión</string>
 
-    <!-- Label del modal de confirmación de eliminar -->
-    <string name="delete_modal_label">Eliminar cuenta</string>
-    <string name="sure_label">¿Estás seguro de que deseas eliminar tu cuenta?</string>
+    <!-- Label del modal de confirmación de eliminar cuenta y eliminar anuncio -->
+    <string name="delete_account_title">Eliminar cuenta</string>
+    <string name="sure_delete_account_label">¿Estás seguro de que deseas eliminar tu cuenta?</string>
+    <string name="delete_advert_title">Eliminar anuncio</string>
+    <string name="sure_delete_advert_label">¿Estás seguro de que deseas eliminar este anuncio?</string>
     <string name="no">NO</string>
     <string name="yes">SI</string>
 
@@ -95,6 +97,7 @@
     <string name="advert_summary">Asignatura: %1$s \nPrecio: %2$s \nProfesor: %3$s \nTeléfono: %4$s \nEmail: %5$s</string>
     <string name="not_found_adverts">No se han encontrado anuncios con esa búsqueda.</string>
     <string name="not_found_favorites">Aún no has marcado ningún favorito.</string>
+    <string name="not_adverts_yet">Aún no has publicado ningún anuncio.</string>
 
     <!-- Label para pantalla de detalles del anuncio -->
     <string name="info_contact_label">Información de contacto</string>
@@ -106,4 +109,5 @@
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
+    <string name="my_adverts_label">Mis anuncios</string>
 </resources>
