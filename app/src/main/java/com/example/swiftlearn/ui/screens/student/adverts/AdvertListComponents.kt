@@ -38,6 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,7 +66,7 @@ import com.example.swiftlearn.model.Level
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.MultiOptionsSectionImmutable
-import com.example.swiftlearn.ui.components.RequestClassModal
+import com.example.swiftlearn.ui.components.RequestClassDialog
 import com.example.swiftlearn.ui.components.SearchTextField
 import com.example.swiftlearn.ui.screens.student.favorites.FavoritesListUiState
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
@@ -363,6 +364,7 @@ fun AdvertItem(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun AdvertDetail(
+    windowSize: WindowWidthSizeClass,
     advert: Advert,
     professor: User,
     onFavoriteButtonClick: (Advert) -> Unit,
@@ -388,9 +390,8 @@ fun AdvertDetail(
 
     // Mostramos el modal de solicitar clase si showDialog es true
     if (showDialog) {
-        RequestClassModal(
-            advert = advert,
-            professor = professor,
+        RequestClassDialog (
+            windowSize = windowSize,
             onRequestConfirm = { },
             onRequestCancel = {
                 showDialog = false
@@ -560,6 +561,7 @@ fun AdvertDetail(
  */
 @Composable
 fun AdvertsListAndDetail(
+    windowSize: WindowWidthSizeClass,
     notFoundMessage: String,
     onQueryChange: (String) -> Unit,
     onAdvertClick: (Advert) -> Unit,
@@ -597,6 +599,7 @@ fun AdvertsListAndDetail(
         professor?.let {
             // Representa los detalles de un anuncio específico
             AdvertDetail(
+                windowSize = windowSize,
                 advert = currentAdvert,
                 professor = professor,
                 onFavoriteButtonClick = onFavoriteButtonClick,
@@ -644,7 +647,7 @@ fun AdvertItemPreview() {
         advert = Advert(
             subject = "Lengua",
             price = 12,
-            classModes = "Presencial,Hibrido",
+            classModes = "Presencial, Hibrido",
             levels = "Bachillerato"
         ),
         isFavorite = true,
@@ -659,10 +662,11 @@ fun AdvertItemPreview() {
 @Composable
 fun AdvertDetailPreview() {
     AdvertDetail(
+        windowSize = WindowWidthSizeClass.Medium,
         advert = Advert(
             subject = "Lengua",
             price = 12,
-            classModes = "Presencial,Hibrido",
+            classModes = "Presencial, Hibrido",
             levels = "Bachillerato"
         ),
         professor = User(

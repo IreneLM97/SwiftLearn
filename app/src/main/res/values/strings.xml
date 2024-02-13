@@ -106,10 +106,22 @@
     <string name="request_button_label">Solicitar clase</string>
 
     <!-- Label para modal de solicitar clase -->
-    <string name="request_class_title">Solicitar clase</string>
     <string name="request_class_label">Indica el día y la hora a la que deseas solicitar la clase.</string>
     <string name="cancel">CANCELAR</string>
     <string name="request">SOLICITAR</string>
+    <string name="next_month_description">Siguiente mes</string>
+    <string name="previous_month_description">Mes anterior</string>
+    <string name="mmmm_yyyy">MMMM yyyy</string>
+    <string name="monday_initial">L</string>
+    <string name="tuesday_initial">M</string>
+    <string name="wednesday_initial">X</string>
+    <string name="thursday_initial">J</string>
+    <string name="friday_initial">V</string>
+    <string name="saturday_initial">S</string>
+    <string name="sunday_initial">D</string>
+    <string name="hour_separator">:</string>
+    <string name="date_request_class">Fecha de la clase: %1$s</string>
+    <string name="hour_request_class">Hora de la clase: %1$s:%2$s</string>
 
     <!-- Label para pantallas de profesor -->
     <string name="my_adverts_label">Mis anuncios</string>

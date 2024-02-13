@@ -74,6 +74,7 @@ fun AdvertsListScreen(
             if (contentType == AdvertsContentType.ListAndDetail) { // tamaño pantalla expanded
                 // Mostramos lista y detalles de anuncios
                 AdvertsListAndDetail(
+                    windowSize = windowSize,
                     advertsListUiState = advertsListUiState,
                     notFoundMessage = stringResource(id = R.string.not_found_adverts),
                     onQueryChange = {
@@ -119,6 +120,7 @@ fun AdvertsListScreen(
                     professor?.let {
                         // Mostramos detalles de un anuncio específico
                         AdvertDetail(
+                            windowSize = windowSize,
                             advert = advertsListUiState.currentAdvert,
                             professor = professor,
                             onFavoriteButtonClick = {

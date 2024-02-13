@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -27,28 +28,33 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
-import com.example.swiftlearn.model.Advert
-import com.example.swiftlearn.model.User
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 @Composable
-fun DeleteConfirmationModal(
+fun DeleteConfirmationDialog(
     title: String,
     textMessage: String,
     onDeleteConfirm: () -> Unit,
@@ -92,19 +98,42 @@ fun DeleteConfirmationModal(
 }
 
 @Composable
-fun RequestClassModal(
-    advert: Advert,
-    professor: User?,
+fun RequestClassDialog(
+    windowSize: WindowWidthSizeClass,
     onRequestConfirm: () -> Unit,
     onRequestCancel: () -> Unit
 ) {
-    val selectedDate = remember { mutableStateOf(Calendar.getInstance()) }
-    val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+    // Variable de estado para la fecha seleccionada
+    val selectedDate = rememberSaveable { mutableStateOf(Calendar.getInstance()) }
+    // Variable de estado para el formato de fecha
+    val dateFormat = rememberSaveable { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
+    // Variables de estado para la hora seleccionada
+    val selectedHour = remember { mutableStateOf(8) }
+    val selectedMinute = remember { mutableStateOf(0) }
+
+    // Determinamos el tamaño de las celdas del calendario en función del tamaño de la pantalla
+    val cellSize = when (windowSize) {
+        WindowWidthSizeClass.Compact, WindowWidthSizeClass.Medium -> 30.dp
+        WindowWidthSizeClass.Expanded -> 60.dp
+        else -> 30.dp
+    }
+
+    // Determinamos el tamaño del texto en función del tamaño de la pantalla
+    val fontSize = when (windowSize) {
+        WindowWidthSizeClass.Compact, WindowWidthSizeClass.Medium -> 14.sp
+        WindowWidthSizeClass.Expanded -> 20.sp
+        else -> 14.sp
+    }
+
+    // Creamos el diálogo
     AlertDialog(
-        modifier = Modifier.fillMaxWidth().padding(top = 10.dp, bottom = 10.dp),
         onDismissRequest = {},
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp, bottom = 10.dp),
         text = {
+            // Columna para organizar el contenido del diálogo verticalmente
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,33 +141,18 @@ fun RequestClassModal(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-                Text(text = stringResource(R.string.request_button_label), fontSize = 20.sp)
-                Spacer(modifier = Modifier.height(8.dp))
+                // Mensaje de solicitar clase
                 Text(
-                    text = "Profesor: ${professor?.username ?: ""}",
-                    fontSize = 16.sp,
-                    color = Color.Gray
+                    text = stringResource(R.string.request_class_label),
+                    fontSize = fontSize,
+                    textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Asignatura: ${advert.subject}",
-                    fontSize = 16.sp,
-                    color = Color.Gray
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Precio: ${advert.price}€",
-                    fontSize = 16.sp,
-                    color = Color.Gray
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = selectedDate.value?.let { "Fecha seleccionada: ${dateFormat.format(it.time)}" }
-                        ?: "Seleccione una fecha",
-                    fontSize = 16.sp,
-                    color = Color.Gray
-                )
+                Spacer(modifier = Modifier.height(15.dp))
+
+                // Mostramos el calendario
                 CalendarComponent(
+                    cellSize = cellSize,
+                    fontSize = fontSize,
                     selectedDate = selectedDate.value,
                     onDateSelected = { newDate ->
                         selectedDate.value = newDate },
@@ -147,6 +161,35 @@ fun RequestClassModal(
                         newCalendar.add(Calendar.MONTH, monthOffset)
                         selectedDate.value = newCalendar
                     }
+                )
+
+                // Mostramos selección de hora
+                HourComponent(
+                    cellSize = cellSize,
+                    fontSize = fontSize,
+                    selectedHour = selectedHour,
+                    selectedMinute = selectedMinute
+                )
+                Spacer(modifier = Modifier.height(15.dp))
+
+                // Mostramos resumen de solicitud del alumno
+                Text(
+                    text = stringResource(
+                        R.string.date_request_class,
+                        dateFormat.format(selectedDate.value.time)
+                    ),
+                    fontSize = fontSize,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                // Mostramos la hora de la clase seleccionada
+                Text(
+                    text = stringResource(
+                        R.string.hour_request_class,
+                        String.format("%02d", selectedHour.value),
+                        String.format("%02d", selectedMinute.value)
+                    ),
+                    fontSize = fontSize
                 )
             }
         },
@@ -174,92 +217,136 @@ fun RequestClassModal(
 
 @Composable
 fun CalendarComponent(
+    cellSize: Dp,
+    fontSize: TextUnit,
     selectedDate: Calendar,
     onDateSelected: (Calendar) -> Unit,
     onMonthChanged: (Int) -> Unit
 ) {
-    val selectedHour = remember { mutableStateOf(10) }
-    val selectedMinute = remember { mutableStateOf(30) }
+    // Total de columnas para los días de la semana
+    val totalColumns = 7
+    // Total de celdas para 6 semanas (7 * 6)
+    val totalCells = 42
 
-    // Estado para manejar la expansión de los menús
-    var isHourMenuExpanded by remember { mutableStateOf(false) }
-    var isMinuteMenuExpanded by remember { mutableStateOf(false) }
-
-    val totalColumns = 7 // Total de columnas para los días de la semana
+    // Creamos instancia de Calendar que representa el mes y el año actuales
     val currentMonthCalendar = Calendar.getInstance()
 
-    // Definir 'today' dentro de 'CalendarComponent'
+    // Definimos el día de hoy
     val today = Calendar.getInstance()
 
+    // Columna contenedora del calendario
     Column(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Creamos una copia de selectedDate para realizar operaciones
         val calendar = selectedDate.clone() as Calendar
-        calendar.set(Calendar.DAY_OF_MONTH, 1) // Establecer el día en el primer día del mes
+        // Configuramos el día del mes como el primer día del mes
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        // Obtenemos el número total de días en el mes
         val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        // Obtenemos el día de la semana del primer día del mes (esto es, Lunes .. Domingo)
         val firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
 
-        // Calcular el startDay considerando que el primer día de la semana sea el lunes
+        // Ajustamos el primer día para que el calendario empiece en Lunes
         val startDay = if (firstDayOfMonth == Calendar.SUNDAY) 7 else firstDayOfMonth - 1
-        val totalCells = 42 // Total de celdas para 6 semanas
 
+        // Botones para navegar entre los meses
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            // Habilitamos el botón de Anterior si no estamos en el mes y año actuales
+            val enabled = calendar.get(Calendar.MONTH) != currentMonthCalendar.get(Calendar.MONTH) || calendar.get(Calendar.YEAR) != currentMonthCalendar.get(Calendar.YEAR)
+
+            // Icono de Anterior
             IconButton(
-                onClick = {
-                    if (calendar.get(Calendar.MONTH) != currentMonthCalendar.get(Calendar.MONTH)) onMonthChanged(
-                        -1
-                    )
-                },
-                enabled = calendar.get(Calendar.MONTH) != currentMonthCalendar.get(Calendar.MONTH)
+                onClick = { if (enabled) onMonthChanged(-1) },
+                enabled = enabled
             ) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "Mes anterior")
+                Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.previous_month_description))
             }
+            // Mostramos mes actual
             Text(
-                text = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(calendar.time),
+                text = SimpleDateFormat(stringResource(R.string.mmmm_yyyy), Locale.getDefault()).format(calendar.time).uppercase(Locale.getDefault()),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(vertical = 8.dp)
+                fontSize = fontSize,
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
             )
-            IconButton(onClick = { onMonthChanged(1) }) {
-                Icon(Icons.Filled.ArrowForward, contentDescription = "Siguiente mes")
+            // Icono de Siguiente
+            IconButton(
+                onClick = { onMonthChanged(1) }
+            ) {
+                Icon(Icons.Filled.ArrowForward, contentDescription = stringResource(R.string.next_month_description))
             }
         }
 
-        // Agregar las iniciales del día de la semana
+        // Iniciales de los días de la semana
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            listOf("L", "M", "X", "J", "V", "S", "D").forEach { initial ->
-                Text(initial, modifier = Modifier.width(30.dp), textAlign = TextAlign.Center)
+            listOf(
+                stringResource(R.string.monday_initial),
+                stringResource(R.string.tuesday_initial),
+                stringResource(R.string.wednesday_initial),
+                stringResource(R.string.thursday_initial),
+                stringResource(R.string.friday_initial),
+                stringResource(R.string.saturday_initial),
+                stringResource(R.string.sunday_initial)
+            ).forEach { initial ->
+                Text(
+                    text = initial,
+                    textAlign = TextAlign.Center,
+                    fontSize = fontSize,
+                    modifier = Modifier
+                        .width(cellSize)
+                        .padding(4.dp)
+                )
             }
         }
 
+        // Iterar sobre las celdas del calendario para mostrar los días del mes
         repeat(totalCells / totalColumns) { weekIndex ->
-            Row(Modifier.fillMaxWidth()) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Repetimos para cada día de la semana
                 repeat(totalColumns) { dayIndex ->
+                    // Calculamos el día correspondiente a la celda actual
                     val day = (weekIndex * totalColumns) + dayIndex - startDay + 2
+
+                    // Verificamos si el día está dentro del mes actual
                     if (day in 1..daysInMonth) {
+                        // Configuramos el día del mes como el dia sobre el que iteramos
                         calendar.set(Calendar.DAY_OF_MONTH, day)
+                        // Verificamos si el día está seleccionado
                         val isSelected = day == selectedDate.get(Calendar.DAY_OF_MONTH)
-                        val isFuture = calendar.timeInMillis > today.timeInMillis
+                        // Verificamos si el día es futuro o es hoy
                         val isToday = calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
                                 calendar.get(Calendar.MONTH) == today.get(Calendar.MONTH) &&
                                 calendar.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)
+                        val isFuture = calendar.timeInMillis > today.timeInMillis
+
+                        // Renderizamos la celda del día
                         DayCell(
+                            cellSize = cellSize,
+                            fontSize = fontSize,
                             day = calendar.clone() as Calendar,
                             isSelected = isSelected,
                             isSelectable = isFuture || isToday,
                             isPastDate = !isFuture && !isToday,
-                            onDateSelected = { onDateSelected(it) },
+                            onDateSelected = { onDateSelected(it) }
                         )
                     } else {
+                        // Renderizamos celda vacía si el día no pertenece al mes actual
                         DayCell(
+                            cellSize = cellSize,
+                            fontSize = fontSize,
                             day = calendar.clone() as Calendar,
                             isSelected = false,
                             isSelectable = false,
@@ -270,80 +357,12 @@ fun CalendarComponent(
             }
         }
     }
-
-    // Selector de hora y minutos en una fila
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        // Selector de hora
-        Column(
-            modifier = Modifier
-                .padding(vertical = 8.dp)
-                .background(Color.Red)
-                .clickable { isHourMenuExpanded = true },
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(String.format("%02d", selectedHour.value))
-            // DropdownMenu para horas con altura máxima
-            DropdownMenu(
-                expanded = isHourMenuExpanded,
-                onDismissRequest = { isHourMenuExpanded = false },
-                modifier = Modifier
-                    .height(200.dp)
-
-            ) {
-                for (hour in 10..22) {
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedHour.value = hour
-                            isHourMenuExpanded = false
-                        },
-                        text = { Text(String.format("%02d", hour)) }
-                    )
-                }
-            }
-        }
-
-        // Selector de minutos
-        Column(
-            modifier = Modifier.padding(vertical = 8.dp)
-                .clickable { isMinuteMenuExpanded = true },
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(String.format("%02d", selectedMinute.value))
-
-            // DropdownMenu para minutos con altura máxima
-            DropdownMenu(
-                expanded = isMinuteMenuExpanded,
-                onDismissRequest = { isMinuteMenuExpanded = false },
-                modifier = Modifier
-                    .height(200.dp)
-
-            ) {
-                for (minute in listOf(0, 15, 30, 45)) {
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedMinute.value = minute
-                            isMinuteMenuExpanded = false
-                        },
-                        text = { Text(String.format("%02d", minute)) } // Formato para asegurar dos dígitos
-                    )
-                }
-            }
-        }
-    }
-
-
-
-
 }
-
 
 @Composable
 fun DayCell(
+    cellSize: Dp,
+    fontSize: TextUnit,
     day: Calendar,
     isSelected: Boolean,
     isSelectable: Boolean = true,
@@ -356,20 +375,162 @@ fun DayCell(
             .padding(4.dp)
             .clickable(enabled = isSelectable, onClick = { if (isSelectable) onDateSelected(day) })
             .background(
-                if (isSelected) Color.Gray
-                else Color.Transparent
+                color =
+                if (isSelected) colorResource(id = R.color.my_dark_purple)
+                else Color.Transparent,
+                shape = RoundedCornerShape(8.dp)
             )
-            .size(30.dp), // Establecer el tamaño de la celda
+            .size(cellSize, cellSize),
         contentAlignment = Alignment.Center
     ) {
+        // Escribimos el día solo si está en el mes actual
         if(isInMonth) {
             Text(
                 text = day.get(Calendar.DAY_OF_MONTH).toString(),
                 color =
-                if (isSelected) Color.White
-                else if (isPastDate) Color.Red
-                else Color.Black
+                    if (isSelected) Color.White
+                    else if (isPastDate) Color.Gray
+                    else Color.Black,
+                fontSize = fontSize
             )
         }
     }
+}
+
+@Composable
+fun HourComponent(
+    cellSize: Dp,
+    fontSize: TextUnit,
+    selectedHour: MutableState<Int>,
+    selectedMinute: MutableState<Int>
+) {
+    // Estado para manejar la expansión del menú de horas
+    var isHourMenuExpanded by remember { mutableStateOf(false) }
+    // Estado para manejar la expansión del menú de minutos
+    var isMinuteMenuExpanded by remember { mutableStateOf(false) }
+
+    // Selector de hora y minutos en una fila
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        // Icono de reloj
+        Icon(
+            imageVector = Icons.Outlined.AccessTime,
+            contentDescription = null,
+            tint = colorResource(id = R.color.my_dark_purple),
+            modifier = Modifier
+                .size(cellSize)
+                .padding(horizontal = 4.dp)
+        )
+
+        // Selector de hora
+        Column(
+            modifier = Modifier
+                .border(
+                    width = 2.dp,
+                    color = colorResource(id = R.color.my_dark_purple),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .size(cellSize, cellSize)
+                .clickable { isHourMenuExpanded = true },
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Texto con la hora seleccionada
+            Text(
+                text = String.format("%02d", selectedHour.value),
+                fontSize = fontSize,
+                modifier = Modifier.padding(2.dp)
+            )
+            // Drowdown con las opciones de horas
+            DropdownMenu(
+                expanded = isHourMenuExpanded,
+                onDismissRequest = { isHourMenuExpanded = false },
+                modifier = Modifier.height(200.dp)
+            ) {
+                // Creamos elementos de menú para cada hora desde 8 hasta 22
+                for (hour in 8..22) {
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedHour.value = hour
+                            isHourMenuExpanded = false
+                        },
+                        text = { Text(String.format("%02d", hour)) }
+                    )
+                }
+            }
+        }
+
+        // Separador de :
+        Text(
+            text = stringResource(id = R.string.hour_separator),
+            fontSize = fontSize,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .padding(top = 5.dp)
+        )
+
+        // Selector de minutos
+        Column(
+            modifier = Modifier
+                .border(
+                    width = 2.dp,
+                    color = colorResource(id = R.color.my_dark_purple),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .size(cellSize, cellSize)
+                .clickable { isMinuteMenuExpanded = true },
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Texto con los minutos seleccionados
+            Text(
+                text = String.format("%02d", selectedMinute.value),
+                fontSize = fontSize,
+                modifier = Modifier.padding(2.dp)
+            )
+            // Drowdown con las opciones de minutos
+            DropdownMenu(
+                expanded = isMinuteMenuExpanded,
+                onDismissRequest = { isMinuteMenuExpanded = false },
+                modifier = Modifier.height(200.dp)
+            ) {
+                // Creamos elementos de menú para cada minuto en la lista [0, 15, 30, 45]
+                for (minute in listOf(0, 15, 30, 45)) {
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedMinute.value = minute
+                            isMinuteMenuExpanded = false
+                        },
+                        text = { Text(String.format("%02d", minute)) }
+                    )
+                }
+            }
+        }
+    }
+    Spacer(modifier = Modifier.height(10.dp))
+}
+
+@Preview
+@Composable
+fun DeleteConfirmationDialogPreview() {
+    DeleteConfirmationDialog(
+        title = stringResource(id = R.string.delete_account_title),
+        textMessage = stringResource(id = R.string.sure_delete_account_label),
+        onDeleteConfirm = {},
+        onDeleteCancel = {}
+    )
+}
+
+@Preview
+@Composable
+fun RequestClassDialogPreview() {
+    RequestClassDialog(
+        windowSize = WindowWidthSizeClass.Compact,
+        onRequestConfirm = {},
+        onRequestCancel = {}
+    )
 }

@@ -78,6 +78,7 @@ fun FavoritesListScreen(
             if (contentType == AdvertsContentType.ListAndDetail) { // tamaño pantalla expanded
                 // Mostramos lista y detalles de anuncios
                 AdvertsListAndDetail(
+                    windowSize = windowSize,
                     favoritesListUiState = favoritesListUiState,
                     notFoundMessage =
                         if(favoritesListUiState.searchQuery == "") stringResource(id = R.string.not_found_favorites)
@@ -127,6 +128,7 @@ fun FavoritesListScreen(
                     professor?.let {
                         // Mostramos detalles de un anuncio específico
                         AdvertDetail(
+                            windowSize = windowSize,
                             advert = favoritesListUiState.currentAdvert,
                             professor = professor,
                             onFavoriteButtonClick = {

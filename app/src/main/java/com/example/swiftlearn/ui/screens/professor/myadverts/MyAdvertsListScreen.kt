@@ -52,7 +52,7 @@ import com.example.swiftlearn.R
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
-import com.example.swiftlearn.ui.components.DeleteConfirmationModal
+import com.example.swiftlearn.ui.components.DeleteConfirmationDialog
 import com.example.swiftlearn.ui.screens.student.adverts.IconWithText
 
 @Composable
@@ -309,7 +309,7 @@ private fun MyAdvertItem(
 
             // Mostramos el modal de confirmación si showDialog es true
             if (showDialog) {
-                DeleteConfirmationModal(
+                DeleteConfirmationDialog(
                     title = stringResource(id = R.string.delete_advert_title),
                     textMessage = stringResource(id = R.string.sure_delete_advert_label),
                     onDeleteConfirm = {
