@@ -142,16 +142,16 @@ fun <T : Enum<T>> MultiOptionsSection(
         title = title,
         options = options,
         selectedOptions = selectedOptionsState.value,
-        onOptionSelected = { selectedMode ->
-            val updatedModes = selectedOptionsState.value.toMutableSet()
-            if (selectedMode in updatedModes) {
-                updatedModes.remove(selectedMode)
+        onOptionSelected = { option ->
+            val updatedOptions = selectedOptionsState.value.toMutableSet()
+            if (option in updatedOptions) {
+                updatedOptions.remove(option)
             } else {
-                updatedModes.add(selectedMode)
+                updatedOptions.add(option)
             }
-            selectedOptionsState.value = updatedModes
+            selectedOptionsState.value = updatedOptions
 
-            onOptionSelected(updatedModes)
+            onOptionSelected(updatedOptions)
         }
     )
 }

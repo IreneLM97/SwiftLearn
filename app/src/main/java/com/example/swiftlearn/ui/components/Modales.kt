@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,6 +48,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
+import com.example.swiftlearn.model.Request
+import com.example.swiftlearn.model.Status
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -71,7 +72,11 @@ fun DeleteConfirmationDialog(
             }
         },
         text = {
-            Text(text = textMessage, fontSize = 15.sp)
+            Text(
+                text = textMessage,
+                fontSize = 15.sp,
+                textAlign = TextAlign.Center
+            )
         },
         dismissButton = {
             TextButton(
@@ -100,7 +105,9 @@ fun DeleteConfirmationDialog(
 @Composable
 fun RequestClassDialog(
     windowSize: WindowWidthSizeClass,
-    onRequestConfirm: () -> Unit,
+    studentId: String,
+    advertId: String,
+    onRequestConfirm: (Request) -> Unit,
     onRequestCancel: () -> Unit
 ) {
     // Variable de estado para la fecha seleccionada
@@ -109,8 +116,8 @@ fun RequestClassDialog(
     val dateFormat = rememberSaveable { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
 
     // Variables de estado para la hora seleccionada
-    val selectedHour = remember { mutableStateOf(8) }
-    val selectedMinute = remember { mutableStateOf(0) }
+    val selectedHour = rememberSaveable { mutableStateOf(8) }
+    val selectedMinute = rememberSaveable { mutableStateOf(0) }
 
     // Determinamos el tamaño de las celdas del calendario en función del tamaño de la pantalla
     val cellSize = when (windowSize) {
@@ -203,7 +210,16 @@ fun RequestClassDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = onRequestConfirm,
+                onClick = {
+                    val request = Request(
+                        studentId = studentId,
+                        advertId = advertId,
+                        status = Status.Pendiente.toString(),
+                        date = dateFormat.format(selectedDate.value.time),
+                        hour = formatHourMinute(selectedHour.value, selectedMinute.value)
+                    )
+                    onRequestConfirm(request)
+                },
                 colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_dark_purple))
             ) {
                 Text(text = stringResource(R.string.request), color = Color.White)
@@ -405,9 +421,9 @@ fun HourComponent(
     selectedMinute: MutableState<Int>
 ) {
     // Estado para manejar la expansión del menú de horas
-    var isHourMenuExpanded by remember { mutableStateOf(false) }
+    var isHourMenuExpanded by rememberSaveable { mutableStateOf(false) }
     // Estado para manejar la expansión del menú de minutos
-    var isMinuteMenuExpanded by remember { mutableStateOf(false) }
+    var isMinuteMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
     // Selector de hora y minutos en una fila
     Row(
@@ -514,6 +530,15 @@ fun HourComponent(
     Spacer(modifier = Modifier.height(10.dp))
 }
 
+private fun formatHourMinute(hour: Int, minute: Int): String {
+    val calendar = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, hour)
+        set(Calendar.MINUTE, minute)
+    }
+    val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return dateFormat.format(calendar.time)
+}
+
 @Preview
 @Composable
 fun DeleteConfirmationDialogPreview() {
@@ -530,6 +555,8 @@ fun DeleteConfirmationDialogPreview() {
 fun RequestClassDialogPreview() {
     RequestClassDialog(
         windowSize = WindowWidthSizeClass.Compact,
+        studentId = "",
+        advertId = "",
         onRequestConfirm = {},
         onRequestCancel = {}
     )

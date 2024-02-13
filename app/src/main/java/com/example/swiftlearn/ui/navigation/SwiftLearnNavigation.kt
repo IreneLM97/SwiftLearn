@@ -1,14 +1,11 @@
 package com.example.swiftlearn.ui.navigation
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.swiftlearn.R
 import com.example.swiftlearn.ui.screens.home.HomeDestination
 import com.example.swiftlearn.ui.screens.home.HomeScreen
 import com.example.swiftlearn.ui.screens.login.LoginDestination
@@ -66,23 +63,4 @@ fun SwiftLearnNavigation(
             )
         }
     }
-}
-
-private fun shareInfo(
-    context: Context,
-    summary: String
-) {
-    // Crear un Intent de acción SEND para compartir
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"  // contenido de texto plano
-        putExtra(Intent.EXTRA_TEXT, summary)  // agregamos resumen
-    }
-
-    // Iniciar una actividad para elegir la aplicación de destino a la que se quiere compartir
-    context.startActivity(
-        Intent.createChooser(
-            intent,
-            context.getString(R.string.send_info)
-        )
-    )
 }

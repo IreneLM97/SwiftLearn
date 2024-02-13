@@ -1,7 +1,6 @@
 package com.example.swiftlearn.ui.screens.home
 
 import com.example.swiftlearn.model.Role
-import com.example.swiftlearn.model.User
 
 /**
  * Clase de estado que representa el estado actual de la pantalla principal.

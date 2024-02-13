@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.screens.home.professor
+package com.example.swiftlearn.ui.screens.map
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

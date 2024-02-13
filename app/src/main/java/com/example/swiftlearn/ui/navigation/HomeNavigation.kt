@@ -20,7 +20,7 @@ import com.example.swiftlearn.ui.screens.home.HomeDestination
 import com.example.swiftlearn.ui.screens.home.HomeUiState
 import com.example.swiftlearn.ui.screens.home.MenuItems
 import com.example.swiftlearn.ui.screens.home.professor.ClassesScreen
-import com.example.swiftlearn.ui.screens.home.professor.MapScreen
+import com.example.swiftlearn.ui.screens.map.MapScreen
 import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertScreen
 import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertDestination
@@ -55,7 +55,8 @@ fun HomeNavigation(
                 Role.Alumno -> {
                     AdvertsListScreen(
                         windowSize = windowSize,
-                        onSendButtonClick = { sendAdvert(context, it) }
+                        onSendButtonClick = { sendAdvert(context, it) },
+                        navigateToClasses = { navController.navigate(MenuItems.ClassesItem.route) }
                     )
                 }
                 Role.None -> null
@@ -68,7 +69,8 @@ fun HomeNavigation(
         composable(route = MenuItems.FavoritesItem.route) {
             FavoritesListScreen(
                 windowSize = windowSize,
-                onSendButtonClick = { sendAdvert(context, it) }
+                onSendButtonClick = { sendAdvert(context, it) },
+                navigateToClasses = { navController.navigate(MenuItems.ClassesItem.route) }
             )
         }
         composable(route = MenuItems.MapItem.route) {

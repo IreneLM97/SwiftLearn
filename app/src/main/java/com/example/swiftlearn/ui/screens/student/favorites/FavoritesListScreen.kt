@@ -36,6 +36,7 @@ import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 fun FavoritesListScreen(
     windowSize: WindowWidthSizeClass,
     onSendButtonClick: (String) -> Unit,
+    navigateToClasses: () -> Unit,
     viewModel: FavoritesListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ){
     // Obtenemos administrador del foco de la aplicación
@@ -93,6 +94,10 @@ fun FavoritesListScreen(
                     onFavoriteButtonClick = {
                         viewModel.toggleAdvertFavoriteState(it)
                     },
+                    onRequestConfirm = {
+                        viewModel.insertRequest(it)
+                        navigateToClasses()
+                    },
                     onSendButtonClick = onSendButtonClick,
                     contentPadding = innerPadding,
                     contentType = contentType,
@@ -129,12 +134,13 @@ fun FavoritesListScreen(
                         // Mostramos detalles de un anuncio específico
                         AdvertDetail(
                             windowSize = windowSize,
+                            studentId = favoritesListUiState.user._id,
                             advert = favoritesListUiState.currentAdvert,
                             professor = professor,
-                            onFavoriteButtonClick = {
-                                viewModel.toggleAdvertFavoriteState(it)
+                            onRequestConfirm = {
+                                viewModel.insertRequest(it)
+                                navigateToClasses()
                             },
-                            onSendButtonClick = onSendButtonClick,
                             contentPadding = innerPadding
                         )
                     }

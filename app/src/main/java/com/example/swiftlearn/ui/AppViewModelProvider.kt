@@ -58,7 +58,8 @@ object AppViewModelProvider {
             AdvertsListViewModel(
                 userRepository = swiftLearnApplication().container.userRepository,
                 advertRepository = swiftLearnApplication().container.advertRepository,
-                favoriteRepository = swiftLearnApplication().container.favoriteRepository
+                favoriteRepository = swiftLearnApplication().container.favoriteRepository,
+                requestRepository = swiftLearnApplication().container.requestRepository
             )
         }
 
@@ -67,7 +68,8 @@ object AppViewModelProvider {
             FavoritesListViewModel(
                 userRepository = swiftLearnApplication().container.userRepository,
                 advertRepository = swiftLearnApplication().container.advertRepository,
-                favoriteRepository = swiftLearnApplication().container.favoriteRepository
+                favoriteRepository = swiftLearnApplication().container.favoriteRepository,
+                requestRepository = swiftLearnApplication().container.requestRepository
             )
         }
 

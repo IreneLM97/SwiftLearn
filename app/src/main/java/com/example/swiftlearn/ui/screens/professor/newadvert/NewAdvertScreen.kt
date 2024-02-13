@@ -140,9 +140,9 @@ fun AdvertForm(
         MultiOptionsSection(
             title = stringResource(id = R.string.class_mode_label),
             options = listOf(
-                ClassMode.Presencial to stringResource(id = R.string.presencial_label),
-                ClassMode.Online to stringResource(id = R.string.online_label),
-                ClassMode.Hibrido to stringResource(id = R.string.hibrido_label)
+                ClassMode.Presencial to ClassMode.Presencial.toString(),
+                ClassMode.Online to ClassMode.Online.toString(),
+                ClassMode.Hibrido to ClassMode.Hibrido.toString()
             ),
             selectedOptions = advertDetails.classModes,
             onOptionSelected = {
@@ -154,12 +154,12 @@ fun AdvertForm(
         MultiOptionsSection(
             title = stringResource(id = R.string.levels_label),
             options = listOf(
-                Level.Primaria to stringResource(id = R.string.primaria_label),
-                Level.ESO to stringResource(id = R.string.eso_label),
-                Level.Bachillerato to stringResource(id = R.string.bachillerato_label),
-                Level.FP to stringResource(id = R.string.fp_label),
-                Level.Universidad to stringResource(id = R.string.universidad_label),
-                Level.Adultos to stringResource(id = R.string.adultos_label)
+                Level.Primaria to Level.Primaria.toString(),
+                Level.ESO to Level.ESO.toString(),
+                Level.Bachillerato to Level.Bachillerato.toString(),
+                Level.FP to Level.FP.toString(),
+                Level.Universidad to Level.Universidad.toString(),
+                Level.Adultos to Level.Adultos.toString()
             ),
             selectedOptions = advertDetails.levels,
             onOptionSelected = {

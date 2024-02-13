@@ -63,6 +63,7 @@ import com.example.swiftlearn.R
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.ClassMode
 import com.example.swiftlearn.model.Level
+import com.example.swiftlearn.model.Request
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.MultiOptionsSectionImmutable
@@ -357,33 +358,21 @@ fun AdvertItem(
  * @param advert Anuncio del que se muestran detalles.
  * @param professor Profesor que publicó el anuncio del que se muestran los detalles.
  * @param modifier Modificador opcional para aplicar al diseño.
- * @param onFavoriteButtonClick Función lambda que se invoca cuando se pulsa en favorito.
- * @param onSendButtonClick Función lambda que se invoca cuando se pulsa en enviar.
  * @param contentPadding Espaciado alrededor del contenido de la pantalla de detalles.
  */
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun AdvertDetail(
     windowSize: WindowWidthSizeClass,
+    studentId: String,
     advert: Advert,
     professor: User,
-    onFavoriteButtonClick: (Advert) -> Unit,
-    onSendButtonClick: (String) -> Unit,
+    onRequestConfirm: (Request) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     // Estado del scroll
     val scrollState = rememberScrollState()
-
-    // Resumen de la información del anuncio
-    val advertSummary = stringResource(
-        R.string.advert_summary,
-        advert.subject,
-        advert.price,
-        professor.username,
-        professor.phone,
-        professor.email
-    )
 
     // Estado booleano para controlar si el diálogo de solicitar clase está abierto o no
     var showDialog by rememberSaveable { mutableStateOf(false) }
@@ -392,7 +381,9 @@ fun AdvertDetail(
     if (showDialog) {
         RequestClassDialog (
             windowSize = windowSize,
-            onRequestConfirm = { },
+            studentId = studentId,
+            advertId = advert._id,
+            onRequestConfirm = onRequestConfirm,
             onRequestCancel = {
                 showDialog = false
             }
@@ -503,9 +494,9 @@ fun AdvertDetail(
             MultiOptionsSectionImmutable(
                 title = stringResource(id = R.string.class_mode_advert),
                 options = listOf(
-                    ClassMode.Presencial to stringResource(id = R.string.presencial_label),
-                    ClassMode.Online to stringResource(id = R.string.online_label),
-                    ClassMode.Hibrido to stringResource(id = R.string.hibrido_label)
+                    ClassMode.Presencial to ClassMode.Presencial.toString(),
+                    ClassMode.Online to ClassMode.Online.toString(),
+                    ClassMode.Hibrido to ClassMode.Hibrido.toString()
                 ),
                 selectedOptions = classModes
             )
@@ -517,12 +508,12 @@ fun AdvertDetail(
             MultiOptionsSectionImmutable(
                 title = stringResource(id = R.string.levels_advert),
                 options = listOf(
-                    Level.Primaria to stringResource(id = R.string.primaria_label),
-                    Level.ESO to stringResource(id = R.string.eso_label),
-                    Level.Bachillerato to stringResource(id = R.string.bachillerato_label),
-                    Level.FP to stringResource(id = R.string.fp_label),
-                    Level.Universidad to stringResource(id = R.string.universidad_label),
-                    Level.Adultos to stringResource(id = R.string.adultos_label)
+                    Level.Primaria to Level.Primaria.toString(),
+                    Level.ESO to Level.ESO.toString(),
+                    Level.Bachillerato to Level.Bachillerato.toString(),
+                    Level.FP to Level.FP.toString(),
+                    Level.Universidad to Level.Universidad.toString(),
+                    Level.Adultos to Level.Adultos.toString()
                 ),
                 selectedOptions = levelsSet
             )
@@ -548,7 +539,6 @@ fun AdvertDetail(
     }
 }
 
-
 /**
  * Función que representa la pantalla de lista de anuncios y detalles de un anuncio.
  *
@@ -566,6 +556,7 @@ fun AdvertsListAndDetail(
     onQueryChange: (String) -> Unit,
     onAdvertClick: (Advert) -> Unit,
     onFavoriteButtonClick: (Advert) -> Unit,
+    onRequestConfirm: (Request) -> Unit,
     onSendButtonClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -592,18 +583,19 @@ fun AdvertsListAndDetail(
             contentType = contentType
         )
 
-        // Obtener el usuario correspondiente al anuncio
-        val professorsList = advertsListUiState?.professorsList ?: favoritesListUiState?.professorsList ?: emptyList()
+        // Obtener la información necesaria para mostrar detalles del anuncio
+        val studentId = advertsListUiState?.user?._id ?: favoritesListUiState?.user?._id ?: ""
         val currentAdvert = advertsListUiState?.currentAdvert ?: favoritesListUiState?.currentAdvert ?: Advert()
+        val professorsList = advertsListUiState?.professorsList ?: favoritesListUiState?.professorsList ?: emptyList()
         val professor = professorsList.find { it._id == currentAdvert.profId }
         professor?.let {
             // Representa los detalles de un anuncio específico
             AdvertDetail(
                 windowSize = windowSize,
+                studentId = studentId,
                 advert = currentAdvert,
                 professor = professor,
-                onFavoriteButtonClick = onFavoriteButtonClick,
-                onSendButtonClick = onSendButtonClick,
+                onRequestConfirm = onRequestConfirm,
                 modifier = Modifier.weight(3f),
                 contentPadding = contentPadding
             )
@@ -663,6 +655,7 @@ fun AdvertItemPreview() {
 fun AdvertDetailPreview() {
     AdvertDetail(
         windowSize = WindowWidthSizeClass.Medium,
+        studentId = "",
         advert = Advert(
             subject = "Lengua",
             price = 12,
@@ -677,7 +670,6 @@ fun AdvertDetailPreview() {
             postal = "56474",
             email = "maria@gmail.com"
         ),
-        onFavoriteButtonClick = {},
-        onSendButtonClick = {}
+        onRequestConfirm = {}
     )
 }

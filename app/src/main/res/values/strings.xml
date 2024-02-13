@@ -55,17 +55,8 @@
     <!-- Label de formulario nuevo anuncio -->
     <string name="subject_label">Asignatura</string>
     <string name="price_label">Precio por hora (euros)</string>
-    <string name="presencial_label">Presencial</string>
-    <string name="online_label">Online</string>
-    <string name="hibrido_label">Híbrido</string>
     <string name="class_mode_label">¿Dónde quieres dar clase?</string>
     <string name="levels_label">¿A qué niveles puedes enseñar?</string>
-    <string name="primaria_label">Primaria</string>
-    <string name="eso_label">ESO</string>
-    <string name="bachillerato_label">Bachillerato</string>
-    <string name="fp_label">FP</string>
-    <string name="universidad_label">Universidad</string>
-    <string name="adultos_label">Adultos</string>
     <string name="description_text_label">Cuéntanos más sobre ti</string>
     <string name="description_label">Descripción</string>
     <string name="save_advert_label">Guardar</string>
@@ -76,7 +67,7 @@
 
     <!-- Título de items del menu inferior -->
     <string name="title_adverts">Anuncios</string>
-    <string name="title_classes">Clases</string>
+    <string name="title_requests">Solicitudes</string>
     <string name="title_new_advert">Nuevo</string>
     <string name="title_map">Mapa</string>
     <string name="title_profile">Perfil</string>

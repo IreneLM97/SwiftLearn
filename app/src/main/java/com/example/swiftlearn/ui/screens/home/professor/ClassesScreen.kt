@@ -5,5 +5,5 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun ClassesScreen() {
-    Text(text = "classes")
+    Text(text = "requests")
 }
