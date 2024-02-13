@@ -41,7 +41,7 @@ fun FavoritesListScreen(
     // Obtenemos administrador del foco de la aplicación
     val focusManager = LocalFocusManager.current
 
-    // Guardamos el estado de la pantalla de anuncios
+    // Guardamos el estado de la pantalla de anuncios favoritos
     val favoritesListUiState = viewModel.favoritesListUiState.collectAsState().value
 
     // Determinamos el tipo de contenido en función del tamaño de la ventana
@@ -127,7 +127,7 @@ fun FavoritesListScreen(
                     professor?.let {
                         // Mostramos detalles de un anuncio específico
                         AdvertDetail(
-                            currentAdvert = favoritesListUiState.currentAdvert,
+                            advert = favoritesListUiState.currentAdvert,
                             professor = professor,
                             onFavoriteButtonClick = {
                                 viewModel.toggleAdvertFavoriteState(it)

@@ -103,7 +103,13 @@
     <string name="info_advert_label">Información del anuncio</string>
     <string name="class_mode_advert">¿Dónde podemos dar las clases?</string>
     <string name="levels_advert">¿A qué niveles puedo dar clase?</string>
-    <string name="request_class_label">Solicitar clase</string>
+    <string name="request_button_label">Solicitar clase</string>
+
+    <!-- Label para modal de solicitar clase -->
+    <string name="request_class_title">Solicitar clase</string>
+    <string name="request_class_label">Indica el día y la hora a la que deseas solicitar la clase.</string>
+    <string name="cancel">CANCELAR</string>
+    <string name="request">SOLICITAR</string>
 
     <!-- Label para pantallas de profesor -->
     <string name="my_adverts_label">Mis anuncios</string>

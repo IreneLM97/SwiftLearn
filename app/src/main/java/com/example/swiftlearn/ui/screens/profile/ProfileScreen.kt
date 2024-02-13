@@ -127,6 +127,24 @@ private fun ProfileForm(
     // Estado booleano para controlar si el diálogo de confirmación está abierto o no
     var showDialog by remember { mutableStateOf(false) }
 
+    // Mostramos el modal de confirmación si showDialog es true
+    if (showDialog) {
+        DeleteConfirmationModal(
+            title = stringResource(id = R.string.delete_account_title),
+            textMessage = stringResource(id = R.string.sure_delete_account_label),
+            onDeleteConfirm = {
+                // Si el usuario confirma, se llama a la función onDeleteClick
+                onDeleteClick()
+                // Se cierra el diálogo
+                showDialog = false
+            },
+            onDeleteCancel = {
+                // Si el usuario cancela, se cierra el diálogo
+                showDialog = false
+            }
+        )
+    }
+
     // Estructura del formulario
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -211,24 +229,6 @@ private fun ProfileForm(
             onClick = onSignOutClick
         )
         Spacer(modifier = Modifier.height(100.dp))
-
-        // Mostramos el modal de confirmación si showDialog es true
-        if (showDialog) {
-            DeleteConfirmationModal(
-                title = stringResource(id = R.string.delete_account_title),
-                textMessage = stringResource(id = R.string.sure_delete_account_label),
-                onDeleteConfirm = {
-                    // Si el usuario confirma, se llama a la función onDeleteClick
-                    onDeleteClick()
-                    // Se cierra el diálogo
-                    showDialog = false
-                },
-                onDeleteCancel = {
-                    // Si el usuario cancela, se cierra el diálogo
-                    showDialog = false
-                }
-            )
-        }
     }
 }
 

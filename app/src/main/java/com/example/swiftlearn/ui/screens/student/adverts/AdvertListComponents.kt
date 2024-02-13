@@ -39,6 +39,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,6 +53,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -60,6 +65,7 @@ import com.example.swiftlearn.model.Level
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.MultiOptionsSectionImmutable
+import com.example.swiftlearn.ui.components.RequestClassModal
 import com.example.swiftlearn.ui.components.SearchTextField
 import com.example.swiftlearn.ui.screens.student.favorites.FavoritesListUiState
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
@@ -347,7 +353,7 @@ fun AdvertItem(
 /**
  * Función que representa la pantalla de detalles de un lugar concreto.
  *
- * @param currentAdvert Anuncio del que se muestran detalles.
+ * @param advert Anuncio del que se muestran detalles.
  * @param professor Profesor que publicó el anuncio del que se muestran los detalles.
  * @param modifier Modificador opcional para aplicar al diseño.
  * @param onFavoriteButtonClick Función lambda que se invoca cuando se pulsa en favorito.
@@ -357,7 +363,7 @@ fun AdvertItem(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun AdvertDetail(
-    currentAdvert: Advert,
+    advert: Advert,
     professor: User,
     onFavoriteButtonClick: (Advert) -> Unit,
     onSendButtonClick: (String) -> Unit,
@@ -370,12 +376,27 @@ fun AdvertDetail(
     // Resumen de la información del anuncio
     val advertSummary = stringResource(
         R.string.advert_summary,
-        currentAdvert.subject,
-        currentAdvert.price,
+        advert.subject,
+        advert.price,
         professor.username,
         professor.phone,
         professor.email
     )
+
+    // Estado booleano para controlar si el diálogo de solicitar clase está abierto o no
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    // Mostramos el modal de solicitar clase si showDialog es true
+    if (showDialog) {
+        RequestClassModal(
+            advert = advert,
+            professor = professor,
+            onRequestConfirm = { },
+            onRequestCancel = {
+                showDialog = false
+            }
+        )
+    }
 
     // Estructura de la información detallada del anuncio
     Box(
@@ -460,13 +481,13 @@ fun AdvertDetail(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = currentAdvert.subject,
+                    text = advert.subject,
                     color = colorResource(id = R.color.my_dark_gray),
                     fontSize = 20.sp,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = stringResource(id = R.string.icon_euro_hour, currentAdvert.price.toString()),
+                    text = stringResource(id = R.string.icon_euro_hour, advert.price.toString()),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = colorResource(id = R.color.my_dark_purple)
@@ -475,7 +496,7 @@ fun AdvertDetail(
             Spacer(modifier = Modifier.height(15.dp))
 
             // Opciones de modalidad de clase
-            val classModes = currentAdvert.classModes.split(", ").mapNotNull { value ->
+            val classModes = advert.classModes.split(", ").mapNotNull { value ->
                 ClassMode.values().find { it.name == value }
             }.toSet()
             MultiOptionsSectionImmutable(
@@ -489,7 +510,7 @@ fun AdvertDetail(
             )
 
             // Opciones de niveles de clase
-            val levelsSet = currentAdvert.levels.split(", ").mapNotNull { value ->
+            val levelsSet = advert.levels.split(", ").mapNotNull { value ->
                     Level.values().find { it.name == value }
                 }.toSet()
             MultiOptionsSectionImmutable(
@@ -508,7 +529,7 @@ fun AdvertDetail(
             // Descripción del anuncio
             IconWithText(
                 icon = Icons.Outlined.Description,
-                text = currentAdvert.description,
+                text = advert.description,
                 iconSize = 30.dp,
                 textSize = 20.sp
             )
@@ -516,9 +537,10 @@ fun AdvertDetail(
 
             // Botón para solicitar una clase
             ButtonWithText(
-                label = stringResource(R.string.request_class_label),
+                label = stringResource(R.string.request_button_label),
                 buttonColor = colorResource(id = R.color.my_dark_purple),
-                textColor = Color.White
+                textColor = Color.White,
+                onClick = { showDialog = true }
             )
             Spacer(Modifier.height(100.dp))
         }
@@ -575,7 +597,7 @@ fun AdvertsListAndDetail(
         professor?.let {
             // Representa los detalles de un anuncio específico
             AdvertDetail(
-                currentAdvert = currentAdvert,
+                advert = currentAdvert,
                 professor = professor,
                 onFavoriteButtonClick = onFavoriteButtonClick,
                 onSendButtonClick = onSendButtonClick,
@@ -609,4 +631,49 @@ fun IconWithText(
         )
     }
     Spacer(modifier = Modifier.height(10.dp))
+}
+
+/**
+ * Función que previsualiza la lista de anuncios.
+ */
+@Preview
+@Composable
+fun AdvertItemPreview() {
+    AdvertItem(
+        professor = User(username = "Pepe"),
+        advert = Advert(
+            subject = "Lengua",
+            price = 12,
+            classModes = "Presencial,Hibrido",
+            levels = "Bachillerato"
+        ),
+        isFavorite = true,
+        isSelected = false,
+        onAdvertClick = {},
+        onFavoriteButtonClick = {},
+        onSendButtonClick = {}
+    )
+}
+
+@Preview
+@Composable
+fun AdvertDetailPreview() {
+    AdvertDetail(
+        advert = Advert(
+            subject = "Lengua",
+            price = 12,
+            classModes = "Presencial,Hibrido",
+            levels = "Bachillerato"
+        ),
+        professor = User(
+            _id = "1",
+            username = "Maria",
+            phone = "657565343",
+            address = "Calle Real",
+            postal = "56474",
+            email = "maria@gmail.com"
+        ),
+        onFavoriteButtonClick = {},
+        onSendButtonClick = {}
+    )
 }

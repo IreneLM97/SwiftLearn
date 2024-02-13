@@ -15,11 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
-import com.example.swiftlearn.model.Advert
-import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 
@@ -122,7 +119,7 @@ fun AdvertsListScreen(
                     professor?.let {
                         // Mostramos detalles de un anuncio específico
                         AdvertDetail(
-                            currentAdvert = advertsListUiState.currentAdvert,
+                            advert = advertsListUiState.currentAdvert,
                             professor = professor,
                             onFavoriteButtonClick = {
                                 viewModel.toggleAdvertFavoriteState(it)
@@ -135,49 +132,4 @@ fun AdvertsListScreen(
             }
         }
     }
-}
-
-/**
- * Función que previsualiza la lista de anuncios.
- */
-@Preview
-@Composable
-fun AdvertItemPreview() {
-    AdvertItem(
-        professor = User(username = "Pepe"),
-        advert = Advert(
-            subject = "Lengua",
-            price = 12,
-            classModes = "Presencial,Hibrido",
-            levels = "Bachillerato"
-        ),
-        isFavorite = true,
-        isSelected = false,
-        onAdvertClick = {},
-        onFavoriteButtonClick = {},
-        onSendButtonClick = {}
-    )
-}
-
-@Preview
-@Composable
-fun AdvertDetailPreview() {
-    AdvertDetail(
-        currentAdvert = Advert(
-            subject = "Lengua",
-            price = 12,
-            classModes = "Presencial,Hibrido",
-            levels = "Bachillerato"
-        ),
-        professor = User(
-            _id = "1",
-            username = "Maria",
-            phone = "657565343",
-            address = "Calle Real",
-            postal = "56474",
-            email = "maria@gmail.com"
-        ),
-        onFavoriteButtonClick = {},
-        onSendButtonClick = {}
-    )
 }
