@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.screens.student.favorites
+package com.example.swiftlearn.ui.screens.student.adverts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,15 +22,15 @@ import kotlinx.coroutines.launch
 /**
  * [ViewModel] para gestionar el estado y la lógica de la pantalla de anuncios.
  */
-class FavoritesListViewModel(
+class AdvertsViewModel(
     val userRepository: UserRepository,
     val advertRepository: AdvertRepository,
     val favoriteRepository: FavoriteRepository,
     val requestRepository: RequestRepository
 ): ViewModel() {
-    // Estado de la interfaz de favoritos
-    private val _favoritesListUiState = MutableStateFlow(FavoritesListUiState())
-    val favoritesListUiState = _favoritesListUiState.asStateFlow()
+    // Estado de la interfaz de anuncios
+    private val _advertsUiState = MutableStateFlow(AdvertsUiState())
+    val advertsUiState = _advertsUiState.asStateFlow()
 
     // Inicialización del ViewModel
     init {
@@ -39,7 +39,7 @@ class FavoritesListViewModel(
                 // Obtenemos el usuario autentificado
                 val user = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
                 // Actualizar el estado de la pantalla con el usuario
-                _favoritesListUiState.update { it.copy(user = user) }
+                _advertsUiState.update { it.copy(user = user) }
 
                 // Combina los flujos de datos de profesores, anuncios y favoritos
                 combine(
@@ -47,23 +47,20 @@ class FavoritesListViewModel(
                     advertRepository.getAllAdverts(),
                     favoriteRepository.getAllFavoritesByUser(user._id)
                 ) { professors, adverts, favorites  ->
-                    val favoritesAdverts = adverts.filter { advert ->
-                        favorites.any { it.advertId == advert._id }
-                    }
-                    Triple(professors, favoritesAdverts, favorites)
-                }.collect { (professors, favoritesAdverts, favorites) ->
+                    Triple(professors, adverts, favorites)
+                }.collect { (professors, adverts, favorites) ->
                     // Actualiza el estado de sesión con los flujos obtenidos
-                    _favoritesListUiState.update {
+                    _advertsUiState.update {
                         it.copy(
                             professorsList = professors,
-                            advertsList = favoritesAdverts,
+                            advertsList = adverts,
                             favoritesList = favorites,
-                            currentAdvert = favoritesAdverts.firstOrNull() ?: Advert()
+                            currentAdvert = adverts.firstOrNull() ?: Advert()
                         )
                     }
 
                     delay(1000)
-                    _favoritesListUiState.update { it.copy(isLoading = false) }
+                    _advertsUiState.update { it.copy(isLoading = false) }
                 }
             } catch (_: Exception) {}
         }
@@ -76,7 +73,7 @@ class FavoritesListViewModel(
      */
     fun onQueryChange(searchQuery: String) {
         // Actualizamos el texto de búsqueda
-        _favoritesListUiState.update { it.copy(searchQuery = searchQuery) }
+        _advertsUiState.update { it.copy(searchQuery = searchQuery) }
     }
 
     /**
@@ -85,7 +82,7 @@ class FavoritesListViewModel(
      * @param selectedAdvert lugar seleccionado por el usuario
      */
     fun updateCurrentAdvert(selectedAdvert: Advert) {
-        _favoritesListUiState.update { it.copy(currentAdvert = selectedAdvert) }
+        _advertsUiState.update { it.copy(currentAdvert = selectedAdvert) }
     }
 
     /**
@@ -95,7 +92,7 @@ class FavoritesListViewModel(
         viewModelScope.launch {
             // Si ese anuncio era favorito -> Se elimina el favorito
             // Si ese anuncio no era favorito (get devuelve null) -> Se inserta el favorito
-            val userId = _favoritesListUiState.value.user._id
+            val userId = _advertsUiState.value.user._id
             favoriteRepository.getFavoriteByInfo(userId = userId, advertId = advert._id)?.let { favorite ->
                 favoriteRepository.deleteFavorite(favorite)
             } ?: favoriteRepository.insertFavorite(Favorite(userId = userId, advertId = advert._id))
@@ -112,13 +109,13 @@ class FavoritesListViewModel(
      * Navega a la página que muestra la lista de anuncios.
      */
     fun navigateToListAdvertsPage() {
-        _favoritesListUiState.update { it.copy(isShowingListPage = true) }
+        _advertsUiState.update { it.copy(isShowingListPage = true) }
     }
 
     /**
      * Navega a la página que muestra los detalles de un anuncio específico.
      */
     fun navigateToDetailAdvertPage() {
-        _favoritesListUiState.update { it.copy(isShowingListPage = false) }
+        _advertsUiState.update { it.copy(isShowingListPage = false) }
     }
 }

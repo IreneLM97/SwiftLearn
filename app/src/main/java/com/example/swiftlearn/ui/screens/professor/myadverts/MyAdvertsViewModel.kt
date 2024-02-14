@@ -18,14 +18,14 @@ import kotlinx.coroutines.launch
 /**
  * [ViewModel] para gestionar el estado y la lógica de la pantalla de anuncios.
  */
-class MyAdvertsListViewModel(
+class MyAdvertsViewModel(
     val userRepository: UserRepository,
     val advertRepository: AdvertRepository,
     val favoriteRepository: FavoriteRepository
 ): ViewModel() {
     // Estado de la interfaz de anuncios
-    private val _myAdvertsListUiState = MutableStateFlow(MyAdvertsListUiState())
-    val myAdvertsListUiState = _myAdvertsListUiState.asStateFlow()
+    private val _myAdvertsUiState = MutableStateFlow(MyAdvertsUiState())
+    val myAdvertsUiState = _myAdvertsUiState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -33,14 +33,14 @@ class MyAdvertsListViewModel(
                 // Obtenemos el usuario autentificado
                 val user = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
                 // Actualizar el estado de la pantalla con el usuario
-                _myAdvertsListUiState.update { it.copy(user = user) }
+                _myAdvertsUiState.update { it.copy(user = user) }
 
                 // Obtenemos flujo de datos con los anuncios del profesor
-                advertRepository.getAllAdvertsByProfId(user._id).collect { adverts ->
-                    _myAdvertsListUiState.update { it.copy(myAdvertsList = adverts) }
+                advertRepository.getAllAdvertsByProfIdFlow(user._id).collect { adverts ->
+                    _myAdvertsUiState.update { it.copy(myAdvertsList = adverts) }
 
-                    delay(1000)
-                    _myAdvertsListUiState.update { it.copy(isLoading = false) }
+                    delay(500)
+                    _myAdvertsUiState.update { it.copy(isLoading = false) }
                 }
             } catch (_: Exception) {}
         }
@@ -48,7 +48,7 @@ class MyAdvertsListViewModel(
 
     fun deleteAdvert(advert: Advert) {
         // Actualizar estado de cargando a true
-        _myAdvertsListUiState.update { it.copy(isLoading = true) }
+        _myAdvertsUiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
             // Eliminamos los favoritos de ese anuncio
@@ -58,7 +58,7 @@ class MyAdvertsListViewModel(
             advertRepository.deleteAdvert(advert)
 
             // Actualizar estado de cargando a false
-            _myAdvertsListUiState.update { it.copy(isLoading = false) }
+            _myAdvertsUiState.update { it.copy(isLoading = false) }
         }
     }
 }

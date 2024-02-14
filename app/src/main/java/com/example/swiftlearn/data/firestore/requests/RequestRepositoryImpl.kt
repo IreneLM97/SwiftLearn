@@ -9,11 +9,11 @@ import kotlinx.coroutines.tasks.await
 
 class RequestRepositoryImpl: RequestRepository {
     private val firestore = FirebaseFirestore.getInstance()
-    private val requestsCollection = firestore.collection("classes")
+    private val requestsCollection = firestore.collection("requests")
 
-    override fun getAllRequestsByUserId(userId: String): Flow<List<Request>> = callbackFlow {
+    override fun getAllRequestsByStudentId(studentId: String): Flow<List<Request>> = callbackFlow {
         val subscription = requestsCollection
-            .whereEqualTo("userId", userId)
+            .whereEqualTo("studentId", studentId)
             .addSnapshotListener { querySnapshot, _ ->
                 val requestsList = mutableListOf<Request>()
                 querySnapshot?.documents?.forEach { documentSnapshot ->
@@ -26,6 +26,23 @@ class RequestRepositoryImpl: RequestRepository {
             subscription.remove()
         }
     }
+
+    override fun getAllRequestsByAdvertsId(advertIds: List<String>): Flow<List<Request>> =
+        callbackFlow {
+            val subscription = requestsCollection
+                .whereIn("advertId", advertIds)
+                .addSnapshotListener { querySnapshot, _ ->
+                    val requestsList = mutableListOf<Request>()
+                    querySnapshot?.documents?.forEach { documentSnapshot ->
+                        val request = documentSnapshot.toObject(Request::class.java)
+                        request?.let { requestsList.add(it) }
+                    }
+                    trySend(requestsList).isSuccess
+                }
+            awaitClose {
+                subscription.remove()
+            }
+        }
 
     override suspend fun insertRequest(request: Request) {
         try {

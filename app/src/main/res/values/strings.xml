@@ -119,12 +119,17 @@
     <string name="new_advert_label">Nuevo anuncio</string>
     <string name="edit_advert_label">Editar anuncio</string>
 
-    <!-- Enviar información a otra aplicación -->
-    <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
-    <string name="send_info">Enviar información a otra aplicación</string>
+    <!-- Label para pantalla de solicitudes de clases -->
+    <string name="date_hour_request">%1$s - %2$s</string>
     <string name="decline_button_label">Rechazar</string>
     <string name="accept_button_label">Aceptar</string>
 
-    <!-- Mensajes de los Snackbar -->
+    <!-- Enviar información a otra aplicación -->
+    <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
+    <string name="send_info">Enviar información a otra aplicación</string>
 
+    <!-- Mensajes de los Snackbar -->
+    <string name="pending_tab_label">Pendientes</string>
+    <string name="accepted_tab_label">Aceptadas</string>
+    <string name="deny_tab_label">Rechazadas</string>
 </resources>

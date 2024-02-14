@@ -15,7 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.swiftlearn.R
 import com.example.swiftlearn.model.Role
-import com.example.swiftlearn.ui.screens.student.adverts.AdvertsListScreen
+import com.example.swiftlearn.ui.screens.student.adverts.AdvertsScreen
 import com.example.swiftlearn.ui.screens.home.HomeDestination
 import com.example.swiftlearn.ui.screens.home.HomeUiState
 import com.example.swiftlearn.ui.screens.home.MenuItems
@@ -25,9 +25,9 @@ import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.example.swiftlearn.ui.screens.professor.classes.ClassesScreen
 import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertDestination
 import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertScreen
-import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsListScreen
+import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsScreen
 import com.example.swiftlearn.ui.screens.profile.ProfileScreen
-import com.example.swiftlearn.ui.screens.student.favorites.FavoritesListScreen
+import com.example.swiftlearn.ui.screens.student.favorites.FavoritesScreen
 
 @Composable
 fun HomeNavigation(
@@ -47,13 +47,13 @@ fun HomeNavigation(
         composable(route = MenuItems.AdvertsItem.route) {
             when(homeUiState.role) {
                 Role.Profesor -> {
-                    MyAdvertsListScreen(
+                    MyAdvertsScreen(
                         navigateToEditAdvert = { navController.navigate("${EditAdvertDestination.route}/$it") },
                         onSendButtonClick = { sendAdvert(context, it) }
                     )
                 }
                 Role.Alumno -> {
-                    AdvertsListScreen(
+                    AdvertsScreen(
                         windowSize = windowSize,
                         onSendButtonClick = { sendAdvert(context, it) },
                         navigateToClasses = { navController.navigate(MenuItems.ClassesItem.route) }
@@ -67,7 +67,7 @@ fun HomeNavigation(
             ClassesScreen()
         }
         composable(route = MenuItems.FavoritesItem.route) {
-            FavoritesListScreen(
+            FavoritesScreen(
                 windowSize = windowSize,
                 onSendButtonClick = { sendAdvert(context, it) },
                 navigateToClasses = { navController.navigate(MenuItems.ClassesItem.route) }

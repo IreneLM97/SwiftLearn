@@ -26,7 +26,7 @@ class AdvertRepositoryImpl: AdvertRepository {
         }
     }
 
-    override fun getAllAdvertsByProfId(profId: String): Flow<List<Advert>> = callbackFlow {
+    override fun getAllAdvertsByProfIdFlow(profId: String): Flow<List<Advert>> = callbackFlow {
         val subscription = advertsCollection
             .whereEqualTo("profId", profId)
             .addSnapshotListener { querySnapshot, _ ->
@@ -40,6 +40,18 @@ class AdvertRepositoryImpl: AdvertRepository {
         awaitClose {
             subscription.remove()
         }
+    }
+
+    override suspend fun getAllAdvertsByProfId(profId: String): List<Advert> {
+        val query = advertsCollection.whereEqualTo("profId", profId).get().await()
+
+        val advertsList = mutableListOf<Advert>()
+        query.documents.forEach { document ->
+            val advert = document.toObject(Advert::class.java)
+            advert?.let { advertsList.add(it) }
+        }
+
+        return advertsList
     }
 
     override suspend fun getAdvertById(advertId: String): Advert? {

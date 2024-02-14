@@ -21,5 +21,12 @@
     <color name="my_dark_gray">#49454F</color>
 
     <color name="my_red">#FFA80707</color>
-    <color name="my_yellow">#D3E122</color>
+
+    <color name="my_light_yellow">#9DA351</color>
+    <color name="my_light_green">#AADAA1</color>
+    <color name="my_light_red">#DAB2A1</color>
+
+    <color name="my_dark_yellow">#B3C24E</color>
+    <color name="my_dark_green">#89AB6B</color>
+    <color name="my_dark_red">#CA6452</color>
 </resources>

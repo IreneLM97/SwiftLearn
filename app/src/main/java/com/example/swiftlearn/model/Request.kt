@@ -1,8 +1,8 @@
 package com.example.swiftlearn.model
 
 enum class Status {
-    Confirmado,
-    Denegado,
+    Aceptada,
+    Rechazada,
     Pendiente
 }
 

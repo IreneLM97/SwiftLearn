@@ -37,6 +37,22 @@ class UserRepositoryImpl: UserRepository {
         }
     }
 
+    override fun getAllStudents(): Flow<List<User>> = callbackFlow {
+        val subscription = usersCollection
+            .whereEqualTo("role", Role.Alumno)
+            .addSnapshotListener { querySnapshot, _ ->
+                val studentsList = mutableListOf<User>()
+                querySnapshot?.documents?.forEach { documentSnapshot ->
+                    val student = documentSnapshot.toObject(User::class.java)
+                    student?.let { studentsList.add(it) }
+                }
+                trySend(studentsList).isSuccess
+            }
+        awaitClose {
+            subscription.remove()
+        }
+    }
+
     override suspend fun insertUser(user: User) {
         try {
             val document = usersCollection.add(user.toMap()).await()

@@ -134,7 +134,9 @@ fun LoginScreen(
                     loginUiState = loginUiState,
                     onFieldChanged = viewModel::onFieldChanged,
                     onToggleChecked = viewModel::onToggleChanged,
-                    onLoginClick = { viewModel.signInWithEmailAndPassword(context = context, loginUiState.loginDetails, navigateToHome) },
+                    onLoginClick = {
+                        viewModel.signInWithEmailAndPassword(context, loginUiState.loginDetails, navigateToHome)
+                    },
                     onGoogleLoginClick = {
                         val options = GoogleSignInOptions
                             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.screens.student.adverts
+package com.example.swiftlearn.ui.screens.student
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -69,7 +69,8 @@ import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.MultiOptionsSectionImmutable
 import com.example.swiftlearn.ui.components.RequestClassDialog
 import com.example.swiftlearn.ui.components.SearchTextField
-import com.example.swiftlearn.ui.screens.student.favorites.FavoritesListUiState
+import com.example.swiftlearn.ui.screens.student.adverts.AdvertsUiState
+import com.example.swiftlearn.ui.screens.student.favorites.FavoritesUiState
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 
 /**
@@ -79,7 +80,7 @@ import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdvertsListBar(
+fun AdvertsBar(
     onBackButtonClick: () -> Unit
 ) {
     // Barra superior personalizada
@@ -119,8 +120,8 @@ fun AdvertsList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     contentType: AdvertsContentType = AdvertsContentType.ListOnly,
-    advertsListUiState: AdvertsListUiState? = null,
-    favoritesListUiState: FavoritesListUiState? = null
+    advertsUiState: AdvertsUiState? = null,
+    favoritesUiState: FavoritesUiState? = null
 ) {
     Column(
         modifier = modifier
@@ -128,7 +129,7 @@ fun AdvertsList(
         Spacer(modifier = modifier.height(20.dp))
 
         // Mostramos campo de búsqueda de clases en función de la asignatura
-        val searchQuery = advertsListUiState?.searchQuery ?: favoritesListUiState?.searchQuery ?: ""
+        val searchQuery = advertsUiState?.searchQuery ?: favoritesUiState?.searchQuery ?: ""
         SearchTextField(
             query = searchQuery,
             onQueryChange = onQueryChange
@@ -136,7 +137,7 @@ fun AdvertsList(
         Spacer(modifier = modifier.height(10.dp))
 
         // Filtramos la lista de anuncios por la asignatura del anuncio
-        val advertsList = advertsListUiState?.advertsList ?: favoritesListUiState?.advertsList ?: emptyList()
+        val advertsList = advertsUiState?.advertsList ?: favoritesUiState?.advertsList ?: emptyList()
         val filteredAdverts = if (searchQuery.isNotEmpty()) {
             advertsList.filter { it.subject.contains(searchQuery, ignoreCase = true) }
         } else {
@@ -166,19 +167,19 @@ fun AdvertsList(
             ) {
                 items(filteredAdverts) { advert ->
                     // Obtener el profesor correspondiente al anuncio
-                    val professorsList = advertsListUiState?.professorsList ?: favoritesListUiState?.professorsList ?: emptyList()
+                    val professorsList = advertsUiState?.professorsList ?: favoritesUiState?.professorsList ?: emptyList()
                     val professor = professorsList.find { it._id == advert.profId }
 
                     // Comprobamos si es favorito o no
-                    val favoritesList = advertsListUiState?.favoritesList ?: favoritesListUiState?.favoritesList ?: emptyList()
-                    val user = advertsListUiState?.user ?: favoritesListUiState?.user ?: User()
+                    val favoritesList = advertsUiState?.favoritesList ?: favoritesUiState?.favoritesList ?: emptyList()
+                    val user = advertsUiState?.user ?: favoritesUiState?.user ?: User()
                     val isFavorite = favoritesList.any {
                         it.userId == user._id && it.advertId == advert._id
                     }
 
                     // Comprobamos si está seleccionado el item y estamos en vista ListAndDetail
                     // para personalizar el fondo del item cuando esté seleccionado
-                    val currentAdvert = advertsListUiState?.currentAdvert ?: favoritesListUiState?.currentAdvert ?: Advert()
+                    val currentAdvert = advertsUiState?.currentAdvert ?: favoritesUiState?.currentAdvert ?: Advert()
                     val isSelected = currentAdvert._id == advert._id && contentType == AdvertsContentType.ListAndDetail
 
                     professor?.let {
@@ -561,16 +562,16 @@ fun AdvertsListAndDetail(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     contentType: AdvertsContentType = AdvertsContentType.ListOnly,
-    advertsListUiState: AdvertsListUiState? = null,
-    favoritesListUiState: FavoritesListUiState? = null
+    advertsUiState: AdvertsUiState? = null,
+    favoritesUiState: FavoritesUiState? = null
 ) {
     Row(
         modifier = modifier
     ) {
         // Representa la lista de anuncios
         AdvertsList(
-            advertsListUiState = advertsListUiState,
-            favoritesListUiState = favoritesListUiState,
+            advertsUiState = advertsUiState,
+            favoritesUiState = favoritesUiState,
             notFoundMessage = notFoundMessage,
             onQueryChange = onQueryChange,
             onAdvertClick = onAdvertClick,
@@ -584,9 +585,9 @@ fun AdvertsListAndDetail(
         )
 
         // Obtener la información necesaria para mostrar detalles del anuncio
-        val studentId = advertsListUiState?.user?._id ?: favoritesListUiState?.user?._id ?: ""
-        val currentAdvert = advertsListUiState?.currentAdvert ?: favoritesListUiState?.currentAdvert ?: Advert()
-        val professorsList = advertsListUiState?.professorsList ?: favoritesListUiState?.professorsList ?: emptyList()
+        val studentId = advertsUiState?.user?._id ?: favoritesUiState?.user?._id ?: ""
+        val currentAdvert = advertsUiState?.currentAdvert ?: favoritesUiState?.currentAdvert ?: Advert()
+        val professorsList = advertsUiState?.professorsList ?: favoritesUiState?.professorsList ?: emptyList()
         val professor = professorsList.find { it._id == currentAdvert.profId }
         professor?.let {
             // Representa los detalles de un anuncio específico

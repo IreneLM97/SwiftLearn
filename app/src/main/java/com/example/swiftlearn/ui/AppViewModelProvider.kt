@@ -7,15 +7,16 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.swiftlearn.SwiftLearnApplication
-import com.example.swiftlearn.ui.screens.student.adverts.AdvertsListViewModel
+import com.example.swiftlearn.ui.screens.student.adverts.AdvertsViewModel
 import com.example.swiftlearn.ui.screens.home.HomeViewModel
 import com.example.swiftlearn.ui.screens.login.LoginViewModel
+import com.example.swiftlearn.ui.screens.professor.classes.ClassesViewModel
 import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertViewModel
-import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsListViewModel
+import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsViewModel
 import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertViewModel
 import com.example.swiftlearn.ui.screens.profile.ProfileViewModel
 import com.example.swiftlearn.ui.screens.register.RegisterViewModel
-import com.example.swiftlearn.ui.screens.student.favorites.FavoritesListViewModel
+import com.example.swiftlearn.ui.screens.student.favorites.FavoritesViewModel
 
 /**
  * Fábrica que crea instancias de ViewModel para toda la aplicación.
@@ -44,18 +45,18 @@ object AppViewModelProvider {
             )
         }
 
-        // Inicialización para MyAdvertsListViewModel
+        // Inicialización para MyAdvertsViewModel
         initializer {
-            MyAdvertsListViewModel(
+            MyAdvertsViewModel(
                 userRepository = swiftLearnApplication().container.userRepository,
                 advertRepository = swiftLearnApplication().container.advertRepository,
                 favoriteRepository = swiftLearnApplication().container.favoriteRepository
             )
         }
 
-        // Inicialización para AdvertsListViewModel
+        // Inicialización para AdvertsViewModel
         initializer {
-            AdvertsListViewModel(
+            AdvertsViewModel(
                 userRepository = swiftLearnApplication().container.userRepository,
                 advertRepository = swiftLearnApplication().container.advertRepository,
                 favoriteRepository = swiftLearnApplication().container.favoriteRepository,
@@ -63,9 +64,9 @@ object AppViewModelProvider {
             )
         }
 
-        // Inicialización para FavoritesListViewModel
+        // Inicialización para FavoritesViewModel
         initializer {
-            FavoritesListViewModel(
+            FavoritesViewModel(
                 userRepository = swiftLearnApplication().container.userRepository,
                 advertRepository = swiftLearnApplication().container.advertRepository,
                 favoriteRepository = swiftLearnApplication().container.favoriteRepository,
@@ -86,6 +87,15 @@ object AppViewModelProvider {
             EditAdvertViewModel(
                 savedStateHandle = this.createSavedStateHandle(),
                 advertRepository = swiftLearnApplication().container.advertRepository
+            )
+        }
+
+        // Inicialización para ClassesViewModel
+        initializer {
+            ClassesViewModel(
+                userRepository = swiftLearnApplication().container.userRepository,
+                advertRepository = swiftLearnApplication().container.advertRepository,
+                requestRepository = swiftLearnApplication().container.requestRepository
             )
         }
 

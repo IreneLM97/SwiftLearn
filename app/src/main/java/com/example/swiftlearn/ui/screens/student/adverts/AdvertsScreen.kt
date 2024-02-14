@@ -18,6 +18,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
 import com.example.swiftlearn.ui.AppViewModelProvider
+import com.example.swiftlearn.ui.screens.student.AdvertDetail
+import com.example.swiftlearn.ui.screens.student.AdvertsBar
+import com.example.swiftlearn.ui.screens.student.AdvertsList
+import com.example.swiftlearn.ui.screens.student.AdvertsListAndDetail
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 
 /**
@@ -29,17 +33,17 @@ import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdvertsListScreen(
+fun AdvertsScreen(
     windowSize: WindowWidthSizeClass,
     onSendButtonClick: (String) -> Unit,
     navigateToClasses: () -> Unit,
-    viewModel: AdvertsListViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: AdvertsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ){
     // Obtenemos administrador del foco de la aplicación
     val focusManager = LocalFocusManager.current
 
     // Guardamos el estado de la pantalla de anuncios
-    val advertsListUiState = viewModel.advertsListUiState.collectAsState().value
+    val advertsUiState = viewModel.advertsUiState.collectAsState().value
 
     // Determinamos el tipo de contenido en función del tamaño de la ventana
     val contentType = when (windowSize) {
@@ -53,7 +57,7 @@ fun AdvertsListScreen(
     }
 
     // Mostramos el icono cargando si está cargando
-    if(advertsListUiState.isLoading) {
+    if(advertsUiState.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -63,9 +67,9 @@ fun AdvertsListScreen(
     } else {
         Scaffold(
             topBar = {
-                if (contentType == AdvertsContentType.ListOnly && !advertsListUiState.isShowingListPage) {
+                if (contentType == AdvertsContentType.ListOnly && !advertsUiState.isShowingListPage) {
                     // Barra superior personalizada
-                    AdvertsListBar(
+                    AdvertsBar(
                         onBackButtonClick = { viewModel.navigateToListAdvertsPage() }
                     )
                 }
@@ -76,7 +80,7 @@ fun AdvertsListScreen(
                 // Mostramos lista y detalles de anuncios
                 AdvertsListAndDetail(
                     windowSize = windowSize,
-                    advertsListUiState = advertsListUiState,
+                    advertsUiState = advertsUiState,
                     notFoundMessage = stringResource(id = R.string.not_found_adverts),
                     onQueryChange = {
                         viewModel.onQueryChange(it)
@@ -98,10 +102,10 @@ fun AdvertsListScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             } else { // tamaño pantalla standard
-                if (advertsListUiState.isShowingListPage) {
+                if (advertsUiState.isShowingListPage) {
                     // Mostramos lista de anuncios
                     AdvertsList(
-                        advertsListUiState = advertsListUiState,
+                        advertsUiState = advertsUiState,
                         notFoundMessage = stringResource(id = R.string.not_found_adverts),
                         onQueryChange = {
                             viewModel.onQueryChange(it)
@@ -121,13 +125,13 @@ fun AdvertsListScreen(
                     )
                 } else {
                     // Obtener el profesor correspondiente al anuncio
-                    val professor = advertsListUiState.professorsList.find { it._id == advertsListUiState.currentAdvert.profId }
+                    val professor = advertsUiState.professorsList.find { it._id == advertsUiState.currentAdvert.profId }
                     professor?.let {
                         // Mostramos detalles de un anuncio específico
                         AdvertDetail(
                             windowSize = windowSize,
-                            studentId = advertsListUiState.user._id,
-                            advert = advertsListUiState.currentAdvert,
+                            studentId = advertsUiState.user._id,
+                            advert = advertsUiState.currentAdvert,
                             professor = professor,
                             onRequestConfirm = {
                                 viewModel.insertRequest(it)

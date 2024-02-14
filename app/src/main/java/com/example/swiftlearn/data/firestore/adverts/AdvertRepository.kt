@@ -5,7 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface AdvertRepository {
     fun getAllAdverts(): Flow<List<Advert>>
-    fun getAllAdvertsByProfId(profId: String): Flow<List<Advert>>
+    fun getAllAdvertsByProfIdFlow(profId: String): Flow<List<Advert>>
+    suspend fun getAllAdvertsByProfId(profId: String): List<Advert>
     suspend fun getAdvertById(advertId: String): Advert?
     suspend fun getAdvertsIdsByProfId(profId: String): List<String>
     suspend fun insertAdvert(advert: Advert)

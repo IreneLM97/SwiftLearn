@@ -1,10 +1,10 @@
-package com.example.swiftlearn.ui.screens.student.favorites
+package com.example.swiftlearn.ui.screens.student.adverts
 
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.Favorite
 import com.example.swiftlearn.model.User
 
-data class FavoritesListUiState(
+data class AdvertsUiState(
     val user: User = User(),
     val advertsList: List<Advert> = emptyList(),
     val professorsList: List<User> = emptyList(),

@@ -21,7 +21,7 @@ class EditAdvertViewModel(
     savedStateHandle: SavedStateHandle,
     val advertRepository: AdvertRepository
 ): ViewModel() {
-    // Estado de la interfaz de nuevo anuncio
+    // Estado de la interfaz de editar anuncio
     private val _advertUiState = MutableStateFlow(AdvertUiState())
     val advertUiState = _advertUiState.asStateFlow()
 

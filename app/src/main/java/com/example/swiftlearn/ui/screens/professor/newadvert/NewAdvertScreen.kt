@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
+import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.ClassMode
 import com.example.swiftlearn.model.Level
 import com.example.swiftlearn.ui.AppViewModelProvider
@@ -75,7 +76,7 @@ fun NewAdvertScreen(
                 advertUiState = newAdvertUiState,
                 onFieldChanged = viewModel::onFieldChanged,
                 onSaveClick = {
-                    viewModel.insertAdvert(newAdvertUiState.advertDetails.toAdvert())
+                    viewModel.insertAdvert(it)
                     navigateToListAdverts()
                 }
             )
@@ -111,7 +112,7 @@ private fun NewAdvertHeader() {
 fun AdvertForm(
     advertUiState: AdvertUiState,
     onFieldChanged: (AdvertDetails) -> Unit,
-    onSaveClick: () -> Unit
+    onSaveClick: (Advert) -> Unit
 ) {
     // Variable para manejar la información del anuncio
     val advertDetails = advertUiState.advertDetails
@@ -202,7 +203,9 @@ fun AdvertForm(
             buttonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
             isEnabled = advertUiState.isEntryValid,
-            onClick = onSaveClick
+            onClick = {
+                onSaveClick(advertDetails.toAdvert())
+            }
         )
         Spacer(modifier = Modifier.height(100.dp))
     }

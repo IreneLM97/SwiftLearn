@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
+import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.ButtonWithTextAndImage
@@ -75,9 +76,11 @@ fun ProfileScreen(
             ProfileForm(
                 profileUiState = profileUiState,
                 onFieldChanged = viewModel::onFieldChanged,
-                onSaveClick = { viewModel.updateUser(profileUiState.profileDetails.updateUser(profileUiState.user)) },
+                onSaveClick = {
+                    viewModel.updateUser(it)
+                },
                 onDeleteClick = {
-                    viewModel.deleteUser(profileUiState.user)
+                    viewModel.deleteUser(it)
                     navigateToLogin()
                 },
                 onSignOutClick = {
@@ -117,8 +120,8 @@ private fun ProfileHeader() {
 private fun ProfileForm(
     profileUiState: ProfileUiState = ProfileUiState(),
     onFieldChanged: (ProfileDetails) -> Unit = {},
-    onSaveClick: () -> Unit = {},
-    onDeleteClick: () -> Unit = {},
+    onSaveClick: (User) -> Unit = {},
+    onDeleteClick: (User) -> Unit = {},
     onSignOutClick: () -> Unit = {}
 ) {
     // Variable para manejar la información del usuario
@@ -134,7 +137,7 @@ private fun ProfileForm(
             textMessage = stringResource(id = R.string.sure_delete_account_label),
             onDeleteConfirm = {
                 // Si el usuario confirma, se llama a la función onDeleteClick
-                onDeleteClick()
+                onDeleteClick(profileUiState.user)
                 // Se cierra el diálogo
                 showDialog = false
             },
@@ -206,7 +209,9 @@ private fun ProfileForm(
             buttonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
             isEnabled = profileUiState.isEntryValid,
-            onClick = onSaveClick
+            onClick = {
+                onSaveClick(profileDetails.updateUser(profileUiState.user))
+            }
         )
         Spacer(modifier = Modifier.height(20.dp))
 

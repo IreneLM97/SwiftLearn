@@ -26,7 +26,6 @@ import com.example.swiftlearn.R
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.navigation.NavigationDestination
 import com.example.swiftlearn.ui.screens.professor.newadvert.AdvertForm
-import com.example.swiftlearn.ui.screens.professor.newadvert.toAdvert
 
 object EditAdvertDestination : NavigationDestination {
     override val titleRes = null
@@ -41,7 +40,7 @@ fun EditAdvertScreen(
     navigateToListAdverts: () -> Unit = {},
     viewModel: EditAdvertViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    // Guardamos el estado de la pantalla de nuevo anuncio
+    // Guardamos el estado de la pantalla de editar anuncio
     val advertUiState = viewModel.advertUiState.collectAsState().value
 
     // Mostramos el icono cargando si está cargando
@@ -52,7 +51,7 @@ fun EditAdvertScreen(
         ) {
             CircularProgressIndicator()
         }
-        // Mostramos el formulario de nuevo anuncio si no está cargando
+    // Mostramos el formulario de nuevo anuncio si no está cargando
     } else {
         Column(
             modifier = Modifier
@@ -66,7 +65,7 @@ fun EditAdvertScreen(
                 advertUiState = advertUiState,
                 onFieldChanged = viewModel::onFieldChanged,
                 onSaveClick = {
-                    viewModel.updateAdvert(advertUiState.advertDetails.toAdvert())
+                    viewModel.updateAdvert(it)
                     navigateToListAdverts()
                 }
             )

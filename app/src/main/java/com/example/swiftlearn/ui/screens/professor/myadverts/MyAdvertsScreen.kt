@@ -53,19 +53,19 @@ import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.DeleteConfirmationDialog
-import com.example.swiftlearn.ui.screens.student.adverts.IconWithText
+import com.example.swiftlearn.ui.screens.student.IconWithText
 
 @Composable
-fun MyAdvertsListScreen(
+fun MyAdvertsScreen(
     navigateToEditAdvert: (String) -> Unit,
     onSendButtonClick: (String) -> Unit,
-    viewModel: MyAdvertsListViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: MyAdvertsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Guardamos el estado de la pantalla de mis anuncios
-    val myAdvertsListUiState = viewModel.myAdvertsListUiState.collectAsState().value
+    val myAdvertsUiState = viewModel.myAdvertsUiState.collectAsState().value
 
     // Mostramos el icono cargando si está cargando
-    if(myAdvertsListUiState.isLoading) {
+    if(myAdvertsUiState.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -80,8 +80,8 @@ fun MyAdvertsListScreen(
 
             // Lista de anuncios del profesor
             MyAdvertsList(
-                professor = myAdvertsListUiState.user,
-                advertsList = myAdvertsListUiState.myAdvertsList,
+                professor = myAdvertsUiState.user,
+                advertsList = myAdvertsUiState.myAdvertsList,
                 notFoundMessage = stringResource(R.string.not_adverts_yet),
                 onEditButtonClick = {
                     navigateToEditAdvert(it._id)

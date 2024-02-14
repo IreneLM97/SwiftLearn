@@ -4,13 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Tab
@@ -19,8 +23,6 @@ import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccessTime
-import androidx.compose.material.icons.outlined.AccessTimeFilled
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.LocationOn
@@ -28,7 +30,9 @@ import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -44,116 +48,149 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.Request
 import com.example.swiftlearn.model.Status
 import com.example.swiftlearn.model.User
-import com.example.swiftlearn.ui.screens.student.adverts.IconWithText
+import com.example.swiftlearn.ui.AppViewModelProvider
+import com.example.swiftlearn.ui.screens.student.IconWithText
 
 @Composable
-fun ClassesScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Estado de selección para cada pestaña
-        val selectedTab1 = rememberSaveable { mutableStateOf(true) }
-        val selectedTab2 = rememberSaveable { mutableStateOf(false) }
-        val selectedTab3 = rememberSaveable { mutableStateOf(false) }
+fun ClassesScreen(
+    viewModel: ClassesViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
+    // Guardamos el estado de la pantalla de clases
+    val classesUiState = viewModel.classesUiState.collectAsState().value
 
-        // TabRow para las pestañas
-        TabRow(
-            selectedTabIndex =
-                if (selectedTab1.value) 0
-                else if (selectedTab2.value) 1
-                else 2,
-            backgroundColor = Color.White,
-            contentColor = Color.Black,
-            indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
-                    color = colorResource(id = R.color.my_dark_purple),
-                    modifier = Modifier.tabIndicatorOffset(
-                        when {
-                            selectedTab1.value -> tabPositions[0]
-                            selectedTab2.value -> tabPositions[1]
-                            else -> tabPositions[2]
-                        }
+    // Mostramos el icono cargando si está cargando
+    if(classesUiState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    // Mostramos las solicitudes si no está cargando
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            val selectedTabIndex = rememberSaveable { mutableStateOf(0) }
+
+            // TabRow para las pestañas
+            TabRow(
+                selectedTabIndex = selectedTabIndex.value,
+                backgroundColor = Color.White,
+                contentColor = Color.Black,
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        color = colorResource(id = R.color.my_dark_purple),
+                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex.value])
                     )
+                }
+            ) {
+                // Pestaña Pendientes
+                TabItem(
+                    text = stringResource(R.string.pending_tab_label),
+                    isSelected = selectedTabIndex.value == 0,
+                    onClick = { selectedTabIndex.value = 0 }
+                )
+
+                // Pestaña Aceptadas
+                TabItem(
+                    text = stringResource(R.string.accepted_tab_label),
+                    isSelected = selectedTabIndex.value == 1,
+                    onClick = { selectedTabIndex.value = 1 }
+                )
+
+                // Pestaña Rechazadas
+                TabItem(
+                    text = stringResource(R.string.deny_tab_label),
+                    isSelected = selectedTabIndex.value == 2,
+                    onClick = { selectedTabIndex.value = 2 }
                 )
             }
-        ) {
-            // Pestaña 1
-            Tab(
-                selected = selectedTab1.value,
-                onClick = {
-                    selectedTab1.value = true
-                    selectedTab2.value = false
-                    selectedTab3.value = false
-                },
-                text = {
-                    Text(
-                        text = Status.Pendiente.toString(),
-                        fontSize =
-                            if(selectedTab1.value) 17.sp
-                            else 15.sp,
-                        color =
-                            if (selectedTab1.value) colorResource(id = R.color.my_dark_purple)
-                            else colorResource(id = R.color.my_dark_gray),
-                    )
-                }
-            )
 
-            // Pestaña 2
-            Tab(
-                selected = selectedTab2.value,
-                onClick = {
-                    selectedTab1.value = false
-                    selectedTab2.value = true
-                    selectedTab3.value = false
+            // Contenido de la pestaña seleccionada
+            ClassesList(
+                tabIndex = selectedTabIndex.value,
+                classesUiState = classesUiState,
+                onAcceptButtonClick = {
+                    viewModel.updateRequest(it)
+                    selectedTabIndex.value = 1
                 },
-                text = {
-                    Text(
-                        text = Status.Confirmado.toString(),
-                        fontSize =
-                            if(selectedTab2.value) 17.sp
-                            else 15.sp,
-                        color =
-                            if (selectedTab2.value) colorResource(id = R.color.my_dark_purple)
-                            else colorResource(id = R.color.my_dark_gray)
-                    )
-                }
-            )
-
-            // Pestaña 3
-            Tab(
-                selected = selectedTab3.value,
-                onClick = {
-                    selectedTab1.value = false
-                    selectedTab2.value = false
-                    selectedTab3.value = true
-                },
-                text = {
-                    Text(
-                        text = Status.Denegado.toString(),
-                        fontSize =
-                            if(selectedTab3.value) 17.sp
-                            else 15.sp,
-                        color =
-                            if (selectedTab3.value) colorResource(id = R.color.my_dark_purple)
-                            else colorResource(id = R.color.my_dark_gray)
-                    )
+                onDeclineButtonClick = {
+                    viewModel.updateRequest(it)
+                    selectedTabIndex.value = 2
                 }
             )
         }
+    }
+}
 
-        // Contenido de la pestaña seleccionada
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // Aquí puedes mostrar el contenido de la pestaña seleccionada
+@Composable
+private fun TabItem(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Tab(
+        selected = isSelected,
+        onClick = onClick,
+        text = {
+            Text(
+                text = text,
+                fontSize =
+                if (isSelected) 17.sp
+                else 15.sp,
+                color =
+                if (isSelected) colorResource(id = R.color.my_dark_purple)
+                else colorResource(id = R.color.my_dark_gray),
+            )
+        }
+    )
+}
+
+@Composable
+private fun ClassesList(
+    tabIndex: Int,
+    classesUiState: ClassesUiState,
+    onAcceptButtonClick: (Request) -> Unit,
+    onDeclineButtonClick: (Request) -> Unit
+) {
+    // Filtramos la lista de solicitudes de clases en función del tab seleccionado
+    val filteredRequests = when (tabIndex) {
+        0 -> classesUiState.pendingRequests
+        1 -> classesUiState.acceptedRequests
+        2 -> classesUiState.deniedRequests
+        else -> emptyList()
+    }
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier
+            .padding(top = dimensionResource(R.dimen.padding_small))
+            .padding(bottom = 62.dp)
+            .height(620.dp)
+    ) {
+        items(filteredRequests) { request ->
+            // Identificamos el alumno vinculado a ese anuncio
+            val student = classesUiState.studentsList.find { it._id == request.studentId } ?: User()
+            // Identificamos el anuncio vinculado a ese anuncio
+            val advert = classesUiState.advertsList.find { it._id == request.advertId } ?: Advert()
+
+            // Mostramos la información de la solicitud
+            ClassItem(
+                student = student,
+                advert = advert,
+                request = request,
+                onAcceptButtonClick = onAcceptButtonClick,
+                onDeclineButtonClick = onDeclineButtonClick
+            )
         }
     }
 }
@@ -163,8 +200,8 @@ private fun ClassItem(
     student: User,
     advert: Advert,
     request: Request,
-    onAcceptButtonClick: () -> Unit,
-    onDeclineButtonClick: () -> Unit,
+    onAcceptButtonClick: (Request) -> Unit,
+    onDeclineButtonClick: (Request) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Diseño del item de la lista
@@ -179,14 +216,24 @@ private fun ClassItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(colorResource(id = R.color.my_light_pink))
+                .background(
+                    color = when (request.status) {
+                        Status.Pendiente.toString() -> colorResource(id = R.color.my_light_pink)
+                        Status.Aceptada.toString() -> colorResource(id = R.color.my_light_green)
+                        else -> colorResource(id = R.color.my_light_red)
+                    }
+                )
                 .border(
                     width = 1.dp,
-                    color = colorResource(id = R.color.my_light_purple),
+                    color = when (request.status) {
+                        Status.Pendiente.toString() -> colorResource(id = R.color.my_dark_purple)
+                        Status.Aceptada.toString() -> colorResource(id = R.color.my_dark_green)
+                        else -> colorResource(id = R.color.my_dark_red)
+                    },
                     shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
                 )
         ) {
-            // Datos del alumno
+            // Información del alumno
             Column(
                 modifier = Modifier
                     .padding(10.dp)
@@ -222,105 +269,128 @@ private fun ClassItem(
                         student.postal
                     )
                 )
-                Spacer(modifier = Modifier.height(10.dp))
 
-                // Botón de Rechazar
-                Text(
-                    text = stringResource(R.string.decline_button_label),
-                    color = colorResource(R.color.my_dark_gray),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .background(Color.White, CircleShape)
-                        .clip(CircleShape)
-                        .border(2.dp, colorResource(R.color.my_dark_gray), CircleShape)
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .clickable(onClick = onDeclineButtonClick)
-                )
-            }
+                // Información de la clase
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    // Asignatura de la clase
+                    Column(modifier = Modifier.weight(1.5f)) {
+                        IconWithText(
+                            icon = Icons.Outlined.MenuBook,
+                            text = advert.subject
+                        )
+                    }
+                    // Fecha de la clase
+                    Column(modifier = Modifier.weight(1.5f)) {
+                        IconWithText(
+                            icon = Icons.Outlined.DateRange,
+                            text = stringResource(
+                                R.string.date_hour_request,
+                                request.date,
+                                request.hour
+                            )
+                        )
+                    }
+                }
 
-            // Datos de la clase
-            Column(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .weight(1f)
-            ) {
-                // Estado de la petición
-                IconWithText(
-                    icon = Icons.Outlined.AccessTimeFilled,
-                    text = Status.Pendiente.toString(),
-                    iconColor = colorResource(id = R.color.my_yellow),
-                    textColor = colorResource(id = R.color.my_yellow)
-                )
-                Spacer(modifier = Modifier.height(6.dp))
+                // Botones de Aceptar y Rechazar solo si está en estado Pendiente
+                if(request.status == Status.Pendiente.toString()) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.decline_button_label),
+                                color = colorResource(R.color.my_dark_gray),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .background(Color.White, CircleShape)
+                                    .clip(CircleShape)
+                                    .border(2.dp, colorResource(R.color.my_dark_gray), CircleShape)
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                                    .clickable(
+                                        onClick = {
+                                            onDeclineButtonClick(request.copy(status = Status.Rechazada.toString()))
+                                        }
+                                    )
+                            )
+                        }
 
-                // Asignatura de la clase
-                IconWithText(
-                    icon = Icons.Outlined.MenuBook,
-                    text = advert.subject
-                )
-
-                // Información de la fecha de la clase
-                IconWithText(
-                    icon = Icons.Outlined.DateRange,
-                    text = request.date
-                )
-
-                // Información de la hora de la clase
-                IconWithText(
-                    icon = Icons.Outlined.AccessTime,
-                    text = request.hour
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // Botón de Aceptar
-                Text(
-                    text = stringResource(R.string.accept_button_label),
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .background(colorResource(id = R.color.my_dark_purple), CircleShape)
-                        .clip(CircleShape)
-                        .border(2.dp, colorResource(R.color.my_dark_purple), CircleShape)
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .clickable(onClick = onAcceptButtonClick)
-                )
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.accept_button_label),
+                                color = Color.White,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .background(colorResource(id = R.color.my_dark_purple), CircleShape)
+                                    .clip(CircleShape)
+                                    .border(2.dp, colorResource(R.color.my_dark_purple), CircleShape)
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                                    .clickable(
+                                        onClick = {
+                                            onAcceptButtonClick(request.copy(status = Status.Aceptada.toString()))
+                                        }
+                                    )
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
 
-
-@Preview
-@Composable
-fun ClassesScreenPreview() {
-    ClassesScreen()
-}
-
 @Preview
 @Composable
 fun ClassItemPreview() {
-    ClassItem(
-        student = User(
-            username = "Pepe",
-            phone = "674534232",
-            address = "Calle Real",
-            postal = "54523",
-            email = "correo@gmail.com"
-        ),
-        advert = Advert(
-            subject = "Lengua",
-            price = 12,
-            classModes = "Presencial, Hibrido",
-            levels = "Bachillerato"
-        ),
-        request = Request(
-            status = "Pendiente",
-            date = "10/03/2023",
-            hour = "10:30"
-        ),
-        onAcceptButtonClick = {},
-        onDeclineButtonClick = {}
+    val student = User(
+        username = "Pepe",
+        phone = "674534232",
+        address = "Calle Real",
+        postal = "54523",
+        email = "correo@gmail.com"
     )
+
+    val advert = Advert(
+        subject = "Lengua",
+        price = 12,
+        classModes = "Presencial, Hibrido",
+        levels = "Bachillerato"
+    )
+
+    val request = Request(
+        status = "Pendiente",
+        date = "10/03/2023",
+        hour = "10:30"
+    )
+
+    Column {
+        ClassItem(
+            student = student,
+            advert = advert,
+            request = request,
+            onAcceptButtonClick = {},
+            onDeclineButtonClick = {}
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        ClassItem(
+            student = student,
+            advert = advert,
+            request = request.copy(status = Status.Aceptada.toString()),
+            onAcceptButtonClick = {},
+            onDeclineButtonClick = {}
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        ClassItem(
+            student = student,
+            advert = advert,
+            request = request.copy(status = Status.Rechazada.toString()),
+            onAcceptButtonClick = {},
+            onDeclineButtonClick = {}
+        )
+    }
 }
