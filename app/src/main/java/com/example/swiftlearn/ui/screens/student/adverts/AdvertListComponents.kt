@@ -327,7 +327,7 @@ fun AdvertItem(
                 // Información de la ubicación
                 IconWithText(
                     icon = Icons.Outlined.LocationOn,
-                    text = stringResource(id = R.string.direction_professor, professor.address, professor.postal),
+                    text = stringResource(id = R.string.direction_info, professor.address, professor.postal),
                     iconSize = 20.dp,
                     textSize = 15.sp
                 )
@@ -431,7 +431,7 @@ fun AdvertDetail(
             // Dirección del profesor
             IconWithText(
                 icon = Icons.Outlined.LocationOn,
-                text = stringResource(id = R.string.direction_professor, professor.address, professor.postal),
+                text = stringResource(id = R.string.direction_info, professor.address, professor.postal),
                 iconSize = 30.dp,
                 textSize = 20.sp
             )
@@ -607,14 +607,18 @@ fun AdvertsListAndDetail(
 fun IconWithText(
     icon: ImageVector,
     text: String,
-    iconSize: Dp,
-    textSize: TextUnit
+    iconSize: Dp = 20.dp,
+    textSize: TextUnit = 15.sp,
+    iconColor: Color = colorResource(id = R.color.my_dark_gray),
+    textColor: Color = colorResource(id = R.color.my_dark_gray)
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = colorResource(id = R.color.my_dark_gray),
+            tint = iconColor,
             modifier = Modifier
                 .padding(end = 4.dp)
                 .size(iconSize)
@@ -622,7 +626,7 @@ fun IconWithText(
         Text(
             text = text,
             fontSize = textSize,
-            color = colorResource(id = R.color.my_dark_gray)
+            color = textColor
         )
     }
     Spacer(modifier = Modifier.height(10.dp))

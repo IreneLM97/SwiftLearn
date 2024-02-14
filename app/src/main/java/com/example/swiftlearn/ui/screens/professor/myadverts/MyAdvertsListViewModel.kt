@@ -12,7 +12,6 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -36,13 +35,8 @@ class MyAdvertsListViewModel(
                 // Actualizar el estado de la pantalla con el usuario
                 _myAdvertsListUiState.update { it.copy(user = user) }
 
-                // Combina los flujos de datos de sus anuncios y sus clases
-                combine(
-                    advertRepository.getAllAdvertsByProfId(user._id)
-                ) { adverts  ->
-                    adverts
-                }.collect { (adverts) ->
-                    // Actualiza el estado de sesión con los flujos obtenidos
+                // Obtenemos flujo de datos con los anuncios del profesor
+                advertRepository.getAllAdvertsByProfId(user._id).collect { adverts ->
                     _myAdvertsListUiState.update { it.copy(myAdvertsList = adverts) }
 
                     delay(1000)

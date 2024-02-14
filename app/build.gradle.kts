@@ -64,6 +64,9 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3-window-size-class")
 
+    // Snackbar
+    implementation("com.google.android.material:material:1.4.0")
+
     // Navegación
     implementation("androidx.navigation:navigation-compose:2.5.3")
 

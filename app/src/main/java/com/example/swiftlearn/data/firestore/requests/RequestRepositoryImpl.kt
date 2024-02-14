@@ -9,7 +9,7 @@ import kotlinx.coroutines.tasks.await
 
 class RequestRepositoryImpl: RequestRepository {
     private val firestore = FirebaseFirestore.getInstance()
-    private val requestsCollection = firestore.collection("requests")
+    private val requestsCollection = firestore.collection("classes")
 
     override fun getAllRequestsByUserId(userId: String): Flow<List<Request>> = callbackFlow {
         val subscription = requestsCollection

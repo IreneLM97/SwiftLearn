@@ -38,6 +38,7 @@ import com.example.swiftlearn.R
 fun ButtonWithText(
     label: String,
     buttonColor: Color,
+    borderButtonColor: Color = Color.Transparent,
     textColor: Color,
     isEnabled: Boolean = true,
     onClick: () -> Unit = {}
@@ -52,6 +53,7 @@ fun ButtonWithText(
                 color = color,
                 shape = CircleShape
             )
+            .border(width = 2.dp, color = borderButtonColor, shape = CircleShape)
             .clip(shape = CircleShape)
             .fillMaxWidth(),
         shape = CircleShape,

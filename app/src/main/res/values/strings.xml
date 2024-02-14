@@ -67,7 +67,7 @@
 
     <!-- Título de items del menu inferior -->
     <string name="title_adverts">Anuncios</string>
-    <string name="title_requests">Solicitudes</string>
+    <string name="title_classes">Clases</string>
     <string name="title_new_advert">Nuevo</string>
     <string name="title_map">Mapa</string>
     <string name="title_profile">Perfil</string>
@@ -83,7 +83,7 @@
     <!-- Label para lista de anuncios y anuncios favoritos -->
     <string name="search_label">¿Qué asignatura quieres buscar?</string>
     <string name="icon_euro_hour">%1$s €/h</string>
-    <string name="direction_professor">%1$s, %2$s</string>
+    <string name="direction_info">%1$s, %2$s</string>
     <string name="advert_summary">Asignatura: %1$s \nPrecio: %2$s \nProfesor: %3$s \nTeléfono: %4$s \nEmail: %5$s</string>
     <string name="not_found_adverts">No se han encontrado anuncios con esa búsqueda.</string>
     <string name="not_found_favorites">Aún no has marcado ningún favorito.</string>
@@ -122,4 +122,9 @@
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
+    <string name="decline_button_label">Rechazar</string>
+    <string name="accept_button_label">Aceptar</string>
+
+    <!-- Mensajes de los Snackbar -->
+
 </resources>
