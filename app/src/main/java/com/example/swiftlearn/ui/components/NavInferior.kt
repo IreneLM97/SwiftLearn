@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.swiftlearn.R
-import com.example.swiftlearn.ui.screens.home.MenuItems
+import com.example.swiftlearn.ui.navigation.MenuItems
 
 @Composable
 fun NavInfProfessor(

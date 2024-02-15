@@ -22,7 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
@@ -70,6 +72,8 @@ fun <T> Options(
 @Composable
 fun <T> MultiOptions(
     title: String = "",
+    fontSize: TextUnit = 15.sp,
+    fontStyle: FontStyle = FontStyle.Normal,
     options: List<Pair<T, String>>,
     selectedOptions: Set<T>,
     onOptionSelected: (T) -> Unit = {},
@@ -83,7 +87,8 @@ fun <T> MultiOptions(
         // Texto arriba de las opciones
         Text(
             text = title,
-            fontSize = 15.sp,
+            fontSize = fontSize,
+            fontStyle =  fontStyle,
             color = colorResource(id = R.color.my_dark_gray),
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -101,20 +106,25 @@ fun <T> MultiOptions(
                     val isSelected = option in selectedOptions
 
                     Surface(
-                        border = BorderStroke(2.dp, if (isSelected) Color(0xFF9C27B0) else colorResource(id = R.color.my_dark_purple)),
+                        border = BorderStroke(2.dp, colorResource(id = R.color.my_pink)),
                         shape = RoundedCornerShape(16.dp),
-                        color = if (isSelected) colorResource(id = R.color.my_dark_purple) else Color.White,
+                        color = if (isSelected) colorResource(id = R.color.my_pink) else Color.White,
                         modifier = Modifier
                             .weight(1f)
                             .padding(vertical = 8.dp)
+                            .padding(horizontal = 1.dp)
                             .clip(RoundedCornerShape(16.dp))
-                            .clickable { if (isSelectable) { onOptionSelected(option) } }
+                            .clickable {
+                                if (isSelectable) {
+                                    onOptionSelected(option)
+                                }
+                            }
                     ) {
                         Text(
                             text = label,
                             style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center,
-                            color = if (isSelected) Color.White else Color.Black,
+                            color = Color.Black,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
@@ -158,12 +168,16 @@ fun <T : Enum<T>> MultiOptionsSection(
 
 @Composable
 fun <T : Enum<T>> MultiOptionsSectionImmutable(
-    title: String,
+    title: String = "",
+    fontSize: TextUnit = 15.sp,
+    fontStyle: FontStyle = FontStyle.Normal,
     options: List<Pair<T, String>>,
     selectedOptions: Set<T>
 ) {
     MultiOptions(
         title = title,
+        fontSize = fontSize,
+        fontStyle = fontStyle,
         options = options,
         selectedOptions = selectedOptions,
         isSelectable = false

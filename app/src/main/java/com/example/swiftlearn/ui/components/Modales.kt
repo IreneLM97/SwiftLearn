@@ -81,7 +81,8 @@ fun DeleteConfirmationDialog(
         dismissButton = {
             TextButton(
                 onClick = onDeleteCancel,
-                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_gray))
+                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_gray)),
+                modifier = Modifier.height(35.dp)
             ) {
                 Text(text = stringResource(R.string.no), color = Color.White)
             }
@@ -89,7 +90,8 @@ fun DeleteConfirmationDialog(
         confirmButton = {
             TextButton(
                 onClick = onDeleteConfirm,
-                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_red))
+                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_red)),
+                modifier = Modifier.height(35.dp)
             ) {
                 Text(text = stringResource(R.string.yes), color = Color.White)
             }
@@ -203,7 +205,8 @@ fun RequestClassDialog(
         dismissButton = {
             TextButton(
                 onClick = onRequestCancel,
-                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_gray))
+                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_gray)),
+                modifier = Modifier.height(35.dp)
             ) {
                 Text(text = stringResource(R.string.cancel), color = Color.White)
             }
@@ -220,7 +223,8 @@ fun RequestClassDialog(
                     )
                     onRequestConfirm(request)
                 },
-                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_dark_purple))
+                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_dark_purple)),
+                modifier = Modifier.height(35.dp)
             ) {
                 Text(text = stringResource(R.string.request), color = Color.White)
             }

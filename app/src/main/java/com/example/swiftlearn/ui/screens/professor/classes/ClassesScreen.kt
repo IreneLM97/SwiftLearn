@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -33,8 +34,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,6 +59,7 @@ import com.example.swiftlearn.model.Request
 import com.example.swiftlearn.model.Status
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
+import com.example.swiftlearn.ui.components.DeleteConfirmationDialog
 import com.example.swiftlearn.ui.screens.student.IconWithText
 
 @Composable
@@ -108,7 +113,7 @@ fun ClassesScreen(
 
                 // Pestaña Rechazadas
                 TabItem(
-                    text = stringResource(R.string.deny_tab_label),
+                    text = stringResource(R.string.decline_tab_label),
                     isSelected = selectedTabIndex.value == 2,
                     onClick = { selectedTabIndex.value = 2 }
                 )
@@ -169,28 +174,53 @@ private fun ClassesList(
         else -> emptyList()
     }
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        modifier = Modifier
-            .padding(top = dimensionResource(R.dimen.padding_small))
-            .padding(bottom = 62.dp)
-            .height(620.dp)
-    ) {
-        items(filteredRequests) { request ->
-            // Identificamos el alumno vinculado a ese anuncio
-            val student = classesUiState.studentsList.find { it._id == request.studentId } ?: User()
-            // Identificamos el anuncio vinculado a ese anuncio
-            val advert = classesUiState.advertsList.find { it._id == request.advertId } ?: Advert()
+    // Personalizamos mensaje de no encontrado si no hay solicitudes
+    val notFoundMessage = when (tabIndex) {
+        0 -> stringResource(R.string.not_found_pending)
+        1 -> stringResource(R.string.not_found_accepted)
+        2 -> stringResource(R.string.not_found_declined)
+        else -> ""
+    }
 
-            // Mostramos la información de la solicitud
-            ClassItem(
-                student = student,
-                advert = advert,
-                request = request,
-                onAcceptButtonClick = onAcceptButtonClick,
-                onDeclineButtonClick = onDeclineButtonClick
-            )
+    if (filteredRequests.isEmpty()) {
+        // Mostramos mensaje informativo si no hay solicitudes
+        Text(
+            text = notFoundMessage,
+            textAlign = TextAlign.Center,
+            fontSize = 17.sp,
+            modifier = Modifier
+                .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                .padding(top = 15.dp)
+                .fillMaxWidth()
+                .height(670.dp)
+        )
+    } else {
+        // Mostramos lista de solicitudes
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier
+                .padding(top = dimensionResource(R.dimen.padding_small))
+                .padding(bottom = 62.dp)
+                .height(620.dp)
+        ) {
+            items(filteredRequests) { request ->
+                // Identificamos el alumno vinculado a ese anuncio
+                val student =
+                    classesUiState.studentsList.find { it._id == request.studentId } ?: User()
+                // Identificamos el anuncio vinculado a ese anuncio
+                val advert =
+                    classesUiState.advertsList.find { it._id == request.advertId } ?: Advert()
+
+                // Mostramos la información de la solicitud
+                ClassItem(
+                    student = student,
+                    advert = advert,
+                    request = request,
+                    onAcceptButtonClick = onAcceptButtonClick,
+                    onDeclineButtonClick = onDeclineButtonClick
+                )
+            }
         }
     }
 }
@@ -204,6 +234,9 @@ private fun ClassItem(
     onDeclineButtonClick: (Request) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Estado booleano para controlar si el diálogo de confirmación está abierto o no
+    var showDialog by remember { mutableStateOf(false) }
+
     // Diseño del item de la lista
     Card(
         elevation = CardDefaults.cardElevation(),
@@ -306,18 +339,17 @@ private fun ClassItem(
                                 color = colorResource(R.color.my_dark_gray),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
+                                    .height(35.dp)
                                     .background(Color.White, CircleShape)
                                     .clip(CircleShape)
                                     .border(2.dp, colorResource(R.color.my_dark_gray), CircleShape)
                                     .padding(8.dp)
                                     .fillMaxWidth()
-                                    .clickable(
-                                        onClick = {
-                                            onDeclineButtonClick(request.copy(status = Status.Rechazada.toString()))
-                                        }
-                                    )
+                                    .clickable(onClick = { showDialog = true })
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(10.dp))
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
@@ -325,9 +357,16 @@ private fun ClassItem(
                                 color = Color.White,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
-                                    .background(colorResource(id = R.color.my_dark_purple), CircleShape)
+                                    .background(
+                                        colorResource(id = R.color.my_dark_purple),
+                                        CircleShape
+                                    )
                                     .clip(CircleShape)
-                                    .border(2.dp, colorResource(R.color.my_dark_purple), CircleShape)
+                                    .border(
+                                        2.dp,
+                                        colorResource(R.color.my_dark_purple),
+                                        CircleShape
+                                    )
                                     .padding(8.dp)
                                     .fillMaxWidth()
                                     .clickable(
@@ -341,6 +380,21 @@ private fun ClassItem(
                 }
             }
         }
+    }
+
+    // Mostramos el modal de confirmación si showDialog es true
+    if (showDialog) {
+        DeleteConfirmationDialog(
+            title = stringResource(id = R.string.decline_request_title),
+            textMessage = stringResource(id = R.string.sure_decline_request_label),
+            onDeleteConfirm = {
+                onDeclineButtonClick(request.copy(status = Status.Rechazada.toString()))
+                showDialog = false
+            },
+            onDeleteCancel = {
+                showDialog = false
+            }
+        )
     }
 }
 

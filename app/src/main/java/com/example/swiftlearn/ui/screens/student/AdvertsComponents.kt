@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -33,6 +35,7 @@ import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -59,6 +62,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.example.swiftlearn.R
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.ClassMode
@@ -88,10 +92,19 @@ fun AdvertsBar(
         title = { Text("") },
         // Icono de navegación que corresponde a una flecha hacia atrás
         navigationIcon = {
-            IconButton(onClick = onBackButtonClick) {
+            Box(
+                modifier = Modifier
+                    .clickable { onBackButtonClick() }
+                    .padding(8.dp)
+                    .size(35.dp)
+                    .border(width = 2.dp, color = Color.Black, shape = CircleShape)
+                    .background(color = Color.White, shape = CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.description_back_icon)
+                    contentDescription = stringResource(R.string.description_back_icon),
+                    tint = Color.Black
                 )
             }
         },
@@ -391,8 +404,36 @@ fun AdvertDetail(
         )
     }
 
+    // Botón para solicitar una clase (versión movil)
+    if(windowSize != WindowWidthSizeClass.Expanded) {
+        Box(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .background(Color.Transparent)
+                .zIndex(2f),
+        ) {
+            FloatingActionButton(
+                onClick = { showDialog = true },
+                shape = CircleShape,
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(35.dp)
+                    .align(Alignment.TopEnd),
+                containerColor = colorResource(id = R.color.my_dark_purple)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.request_button_label),
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(5.dp)
+                )
+            }
+        }
+    }
+
     // Estructura de la información detallada del anuncio
-    Box(
+    Row(
         modifier = modifier
             .verticalScroll(state = scrollState)
             .padding(contentPadding)
@@ -409,7 +450,6 @@ fun AdvertDetail(
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.my_dark_gray),
-                fontStyle = FontStyle.Italic,
                 modifier = Modifier
                     .padding(horizontal = dimensionResource(R.dimen.padding_small))
                     .fillMaxWidth()
@@ -429,30 +469,46 @@ fun AdvertDetail(
             )
             Spacer(Modifier.height(10.dp))
 
-            // Dirección del profesor
-            IconWithText(
-                icon = Icons.Outlined.LocationOn,
-                text = stringResource(id = R.string.direction_info, professor.address, professor.postal),
-                iconSize = 30.dp,
-                textSize = 20.sp
-            )
+            // Columna contenedora de la información del profesor
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        2.dp,
+                        colorResource(id = R.color.my_dark_purple),
+                        RoundedCornerShape(10.dp)
+                    )
+            ) {
+                Spacer(modifier = Modifier.height(10.dp))
 
-            // Teléfono del profesor
-            IconWithText(
-                icon = Icons.Outlined.Phone,
-                text = professor.phone,
-                iconSize = 30.dp,
-                textSize = 20.sp
-            )
+                // Dirección del profesor
+                IconWithText(
+                    icon = Icons.Outlined.LocationOn,
+                    text = stringResource(id = R.string.direction_info, professor.address, professor.postal),
+                    iconSize = 30.dp,
+                    textSize = 20.sp,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                )
 
-            // Email del profesor
-            IconWithText(
-                icon = Icons.Outlined.Email,
-                text = professor.email,
-                iconSize = 30.dp,
-                textSize = 20.sp
-            )
-            Spacer(Modifier.height(20.dp))
+                // Teléfono del profesor
+                IconWithText(
+                    icon = Icons.Outlined.Phone,
+                    text = professor.phone,
+                    iconSize = 30.dp,
+                    textSize = 20.sp,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                )
+
+                // Email del profesor
+                IconWithText(
+                    icon = Icons.Outlined.Email,
+                    text = professor.email,
+                    iconSize = 30.dp,
+                    textSize = 20.sp,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(15.dp))
 
             // Mensaje información del anuncio
             Text(
@@ -467,23 +523,51 @@ fun AdvertDetail(
             )
             Spacer(Modifier.height(10.dp))
 
-            // Asignatura y precio del anuncio
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            // Columna contenedora de la información del anuncio
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        2.dp,
+                        colorResource(id = R.color.my_dark_purple),
+                        RoundedCornerShape(10.dp)
+                    )
             ) {
-                Text(
-                    text = advert.subject,
-                    color = colorResource(id = R.color.my_dark_gray),
-                    fontSize = 20.sp,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = stringResource(id = R.string.icon_euro_hour, advert.price.toString()),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.my_dark_purple)
+                // Asignatura y precio del anuncio
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    // Asignatura
+                    Text(
+                        text = advert.subject,
+                        color = colorResource(id = R.color.my_dark_gray),
+                        fontSize = 20.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                    // Precio
+                    Text(
+                        text = stringResource(
+                            id = R.string.icon_euro_hour,
+                            advert.price.toString()
+                        ),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.my_dark_purple)
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Descripción del anuncio
+                IconWithText(
+                    icon = Icons.Outlined.Description,
+                    text = advert.description,
+                    iconSize = 30.dp,
+                    textSize = 20.sp,
+                    modifier = Modifier.padding(horizontal = 10.dp)
                 )
             }
             Spacer(modifier = Modifier.height(15.dp))
@@ -493,7 +577,9 @@ fun AdvertDetail(
                 ClassMode.values().find { it.name == value }
             }.toSet()
             MultiOptionsSectionImmutable(
-                title = stringResource(id = R.string.class_mode_advert),
+                title = stringResource(R.string.class_mode_advert),
+                fontSize = 20.sp,
+                fontStyle = FontStyle.Italic,
                 options = listOf(
                     ClassMode.Presencial to ClassMode.Presencial.toString(),
                     ClassMode.Online to ClassMode.Online.toString(),
@@ -508,6 +594,8 @@ fun AdvertDetail(
                 }.toSet()
             MultiOptionsSectionImmutable(
                 title = stringResource(id = R.string.levels_advert),
+                fontSize = 20.sp,
+                fontStyle = FontStyle.Italic,
                 options = listOf(
                     Level.Primaria to Level.Primaria.toString(),
                     Level.ESO to Level.ESO.toString(),
@@ -518,24 +606,19 @@ fun AdvertDetail(
                 ),
                 selectedOptions = levelsSet
             )
-
-            // Descripción del anuncio
-            IconWithText(
-                icon = Icons.Outlined.Description,
-                text = advert.description,
-                iconSize = 30.dp,
-                textSize = 20.sp
-            )
             Spacer(Modifier.height(20.dp))
 
-            // Botón para solicitar una clase
-            ButtonWithText(
-                label = stringResource(R.string.request_button_label),
-                buttonColor = colorResource(id = R.color.my_dark_purple),
-                textColor = Color.White,
-                onClick = { showDialog = true }
-            )
-            Spacer(Modifier.height(100.dp))
+            // Botón para solicitar una clase (versión tablet)
+            if(windowSize == WindowWidthSizeClass.Expanded) {
+                ButtonWithText(
+                    label = stringResource(R.string.request_button_label),
+                    buttonColor = colorResource(id = R.color.my_dark_purple),
+                    textColor = Color.White,
+                    onClick = { showDialog = true }
+                )
+
+                Spacer(Modifier.height(100.dp))
+            }
         }
     }
 }
@@ -608,21 +691,22 @@ fun AdvertsListAndDetail(
 fun IconWithText(
     icon: ImageVector,
     text: String,
+    modifier: Modifier = Modifier,
     iconSize: Dp = 20.dp,
     textSize: TextUnit = 15.sp,
     iconColor: Color = colorResource(id = R.color.my_dark_gray),
     textColor: Color = colorResource(id = R.color.my_dark_gray)
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = iconColor,
-            modifier = Modifier
-                .padding(end = 4.dp)
+            modifier = modifier
                 .size(iconSize)
+                .padding(end = 4.dp)
         )
         Text(
             text = text,
@@ -665,7 +749,9 @@ fun AdvertDetailPreview() {
             subject = "Lengua",
             price = 12,
             classModes = "Presencial, Hibrido",
-            levels = "Bachillerato"
+            levels = "Bachillerato",
+            description = "Esto es una prueba de una descripción muy larga para ver" +
+                    " como se comporta el diseño de la aplicación"
         ),
         professor = User(
             _id = "1",

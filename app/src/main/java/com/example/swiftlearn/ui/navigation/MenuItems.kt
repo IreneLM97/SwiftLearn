@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.screens.home
+package com.example.swiftlearn.ui.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

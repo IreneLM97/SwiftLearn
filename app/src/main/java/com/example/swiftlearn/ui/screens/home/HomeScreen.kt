@@ -18,6 +18,8 @@ import com.example.swiftlearn.ui.navigation.NavigationDestination
 import com.example.swiftlearn.ui.components.NavInfProfessor
 import com.example.swiftlearn.ui.components.NavInfStudent
 import com.example.swiftlearn.ui.navigation.HomeNavigation
+import com.example.swiftlearn.ui.navigation.professorMenuItems
+import com.example.swiftlearn.ui.navigation.studentMenuItems
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
