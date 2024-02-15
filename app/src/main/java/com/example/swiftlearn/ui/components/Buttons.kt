@@ -28,8 +28,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
@@ -49,6 +51,7 @@ fun ButtonWithText(
         onClick = onClick,
         enabled = isEnabled,
         modifier = Modifier
+            .height(45.dp)
             .background(
                 color = color,
                 shape = CircleShape
@@ -61,8 +64,6 @@ fun ButtonWithText(
     ) {
         Text(
             text = label,
-            modifier = Modifier
-                .padding(5.dp),
             style = TextStyle(color = textColor),
             fontSize = 20.sp
         )
@@ -81,6 +82,7 @@ fun ButtonWithTextAndImage(
     Button(
         onClick = onClick,
         modifier = Modifier
+            .height(45.dp)
             .background(
                 color = buttonColor,
                 shape = CircleShape
@@ -105,8 +107,6 @@ fun ButtonWithTextAndImage(
 
         Text(
             text = label,
-            modifier = Modifier
-                .padding(5.dp),
             style = TextStyle(color = textColor),
             fontSize = 20.sp
         )
@@ -147,4 +147,30 @@ fun ToggleButton(
             fontSize = 17.sp
         )
     }
+}
+
+@Preview
+@Composable
+fun ButtonWithTextPreview() {
+    ButtonWithText(
+        label = stringResource(R.string.login_label),
+        buttonColor = colorResource(id = R.color.my_dark_purple),
+        textColor = colorResource(id = R.color.white),
+        isEnabled = true,
+        onClick = {}
+
+    )
+}
+
+@Preview
+@Composable
+fun ButtonWithTextAndImagePreview() {
+    ButtonWithTextAndImage(
+        label = stringResource(id = R.string.google_label),
+        image = painterResource(id = R.drawable.icon_google),
+        buttonColor = colorResource(id = R.color.white),
+        borderButtonColor = colorResource(id = R.color.my_dark_purple),
+        textColor = colorResource(id = R.color.my_dark_purple),
+        onClick = {}
+    )
 }

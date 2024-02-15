@@ -1,14 +1,21 @@
 package com.example.swiftlearn.ui.screens.profile
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -26,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -38,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
+import com.example.swiftlearn.model.Status
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ButtonWithText
@@ -203,33 +212,64 @@ private fun ProfileForm(
         )
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Botón para guardar la información
-        ButtonWithText(
-            label = stringResource(R.string.update_account_label),
-            buttonColor = colorResource(id = R.color.my_dark_purple),
-            textColor = colorResource(id = R.color.white),
-            isEnabled = profileUiState.isEntryValid,
-            onClick = {
-                onSaveClick(profileDetails.updateUser(profileUiState.user))
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.delete_account_label),
+                    color = colorResource(R.color.my_dark_purple),
+                    fontSize = 17.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .height(40.dp)
+                        .background(Color.White, CircleShape)
+                        .clip(CircleShape)
+                        .border(2.dp, colorResource(R.color.my_dark_purple), CircleShape)
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .clickable(onClick = { showDialog = true })
+                )
             }
-        )
-        Spacer(modifier = Modifier.height(20.dp))
 
-        // Botón para eliminar la cuenta
-        ButtonWithText(
-            label = stringResource(R.string.delete_account_label),
-            buttonColor = colorResource(id = R.color.my_red),
-            textColor = colorResource(id = R.color.white),
-            onClick = { showDialog = true }
-        )
-        Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.update_account_label),
+                    color = Color.White,
+                    fontSize = 17.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .height(40.dp)
+                        .background(
+                            colorResource(id = R.color.my_dark_purple),
+                            CircleShape
+                        )
+                        .clip(CircleShape)
+                        .border(
+                            2.dp,
+                            colorResource(R.color.my_dark_purple),
+                            CircleShape
+                        )
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .clickable(
+                            onClick = {
+                                onSaveClick(profileDetails.updateUser(profileUiState.user))
+                            }
+                        )
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
 
         // Botón para cerrar sesión
         ButtonWithTextAndImage(
             label = stringResource(R.string.sign_out_label),
             image = painterResource(R.drawable.icon_sign_out),
             buttonColor = Color.White,
-            borderButtonColor = colorResource(id = R.color.my_red),
+            borderButtonColor = Color.White,
             textColor = colorResource(id = R.color.my_red),
             onClick = onSignOutClick
         )

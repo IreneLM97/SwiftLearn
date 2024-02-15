@@ -21,7 +21,7 @@ import com.example.swiftlearn.ui.screens.home.HomeUiState
 import com.example.swiftlearn.ui.screens.map.MapScreen
 import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertScreen
 import com.example.swiftlearn.ui.screens.login.LoginDestination
-import com.example.swiftlearn.ui.screens.professor.classes.ClassesScreen
+import com.example.swiftlearn.ui.screens.professor.myclasses.MyClassesScreen
 import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertDestination
 import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertScreen
 import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsScreen
@@ -63,7 +63,7 @@ fun HomeNavigation(
 
         }
         composable(route = MenuItems.ClassesItem.route) {
-            ClassesScreen()
+            MyClassesScreen()
         }
         composable(route = MenuItems.FavoritesItem.route) {
             FavoritesScreen(

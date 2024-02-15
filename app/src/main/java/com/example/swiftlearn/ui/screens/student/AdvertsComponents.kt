@@ -166,7 +166,7 @@ fun AdvertsList(
                     .padding(horizontal = dimensionResource(R.dimen.padding_medium))
                     .padding(top = dimensionResource(R.dimen.padding_small))
                     .fillMaxWidth()
-                    .height(670.dp)
+                    .height(700.dp)
             )
         } else {
             // Mostrar la lista de anuncios filtrada
@@ -175,8 +175,8 @@ fun AdvertsList(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
                 modifier = Modifier
                     .padding(top = dimensionResource(R.dimen.padding_small))
-                    .padding(bottom = 62.dp)
-                    .height(620.dp)
+                    .padding(bottom = 60.dp)
+                    .height(700.dp)
             ) {
                 items(filteredAdverts) { advert ->
                     // Obtener el profesor correspondiente al anuncio
@@ -212,7 +212,7 @@ fun AdvertsList(
         }
 
         // Agrega margen al final de la lista de anuncios
-        Spacer(modifier = modifier.height(20.dp))
+        Spacer(modifier = modifier.height(40.dp))
     }
 }
 
@@ -616,9 +616,9 @@ fun AdvertDetail(
                     textColor = Color.White,
                     onClick = { showDialog = true }
                 )
-
-                Spacer(Modifier.height(100.dp))
             }
+
+            Spacer(Modifier.height(80.dp))
         }
     }
 }

@@ -1,10 +1,10 @@
-package com.example.swiftlearn.ui.screens.professor.classes
+package com.example.swiftlearn.ui.screens.professor.myclasses
 
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.Request
 import com.example.swiftlearn.model.User
 
-data class ClassesUiState(
+data class MyClassesUiState(
     val user: User = User(),
     val advertsList: List<Advert> = emptyList(),
     val studentsList: List<User> = emptyList(),

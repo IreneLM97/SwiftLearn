@@ -29,4 +29,6 @@
     <color name="my_dark_yellow">#B3C24E</color>
     <color name="my_dark_green">#89AB6B</color>
     <color name="my_dark_red">#CA6452</color>
+
+    <color name="my_white">#EEEAF1</color>
 </resources>

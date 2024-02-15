@@ -10,7 +10,7 @@ import com.example.swiftlearn.SwiftLearnApplication
 import com.example.swiftlearn.ui.screens.student.adverts.AdvertsViewModel
 import com.example.swiftlearn.ui.screens.home.HomeViewModel
 import com.example.swiftlearn.ui.screens.login.LoginViewModel
-import com.example.swiftlearn.ui.screens.professor.classes.ClassesViewModel
+import com.example.swiftlearn.ui.screens.professor.myclasses.MyClassesViewModel
 import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertViewModel
 import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsViewModel
 import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertViewModel
@@ -90,9 +90,9 @@ object AppViewModelProvider {
             )
         }
 
-        // Inicialización para ClassesViewModel
+        // Inicialización para MyClassesViewModel
         initializer {
-            ClassesViewModel(
+            MyClassesViewModel(
                 userRepository = swiftLearnApplication().container.userRepository,
                 advertRepository = swiftLearnApplication().container.advertRepository,
                 requestRepository = swiftLearnApplication().container.requestRepository

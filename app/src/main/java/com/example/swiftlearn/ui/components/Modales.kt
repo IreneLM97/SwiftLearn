@@ -1,5 +1,6 @@
 package com.example.swiftlearn.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -205,10 +206,11 @@ fun RequestClassDialog(
         dismissButton = {
             TextButton(
                 onClick = onRequestCancel,
-                colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_gray)),
+                colors = ButtonDefaults.textButtonColors(Color.White),
+                border = BorderStroke(2.dp, colorResource(id = R.color.my_dark_purple)),
                 modifier = Modifier.height(35.dp)
             ) {
-                Text(text = stringResource(R.string.cancel), color = Color.White)
+                Text(text = stringResource(R.string.cancel), color = colorResource(id = R.color.my_dark_purple))
             }
         },
         confirmButton = {

@@ -41,7 +41,7 @@
     <!-- Label de formulario perfil -->
     <string name="profile_label">Mi perfil</string>
     <string name="update_account_label">Guardar</string>
-    <string name="delete_account_label">Eliminar cuenta</string>
+    <string name="delete_account_label">Eliminar perfil</string>
     <string name="sign_out_label">Cerrar sesión</string>
 
     <!-- Label de modales de confirmación -->

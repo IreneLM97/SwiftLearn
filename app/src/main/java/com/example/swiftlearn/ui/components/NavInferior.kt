@@ -18,12 +18,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.swiftlearn.R
 import com.example.swiftlearn.ui.navigation.MenuItems
+import com.example.swiftlearn.ui.navigation.professorMenuItems
+import com.example.swiftlearn.ui.navigation.studentMenuItems
 
 @Composable
 fun NavInfProfessor(
@@ -34,12 +38,14 @@ fun NavInfProfessor(
         cutoutShape = MaterialTheme.shapes.small.copy(
             CornerSize(percent = 50)
         ),
-        backgroundColor = colorResource(id = R.color.my_dark_purple),
+        elevation = 8.dp,
+        backgroundColor = colorResource(id = R.color.my_white),
         modifier = Modifier
             .height(60.dp)
     ) {
         BottomNavigation(
-            backgroundColor = colorResource(id = R.color.my_dark_purple),
+            backgroundColor = colorResource(id = R.color.my_white),
+            elevation = 0.dp,
             modifier = Modifier
                 .height(60.dp)
                 .padding(0.dp, 0.dp, 60.dp, 0.dp)
@@ -55,7 +61,7 @@ fun NavInfProfessor(
                             painter =
                                 if(selected) painterResource(id = item.filledIconRes)
                                 else painterResource(item.outlinedIconRes),
-                            tint = Color.White,
+                            tint = colorResource(id = R.color.my_dark_purple),
                             contentDescription = stringResource(item.titleRes),
                             modifier = Modifier
                                 .size(30.dp)
@@ -65,7 +71,7 @@ fun NavInfProfessor(
                         Text(
                             text = stringResource(item.titleRes),
                             fontSize = 12.sp,
-                            color = Color.White
+                            color = colorResource(id = R.color.my_dark_purple)
                         )
                     },
                     alwaysShowLabel = false
@@ -81,12 +87,14 @@ fun NavInfStudent(
     menuItems: List<MenuItems>
 ) {
     BottomAppBar(
-        backgroundColor = colorResource(id = R.color.my_dark_purple),
+        backgroundColor = colorResource(id = R.color.my_white),
+        elevation = 8.dp,
         modifier = Modifier
             .height(60.dp)
     ) {
         BottomNavigation(
-            backgroundColor = colorResource(id = R.color.my_dark_purple),
+            backgroundColor = colorResource(id = R.color.my_white),
+            elevation = 0.dp,
             modifier = Modifier
                 .height(60.dp)
         ) {
@@ -101,7 +109,7 @@ fun NavInfStudent(
                             painter =
                             if(selected) painterResource(id = item.filledIconRes)
                             else painterResource(item.outlinedIconRes),
-                            tint = Color.White,
+                            tint = colorResource(id = R.color.my_dark_purple),
                             contentDescription = stringResource(item.titleRes),
                             modifier = Modifier
                                 .size(30.dp)
@@ -111,7 +119,7 @@ fun NavInfStudent(
                         Text(
                             text = stringResource(item.titleRes),
                             fontSize = 12.sp,
-                            color = Color.White
+                            color = colorResource(id = R.color.my_dark_purple)
                         )
                     },
                     alwaysShowLabel = false
@@ -140,4 +148,16 @@ fun FloatingButtonNavigation(
 
         )
     }
+}
+
+@Preview
+@Composable
+fun NavInfProfessorPreview() {
+    NavInfProfessor(rememberNavController(), professorMenuItems)
+}
+
+@Preview
+@Composable
+fun NavInfStudentPreview() {
+    NavInfStudent(rememberNavController(), studentMenuItems)
 }

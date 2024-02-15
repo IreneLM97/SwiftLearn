@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.screens.professor.classes
+package com.example.swiftlearn.ui.screens.professor.myclasses
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
@@ -60,17 +59,18 @@ import com.example.swiftlearn.model.Status
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.DeleteConfirmationDialog
+import com.example.swiftlearn.ui.components.TabItem
 import com.example.swiftlearn.ui.screens.student.IconWithText
 
 @Composable
-fun ClassesScreen(
-    viewModel: ClassesViewModel = viewModel(factory = AppViewModelProvider.Factory)
+fun MyClassesScreen(
+    viewModel: MyClassesViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Guardamos el estado de la pantalla de clases
-    val classesUiState = viewModel.classesUiState.collectAsState().value
+    val myClassesUiState = viewModel.myClassesUiState.collectAsState().value
 
     // Mostramos el icono cargando si está cargando
-    if(classesUiState.isLoading) {
+    if(myClassesUiState.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -122,7 +122,7 @@ fun ClassesScreen(
             // Contenido de la pestaña seleccionada
             ClassesList(
                 tabIndex = selectedTabIndex.value,
-                classesUiState = classesUiState,
+                myClassesUiState = myClassesUiState,
                 onAcceptButtonClick = {
                     viewModel.updateRequest(it)
                     selectedTabIndex.value = 1
@@ -136,41 +136,20 @@ fun ClassesScreen(
     }
 }
 
-@Composable
-private fun TabItem(
-    text: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    Tab(
-        selected = isSelected,
-        onClick = onClick,
-        text = {
-            Text(
-                text = text,
-                fontSize =
-                if (isSelected) 17.sp
-                else 15.sp,
-                color =
-                if (isSelected) colorResource(id = R.color.my_dark_purple)
-                else colorResource(id = R.color.my_dark_gray),
-            )
-        }
-    )
-}
+
 
 @Composable
 private fun ClassesList(
     tabIndex: Int,
-    classesUiState: ClassesUiState,
+    myClassesUiState: MyClassesUiState,
     onAcceptButtonClick: (Request) -> Unit,
     onDeclineButtonClick: (Request) -> Unit
 ) {
     // Filtramos la lista de solicitudes de clases en función del tab seleccionado
     val filteredRequests = when (tabIndex) {
-        0 -> classesUiState.pendingRequests
-        1 -> classesUiState.acceptedRequests
-        2 -> classesUiState.deniedRequests
+        0 -> myClassesUiState.pendingRequests
+        1 -> myClassesUiState.acceptedRequests
+        2 -> myClassesUiState.deniedRequests
         else -> emptyList()
     }
 
@@ -207,10 +186,10 @@ private fun ClassesList(
             items(filteredRequests) { request ->
                 // Identificamos el alumno vinculado a ese anuncio
                 val student =
-                    classesUiState.studentsList.find { it._id == request.studentId } ?: User()
+                    myClassesUiState.studentsList.find { it._id == request.studentId } ?: User()
                 // Identificamos el anuncio vinculado a ese anuncio
                 val advert =
-                    classesUiState.advertsList.find { it._id == request.advertId } ?: Advert()
+                    myClassesUiState.advertsList.find { it._id == request.advertId } ?: Advert()
 
                 // Mostramos la información de la solicitud
                 ClassItem(
@@ -336,13 +315,13 @@ private fun ClassItem(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = stringResource(R.string.decline_button_label),
-                                color = colorResource(R.color.my_dark_gray),
+                                color = colorResource(R.color.my_dark_purple),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .height(35.dp)
                                     .background(Color.White, CircleShape)
                                     .clip(CircleShape)
-                                    .border(2.dp, colorResource(R.color.my_dark_gray), CircleShape)
+                                    .border(2.dp, colorResource(R.color.my_dark_purple), CircleShape)
                                     .padding(8.dp)
                                     .fillMaxWidth()
                                     .clickable(onClick = { showDialog = true })

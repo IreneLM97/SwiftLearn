@@ -10,8 +10,8 @@ sealed class MenuItems(
     @StringRes val titleRes: Int,
     val route: String
 ) {
-    object AdvertsItem: MenuItems(R.drawable.outlined_icon_advert, R.drawable.filled_icon_advert, R.string.title_adverts, "adverts")
-    object ClassesItem: MenuItems(R.drawable.outlined_icon_classes, R.drawable.filled_icon_classes, R.string.title_classes, "classes")
+    object AdvertsItem: MenuItems(R.drawable.outlined_icon_advert, R.drawable.filled_icon_advert, R.string.title_adverts, "myadverts")
+    object ClassesItem: MenuItems(R.drawable.outlined_icon_classes, R.drawable.filled_icon_classes, R.string.title_classes, "myclasses")
     object MapItem: MenuItems(R.drawable.outlined_icon_map, R.drawable.filled_icon_map, R.string.title_map, "map")
     object ProfileItem: MenuItems(R.drawable.outlined_icon_user, R.drawable.filled_icon_user, R.string.title_profile, "profile")
     object NewAdvertItem: MenuItems(R.drawable.icon_add, R.drawable.icon_add, R.string.title_new_advert, "new_advert")

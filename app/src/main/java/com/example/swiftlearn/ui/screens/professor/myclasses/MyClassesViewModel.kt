@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.screens.professor.classes
+package com.example.swiftlearn.ui.screens.professor.myclasses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,14 +20,14 @@ import kotlinx.coroutines.launch
 /**
  * [ViewModel] para gestionar el estado y la lógica de la pantalla de clases del profesor.
  */
-class ClassesViewModel(
+class MyClassesViewModel(
     val userRepository: UserRepository,
     val advertRepository: AdvertRepository,
     val requestRepository: RequestRepository
 ): ViewModel() {
     // Estado de la interfaz de clases
-    private val _classesUiState = MutableStateFlow(ClassesUiState())
-    val classesUiState = _classesUiState.asStateFlow()
+    private val _myClassesUiState = MutableStateFlow(MyClassesUiState())
+    val myClassesUiState = _myClassesUiState.asStateFlow()
 
     // Inicialización del ViewModel
     init {
@@ -36,12 +36,12 @@ class ClassesViewModel(
                 // Obtenemos el usuario autentificado
                 val user = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
                 // Actualizar el estado de la pantalla con el usuario
-                _classesUiState.update { it.copy(user = user) }
+                _myClassesUiState.update { it.copy(user = user) }
 
                 // Obtenemos lista de anuncios del profesor
                 val advertsList = advertRepository.getAllAdvertsByProfId(user._id)
                 // Actualizar el estado de la pantalla con la lista de anuncios
-                _classesUiState.update { it.copy(advertsList = advertsList) }
+                _myClassesUiState.update { it.copy(advertsList = advertsList) }
 
                 // Obtenemos la lista de Ids de los anuncios del profesor
                 val advertIds = advertsList.map { it._id }
@@ -56,7 +56,7 @@ class ClassesViewModel(
                     }
                     Triple(studentsWithRequests, requests, null)
                 }.collect { (studentsWithRequests, requests, _) ->
-                    _classesUiState.update {
+                    _myClassesUiState.update {
                         it.copy(
                             studentsList = studentsWithRequests,
                             pendingRequests = requests.filter { request -> request.status == Status.Pendiente.toString() },
@@ -65,7 +65,7 @@ class ClassesViewModel(
                         ) }
 
                     delay(500)
-                    _classesUiState.update { it.copy(isLoading = false) }
+                    _myClassesUiState.update { it.copy(isLoading = false) }
                 }
             } catch (_: Exception) {}
         }
