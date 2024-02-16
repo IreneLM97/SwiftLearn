@@ -56,11 +56,11 @@ import java.util.Calendar
 import java.util.Locale
 
 @Composable
-fun DeleteConfirmationDialog(
+fun ConfirmationDialog(
     title: String,
     textMessage: String,
-    onDeleteConfirm: () -> Unit,
-    onDeleteCancel: () -> Unit
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = {},
@@ -81,7 +81,7 @@ fun DeleteConfirmationDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = onDeleteCancel,
+                onClick = onCancel,
                 colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_gray)),
                 modifier = Modifier.height(35.dp)
             ) {
@@ -90,7 +90,7 @@ fun DeleteConfirmationDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = onDeleteConfirm,
+                onClick = onConfirm,
                 colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.my_red)),
                 modifier = Modifier.height(35.dp)
             ) {
@@ -548,11 +548,11 @@ private fun formatHourMinute(hour: Int, minute: Int): String {
 @Preview
 @Composable
 fun DeleteConfirmationDialogPreview() {
-    DeleteConfirmationDialog(
-        title = stringResource(id = R.string.delete_account_title),
-        textMessage = stringResource(id = R.string.sure_delete_account_label),
-        onDeleteConfirm = {},
-        onDeleteCancel = {}
+    ConfirmationDialog(
+        title = stringResource(id = R.string.close_session_title),
+        textMessage = stringResource(id = R.string.sure_close_session_label),
+        onConfirm = {},
+        onCancel = {}
     )
 }
 

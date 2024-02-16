@@ -65,7 +65,7 @@ import com.example.swiftlearn.model.Request
 import com.example.swiftlearn.model.Status
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
-import com.example.swiftlearn.ui.components.DeleteConfirmationDialog
+import com.example.swiftlearn.ui.components.ConfirmationDialog
 import com.example.swiftlearn.ui.components.TabItem
 import com.example.swiftlearn.ui.screens.student.IconWithText
 import kotlinx.coroutines.launch
@@ -85,8 +85,8 @@ fun ClassesScreen(
     // Ámbito del coroutine
     val coroutineScope = rememberCoroutineScope()
 
-    // Variables para controlar la muestra de Snackbar
-    val showSnackbarCancelled = remember { mutableStateOf(false) }
+    // Estado booleano para controlar la muestra del Snackbar
+    val showSnackbarCancelled = rememberSaveable { mutableStateOf(false) }
 
     // SnackbarHost para mostrar mensaje emergente
     SnackbarHost(
@@ -369,14 +369,14 @@ private fun ClassItem(
 
     // Mostramos el modal de confirmación si showDialog es true
     if (showDialog) {
-        DeleteConfirmationDialog(
+        ConfirmationDialog(
             title = stringResource(id = R.string.cancel_request_title),
             textMessage = stringResource(id = R.string.sure_cancel_request_label),
-            onDeleteConfirm = {
+            onConfirm = {
                 onDeleteButtonClick(request)
                 showDialog = false
             },
-            onDeleteCancel = {
+            onCancel = {
                 showDialog = false
             }
         )

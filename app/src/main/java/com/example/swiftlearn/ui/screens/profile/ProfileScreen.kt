@@ -29,7 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,12 +46,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
-import com.example.swiftlearn.model.Status
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.AppViewModelProvider
-import com.example.swiftlearn.ui.components.ButtonWithText
 import com.example.swiftlearn.ui.components.ButtonWithTextAndImage
-import com.example.swiftlearn.ui.components.DeleteConfirmationDialog
+import com.example.swiftlearn.ui.components.ConfirmationDialog
 import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 
@@ -136,23 +134,36 @@ private fun ProfileForm(
     // Variable para manejar la información del usuario
     val profileDetails = profileUiState.profileDetails
 
-    // Estado booleano para controlar si el diálogo de confirmación está abierto o no
-    var showDialog by remember { mutableStateOf(false) }
+    // Estados booleano para controlar la muestra de los diálogos de confirmación
+    var showDialogProfile by rememberSaveable { mutableStateOf(false) }
+    var showDialogSession by rememberSaveable { mutableStateOf(false) }
 
-    // Mostramos el modal de confirmación si showDialog es true
-    if (showDialog) {
-        DeleteConfirmationDialog(
-            title = stringResource(id = R.string.delete_account_title),
-            textMessage = stringResource(id = R.string.sure_delete_account_label),
-            onDeleteConfirm = {
-                // Si el usuario confirma, se llama a la función onDeleteClick
+    // Mostramos el modal de confirmación de eliminar perfil
+    if (showDialogProfile) {
+        ConfirmationDialog(
+            title = stringResource(id = R.string.delete_profile_title),
+            textMessage = stringResource(id = R.string.sure_delete_profile_label),
+            onConfirm = {
                 onDeleteClick(profileUiState.user)
-                // Se cierra el diálogo
-                showDialog = false
+                showDialogProfile = false
             },
-            onDeleteCancel = {
-                // Si el usuario cancela, se cierra el diálogo
-                showDialog = false
+            onCancel = {
+                showDialogProfile = false
+            }
+        )
+    }
+
+    // Mostramos el modal de confirmación de cerrar sesión
+    if (showDialogSession) {
+        ConfirmationDialog(
+            title = stringResource(id = R.string.close_session_title),
+            textMessage = stringResource(id = R.string.sure_close_session_label),
+            onConfirm = {
+                onSignOutClick()
+                showDialogSession = false
+            },
+            onCancel = {
+                showDialogSession = false
             }
         )
     }
@@ -217,7 +228,7 @@ private fun ProfileForm(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(R.string.delete_account_label),
+                    text = stringResource(R.string.delete_profile_label),
                     color = colorResource(R.color.my_dark_purple),
                     fontSize = 17.sp,
                     textAlign = TextAlign.Center,
@@ -228,7 +239,11 @@ private fun ProfileForm(
                         .border(2.dp, colorResource(R.color.my_dark_purple), CircleShape)
                         .padding(8.dp)
                         .fillMaxWidth()
-                        .clickable(onClick = { showDialog = true })
+                        .clickable(
+                            onClick = {
+                                showDialogProfile = true
+                            }
+                        )
                 )
             }
 
@@ -236,7 +251,7 @@ private fun ProfileForm(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(R.string.update_account_label),
+                    text = stringResource(R.string.update_profile_label),
                     color = Color.White,
                     fontSize = 17.sp,
                     textAlign = TextAlign.Center,
@@ -271,7 +286,9 @@ private fun ProfileForm(
             buttonColor = Color.White,
             borderButtonColor = Color.White,
             textColor = colorResource(id = R.color.my_red),
-            onClick = onSignOutClick
+            onClick = {
+                showDialogSession = true
+            }
         )
         Spacer(modifier = Modifier.height(100.dp))
     }
