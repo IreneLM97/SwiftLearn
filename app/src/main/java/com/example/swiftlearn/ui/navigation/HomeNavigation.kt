@@ -26,6 +26,7 @@ import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertDestinat
 import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertScreen
 import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsScreen
 import com.example.swiftlearn.ui.screens.profile.ProfileScreen
+import com.example.swiftlearn.ui.screens.student.classes.ClassesScreen
 import com.example.swiftlearn.ui.screens.student.favorites.FavoritesScreen
 
 @Composable
@@ -36,6 +37,7 @@ fun HomeNavigation(
     mainNavController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    // Contexto de la aplicación
     val context = LocalContext.current
 
     NavHost(
@@ -63,7 +65,11 @@ fun HomeNavigation(
 
         }
         composable(route = MenuItems.ClassesItem.route) {
-            MyClassesScreen()
+            when(homeUiState.role) {
+                Role.Profesor -> MyClassesScreen()
+                Role.Alumno -> ClassesScreen()
+                Role.None -> null
+            }
         }
         composable(route = MenuItems.FavoritesItem.route) {
             FavoritesScreen(

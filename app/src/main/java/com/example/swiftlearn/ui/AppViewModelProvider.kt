@@ -16,6 +16,7 @@ import com.example.swiftlearn.ui.screens.professor.myadverts.MyAdvertsViewModel
 import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertViewModel
 import com.example.swiftlearn.ui.screens.profile.ProfileViewModel
 import com.example.swiftlearn.ui.screens.register.RegisterViewModel
+import com.example.swiftlearn.ui.screens.student.classes.ClassesViewModel
 import com.example.swiftlearn.ui.screens.student.favorites.FavoritesViewModel
 
 /**
@@ -93,6 +94,15 @@ object AppViewModelProvider {
         // Inicialización para MyClassesViewModel
         initializer {
             MyClassesViewModel(
+                userRepository = swiftLearnApplication().container.userRepository,
+                advertRepository = swiftLearnApplication().container.advertRepository,
+                requestRepository = swiftLearnApplication().container.requestRepository
+            )
+        }
+
+        // Inicialización para ClassesViewModel
+        initializer {
+            ClassesViewModel(
                 userRepository = swiftLearnApplication().container.userRepository,
                 advertRepository = swiftLearnApplication().container.advertRepository,
                 requestRepository = swiftLearnApplication().container.requestRepository

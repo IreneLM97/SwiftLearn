@@ -1,4 +1,4 @@
-package com.example.swiftlearn.ui.screens.professor.myclasses
+package com.example.swiftlearn.ui.screens.student.classes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -71,11 +71,11 @@ import com.example.swiftlearn.ui.screens.student.IconWithText
 import kotlinx.coroutines.launch
 
 @Composable
-fun MyClassesScreen(
-    viewModel: MyClassesViewModel = viewModel(factory = AppViewModelProvider.Factory)
+fun ClassesScreen(
+    viewModel: ClassesViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Guardamos el estado de la pantalla de clases
-    val myClassesUiState = viewModel.myClassesUiState.collectAsState().value
+    val classesUiState = viewModel.classesUiState.collectAsState().value
 
     // Contexto de la aplicación
     val context = LocalContext.current
@@ -86,8 +86,7 @@ fun MyClassesScreen(
     val coroutineScope = rememberCoroutineScope()
 
     // Variables para controlar la muestra de Snackbar
-    val showSnackbarAccepted = remember { mutableStateOf(false) }
-    val showSnackbarDeclined = remember { mutableStateOf(false) }
+    val showSnackbarCancelled = remember { mutableStateOf(false) }
 
     // SnackbarHost para mostrar mensaje emergente
     SnackbarHost(
@@ -97,35 +96,21 @@ fun MyClassesScreen(
             .padding(10.dp)
     )
 
-    // LaunchedEffect para mostrar el Snackbar cuando se rechaza una solicitud
-    LaunchedEffect(showSnackbarDeclined.value) {
-        if(showSnackbarDeclined.value) {
+    // LaunchedEffect para mostrar el Snackbar cuando se cancela una solicitud
+    LaunchedEffect(showSnackbarCancelled.value) {
+        if(showSnackbarCancelled.value) {
             coroutineScope.launch {
                 snackbarHostState.showSnackbar(
-                    message = context.getString(R.string.snackbar_declined),
+                    message = context.getString(R.string.snackbar_cancelled),
                     actionLabel = context.getString(R.string.snackbar_accept_button),
                     duration = SnackbarDuration.Short
                 )
-                showSnackbarDeclined.value = false
+                showSnackbarCancelled.value = false
             }
         }
     }
 
-    // LaunchedEffect para mostrar el Snackbar cuando se acepta una solicitud
-    LaunchedEffect(showSnackbarAccepted.value) {
-        if(showSnackbarAccepted.value) {
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(
-                    message = context.getString(R.string.snackbar_accepted),
-                    actionLabel = context.getString(R.string.snackbar_accept_button),
-                    duration = SnackbarDuration.Short
-                )
-                showSnackbarAccepted.value = false
-            }
-        }
-    }
-
-    if(myClassesUiState.isLoading) {
+    if(classesUiState.isLoading) {
         // Mostramos el icono cargando si está cargando
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -176,16 +161,12 @@ fun MyClassesScreen(
             }
 
             // Contenido de la pestaña seleccionada
-            MyClassesList(
+            ClassesList(
                 tabIndex = selectedTabIndex.value,
-                myClassesUiState = myClassesUiState,
-                onAcceptButtonClick = {
-                    viewModel.updateRequest(it)
-                    showSnackbarAccepted.value = true
-                },
-                onDeclineButtonClick = {
-                    viewModel.updateRequest(it)
-                    showSnackbarDeclined.value = true
+                classesUiState = classesUiState,
+                onDeleteButtonClick = {
+                    viewModel.deleteRequest(it)
+                    showSnackbarCancelled.value = true
                 }
             )
         }
@@ -193,17 +174,16 @@ fun MyClassesScreen(
 }
 
 @Composable
-private fun MyClassesList(
+private fun ClassesList(
     tabIndex: Int,
-    myClassesUiState: MyClassesUiState,
-    onAcceptButtonClick: (Request) -> Unit,
-    onDeclineButtonClick: (Request) -> Unit
+    classesUiState: ClassesUiState,
+    onDeleteButtonClick: (Request) -> Unit
 ) {
     // Filtramos la lista de solicitudes de clases en función del tab seleccionado
     val filteredRequests = when (tabIndex) {
-        0 -> myClassesUiState.pendingRequests
-        1 -> myClassesUiState.acceptedRequests
-        2 -> myClassesUiState.deniedRequests
+        0 -> classesUiState.pendingRequests
+        1 -> classesUiState.acceptedRequests
+        2 -> classesUiState.deniedRequests
         else -> emptyList()
     }
 
@@ -238,20 +218,19 @@ private fun MyClassesList(
                 .height(700.dp)
         ) {
             items(filteredRequests) { request ->
-                // Identificamos el alumno vinculado a esa petición
-                val student =
-                    myClassesUiState.studentsList.find { it._id == request.studentId } ?: User()
                 // Identificamos el anuncio vinculado a esa petición
                 val advert =
-                    myClassesUiState.advertsList.find { it._id == request.advertId } ?: Advert()
+                    classesUiState.advertsList.find { it._id == request.advertId } ?: Advert()
+                // Identificamos el profesor vinculado a ese anuncio
+                val professor =
+                    classesUiState.professorsList.find { it._id == advert.profId } ?: User()
 
                 // Mostramos la información de la solicitud
-                MyClassItem(
-                    student = student,
+                ClassItem(
+                    professor = professor,
                     advert = advert,
                     request = request,
-                    onAcceptButtonClick = onAcceptButtonClick,
-                    onDeclineButtonClick = onDeclineButtonClick
+                    onDeleteButtonClick = onDeleteButtonClick
                 )
             }
         }
@@ -259,12 +238,11 @@ private fun MyClassesList(
 }
 
 @Composable
-private fun MyClassItem(
-    student: User,
+private fun ClassItem(
+    professor: User,
     advert: Advert,
     request: Request,
-    onAcceptButtonClick: (Request) -> Unit,
-    onDeclineButtonClick: (Request) -> Unit,
+    onDeleteButtonClick: (Request) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Estado booleano para controlar si el diálogo de confirmación está abierto o no
@@ -278,7 +256,7 @@ private fun MyClassItem(
             .padding(horizontal = dimensionResource(R.dimen.padding_medium)),
         shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
     ) {
-        // Columna para datos del alumno y de la clase
+        // Columna para datos del profesor y de la clase
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -299,15 +277,15 @@ private fun MyClassItem(
                     shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
                 )
         ) {
-            // Información del alumno
+            // Información del profesor
             Column(
                 modifier = Modifier
                     .padding(10.dp)
                     .weight(1f)
             ) {
-                // Nombre del alumno
+                // Nombre del profesor
                 Text(
-                    text = student.username,
+                    text = professor.username,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Italic
@@ -317,13 +295,13 @@ private fun MyClassItem(
                 // Información del teléfono
                 IconWithText(
                     icon = Icons.Outlined.Phone,
-                    text = student.phone
+                    text = professor.phone
                 )
 
                 // Información del email
                 IconWithText(
                     icon = Icons.Outlined.Email,
-                    text = student.email
+                    text = professor.email
                 )
 
                 // Información de la dirección
@@ -331,8 +309,8 @@ private fun MyClassItem(
                     icon = Icons.Outlined.LocationOn,
                     text = stringResource(
                         R.string.direction_info,
-                        student.address,
-                        student.postal
+                        professor.address,
+                        professor.postal
                     )
                 )
 
@@ -360,7 +338,7 @@ private fun MyClassItem(
                     }
                 }
 
-                // Botones de Aceptar y Rechazar solo si está en estado Pendiente
+                // Botón de Cancelar solicitud si está en estado Pendiente
                 if(request.status == Status.Pendiente.toString()) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Row(
@@ -368,18 +346,14 @@ private fun MyClassItem(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = stringResource(R.string.decline_button_label),
+                                text = stringResource(R.string.cancel_button_label),
                                 color = colorResource(R.color.my_dark_purple),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .height(35.dp)
                                     .background(Color.White, CircleShape)
                                     .clip(CircleShape)
-                                    .border(
-                                        2.dp,
-                                        colorResource(R.color.my_dark_purple),
-                                        CircleShape
-                                    )
+                                    .border(2.dp, colorResource(R.color.my_dark_purple), CircleShape)
                                     .padding(8.dp)
                                     .fillMaxWidth()
                                     .clickable(onClick = { showDialog = true })
@@ -387,32 +361,6 @@ private fun MyClassItem(
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = stringResource(R.string.accept_button_label),
-                                color = Color.White,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .background(
-                                        colorResource(id = R.color.my_dark_purple),
-                                        CircleShape
-                                    )
-                                    .clip(CircleShape)
-                                    .border(
-                                        2.dp,
-                                        colorResource(R.color.my_dark_purple),
-                                        CircleShape
-                                    )
-                                    .padding(8.dp)
-                                    .fillMaxWidth()
-                                    .clickable(
-                                        onClick = {
-                                            onAcceptButtonClick(request.copy(status = Status.Aceptada.toString()))
-                                        }
-                                    )
-                            )
-                        }
                     }
                 }
             }
@@ -422,10 +370,10 @@ private fun MyClassItem(
     // Mostramos el modal de confirmación si showDialog es true
     if (showDialog) {
         DeleteConfirmationDialog(
-            title = stringResource(id = R.string.decline_request_title),
-            textMessage = stringResource(id = R.string.sure_decline_request_label),
+            title = stringResource(id = R.string.cancel_request_title),
+            textMessage = stringResource(id = R.string.sure_cancel_request_label),
             onDeleteConfirm = {
-                onDeclineButtonClick(request.copy(status = Status.Rechazada.toString()))
+                onDeleteButtonClick(request)
                 showDialog = false
             },
             onDeleteCancel = {
@@ -437,9 +385,9 @@ private fun MyClassItem(
 
 @Preview
 @Composable
-fun MyClassItemPreview() {
-    val student = User(
-        username = "Pepe",
+fun ClassItemPreview() {
+    val professor = User(
+        username = "Laura",
         phone = "674534232",
         address = "Calle Real",
         postal = "54523",
@@ -460,28 +408,25 @@ fun MyClassItemPreview() {
     )
 
     Column {
-        MyClassItem(
-            student = student,
+        ClassItem(
+            professor = professor,
             advert = advert,
             request = request,
-            onAcceptButtonClick = {},
-            onDeclineButtonClick = {}
+            onDeleteButtonClick = {}
         )
         Spacer(modifier = Modifier.height(16.dp))
-        MyClassItem(
-            student = student,
+        ClassItem(
+            professor = professor,
             advert = advert,
             request = request.copy(status = Status.Aceptada.toString()),
-            onAcceptButtonClick = {},
-            onDeclineButtonClick = {}
+            onDeleteButtonClick = {}
         )
         Spacer(modifier = Modifier.height(16.dp))
-        MyClassItem(
-            student = student,
+        ClassItem(
+            professor = professor,
             advert = advert,
             request = request.copy(status = Status.Rechazada.toString()),
-            onAcceptButtonClick = {},
-            onDeclineButtonClick = {}
+            onDeleteButtonClick = {}
         )
     }
 }

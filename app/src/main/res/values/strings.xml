@@ -51,6 +51,8 @@
     <string name="sure_delete_advert_label">¿Estás seguro de que deseas eliminar este anuncio?</string>
     <string name="decline_request_title">Rechazar solicitud</string>
     <string name="sure_decline_request_label">¿Estás seguro de que deseas rechazar la solicitud?</string>
+    <string name="cancel_request_title">Cancelar solicitud</string>
+    <string name="sure_cancel_request_label">¿Estás seguro de que deseas cancelar la solicitud?</string>
     <string name="no">NO</string>
     <string name="yes">SI</string>
 
@@ -125,6 +127,7 @@
     <string name="date_hour_request">%1$s - %2$s</string>
     <string name="decline_button_label">Rechazar</string>
     <string name="accept_button_label">Aceptar</string>
+    <string name="cancel_button_label">Cancelar solicitud</string>
     <string name="not_found_pending">No hay solicitudes pendientes.</string>
     <string name="not_found_accepted">No hay solicitudes aceptadas.</string>
     <string name="not_found_declined">No hay solicitudes rechazadas.</string>
@@ -133,8 +136,14 @@
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>
 
-    <!-- Mensajes de los Snackbar -->
+    <!-- Label de los TabItem -->
     <string name="pending_tab_label">Pendientes</string>
     <string name="accepted_tab_label">Aceptadas</string>
     <string name="decline_tab_label">Rechazadas</string>
+
+    <!-- Mensajes de los Snackbar -->
+    <string name="snackbar_declined">Solicitud rechazada</string>
+    <string name="snackbar_accepted">Solicitud aceptada</string>
+    <string name="snackbar_cancelled">Solicitud cancelada</string>
+    <string name="snackbar_accept_button">Aceptar</string>
 </resources>
