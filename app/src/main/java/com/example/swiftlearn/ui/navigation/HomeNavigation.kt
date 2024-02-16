@@ -18,9 +18,9 @@ import com.example.swiftlearn.model.Role
 import com.example.swiftlearn.ui.screens.student.adverts.AdvertsScreen
 import com.example.swiftlearn.ui.screens.home.HomeDestination
 import com.example.swiftlearn.ui.screens.home.HomeUiState
-import com.example.swiftlearn.ui.screens.map.MapScreen
 import com.example.swiftlearn.ui.screens.professor.newadvert.NewAdvertScreen
 import com.example.swiftlearn.ui.screens.login.LoginDestination
+import com.example.swiftlearn.ui.screens.map.MapScreen
 import com.example.swiftlearn.ui.screens.professor.myclasses.MyClassesScreen
 import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertDestination
 import com.example.swiftlearn.ui.screens.professor.editadvert.EditAdvertScreen
