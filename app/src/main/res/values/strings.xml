@@ -134,6 +134,9 @@
     <string name="not_found_accepted">No hay solicitudes aceptadas.</string>
     <string name="not_found_declined">No hay solicitudes rechazadas.</string>
 
+    <!-- Label para pantalla de mapa -->
+    <string name="search_map_label">¿Qué dirección quieres buscar?</string>
+
     <!-- Enviar información a otra aplicación -->
     <string name="summary">Nombre: %1$s \nDirección: %2$s \nDescripción: %3$s</string>
     <string name="send_info">Enviar información a otra aplicación</string>

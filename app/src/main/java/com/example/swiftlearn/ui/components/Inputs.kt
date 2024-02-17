@@ -42,6 +42,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
@@ -49,8 +50,10 @@ import com.example.swiftlearn.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTextField(
+    placeholder: String,
     query: String = "",
-    onQueryChange: (String) -> Unit = {}
+    onQueryChange: (String) -> Unit = {},
+    onSearch: (String) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -59,7 +62,7 @@ fun SearchTextField(
         value = query,
         onValueChange = onQueryChange,
         singleLine = true,
-        placeholder = { Text(text = stringResource(R.string.search_label)) },
+        placeholder = { Text(text = placeholder) },
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Search,
             keyboardType = KeyboardType.Text
@@ -68,7 +71,7 @@ fun SearchTextField(
             // Maneja evento al pulsar el icono Search del teclado
             onSearch = {
                 focusManager.clearFocus()
-                onQueryChange(query.replace("\n", ""))
+                onSearch(query)
             }
         ),
         leadingIcon = {
@@ -82,12 +85,12 @@ fun SearchTextField(
                 // Maneja el evento al presionar la tecla "Enter" en el teclado
                 if (e.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_ENTER) {
                     focusManager.clearFocus()
-                    onQueryChange(query.replace("\n", ""))
+                    onSearch(query)
                 }
                 false
             }
             .fillMaxWidth()
-            .padding(start = 8.dp, end = 15.dp, top = 8.dp)
+            .height(52.dp)
             .background(
                 Color.White,
                 shape = RoundedCornerShape(40.dp)
@@ -155,7 +158,9 @@ fun InputField(
                 Icon(imageVector = leadingIcon, contentDescription = null)
             } else {
                 Box(
-                    modifier = Modifier.height(150.dp).padding(top = 15.dp)
+                    modifier = Modifier
+                        .height(150.dp)
+                        .padding(top = 15.dp)
                 ) {
                     Icon(imageVector = leadingIcon, contentDescription = null)
                 }
@@ -288,5 +293,13 @@ private fun ShowErrorMessage(
         modifier = Modifier
             .padding(top = 4.dp, bottom = 8.dp)
             .fillMaxWidth()
+    )
+}
+
+@Preview
+@Composable
+fun SearchTextFieldPreview() {
+    SearchTextField(
+        placeholder = stringResource(id = R.string.search_label)
     )
 }

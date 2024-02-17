@@ -56,8 +56,8 @@ fun AdvertsScreen(
         else -> AdvertsContentType.ListOnly
     }
 
-    // Mostramos el icono cargando si está cargando
     if(advertsUiState.isLoading) {
+        // Mostramos el icono cargando si está cargando
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -65,6 +65,7 @@ fun AdvertsScreen(
             CircularProgressIndicator()
         }
     } else {
+        // Mostramos lista de anuncios
         Scaffold(
             topBar = {
                 if (contentType == AdvertsContentType.ListOnly && !advertsUiState.isShowingListPage) {
@@ -85,6 +86,9 @@ fun AdvertsScreen(
                     onQueryChange = {
                         viewModel.onQueryChange(it)
                         if (it.isEmpty()) focusManager.clearFocus()
+                    },
+                    onSearch = {
+                        viewModel.onQueryChange(it.replace("\n", ""))
                     },
                     onAdvertClick = {
                         viewModel.updateCurrentAdvert(it)
@@ -110,6 +114,9 @@ fun AdvertsScreen(
                         onQueryChange = {
                             viewModel.onQueryChange(it)
                             if (it.isEmpty()) focusManager.clearFocus()
+                        },
+                        onSearch = {
+                            viewModel.onQueryChange(it.replace("\n", ""))
                         },
                         onAdvertClick = {
                             viewModel.updateCurrentAdvert(it)

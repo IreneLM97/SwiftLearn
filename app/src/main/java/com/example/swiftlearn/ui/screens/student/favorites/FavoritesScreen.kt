@@ -88,6 +88,9 @@ fun FavoritesScreen(
                         viewModel.onQueryChange(it)
                         if (it.isEmpty()) focusManager.clearFocus()
                     },
+                    onSearch = {
+                        viewModel.onQueryChange(it.replace("\n", ""))
+                    },
                     onAdvertClick = {
                         viewModel.updateCurrentAdvert(it)
                     },
@@ -114,6 +117,9 @@ fun FavoritesScreen(
                         onQueryChange = {
                             viewModel.onQueryChange(it)
                             if (it.isEmpty()) focusManager.clearFocus()
+                        },
+                        onSearch = {
+                            viewModel.onQueryChange(it.replace("\n", ""))
                         },
                         onAdvertClick = {
                             viewModel.updateCurrentAdvert(it)

@@ -127,6 +127,7 @@ fun AdvertsBar(
 fun AdvertsList(
     notFoundMessage: String,
     onQueryChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
     onAdvertClick: (Advert) -> Unit,
     onFavoriteButtonClick: (Advert) -> Unit,
     onSendButtonClick: (String) -> Unit,
@@ -144,8 +145,10 @@ fun AdvertsList(
         // Mostramos campo de búsqueda de clases en función de la asignatura
         val searchQuery = advertsUiState?.searchQuery ?: favoritesUiState?.searchQuery ?: ""
         SearchTextField(
+            placeholder = stringResource(id = R.string.search_label),
             query = searchQuery,
-            onQueryChange = onQueryChange
+            onQueryChange = onQueryChange,
+            onSearch = onSearch
         )
         Spacer(modifier = modifier.height(10.dp))
 
@@ -638,6 +641,7 @@ fun AdvertsListAndDetail(
     windowSize: WindowWidthSizeClass,
     notFoundMessage: String,
     onQueryChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
     onAdvertClick: (Advert) -> Unit,
     onFavoriteButtonClick: (Advert) -> Unit,
     onRequestConfirm: (Request) -> Unit,
@@ -657,6 +661,7 @@ fun AdvertsListAndDetail(
             favoritesUiState = favoritesUiState,
             notFoundMessage = notFoundMessage,
             onQueryChange = onQueryChange,
+            onSearch = onSearch,
             onAdvertClick = onAdvertClick,
             onFavoriteButtonClick = onFavoriteButtonClick,
             onSendButtonClick = onSendButtonClick,
