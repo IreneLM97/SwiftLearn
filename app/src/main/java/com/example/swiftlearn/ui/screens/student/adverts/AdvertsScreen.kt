@@ -137,7 +137,7 @@ fun AdvertsScreen(
                         // Mostramos detalles de un anuncio específico
                         AdvertDetail(
                             windowSize = windowSize,
-                            studentId = advertsUiState.user._id,
+                            userLogged = advertsUiState.userLogged,
                             advert = advertsUiState.currentAdvert,
                             professor = professor,
                             onRequestConfirm = {

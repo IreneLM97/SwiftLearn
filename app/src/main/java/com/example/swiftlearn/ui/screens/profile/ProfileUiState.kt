@@ -6,7 +6,7 @@ import com.example.swiftlearn.model.User
  * Clase de estado que representa el estado actual de la pantalla de perfil.
  */
 data class ProfileUiState(
-    val user: User = User(),
+    val userLogged: User = User(),
     val profileDetails: ProfileDetails = ProfileDetails(),
     val isEntryValid: Boolean = false,
     val isLoading: Boolean = false

@@ -5,7 +5,7 @@ import com.example.swiftlearn.model.Request
 import com.example.swiftlearn.model.User
 
 data class ClassesUiState(
-    val user: User = User(),
+    val userLogged: User = User(),
     val advertsList: List<Advert> = emptyList(),
     val professorsList: List<User> = emptyList(),
     val pendingRequests: List<Request> = emptyList(),

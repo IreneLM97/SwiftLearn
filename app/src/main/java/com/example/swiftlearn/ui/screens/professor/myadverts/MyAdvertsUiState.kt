@@ -4,7 +4,7 @@ import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.User
 
 data class MyAdvertsUiState(
-    val user: User = User(),
+    val userLogged: User = User(),
     val myAdvertsList: List<Advert> = emptyList(),
     val isLoading: Boolean = true
 )

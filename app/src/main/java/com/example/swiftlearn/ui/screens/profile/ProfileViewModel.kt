@@ -46,12 +46,12 @@ class ProfileViewModel(
         viewModelScope.launch {
             try {
                 // Obtener los datos del usuario desde el repositorio
-                val user = userRepository.getUserByAuthId(auth.currentUser?.uid.toString())
+                val userLogged = userRepository.getUserByAuthId(auth.currentUser?.uid.toString())
                 // Actualizar el estado de la pantalla con los datos del usuario obtenidos
                 _profileUiState.update {
-                    val profileDetails = user?.toProfileDetails() ?: ProfileDetails()
+                    val profileDetails = userLogged?.toProfileDetails() ?: ProfileDetails()
                     it.copy(
-                        user = user ?: User(),
+                        userLogged = userLogged ?: User(),
                         profileDetails = profileDetails,
                         isEntryValid = validateForm(profileDetails)
                     )
@@ -70,7 +70,7 @@ class ProfileViewModel(
 
         viewModelScope.launch {
             // Actualizamos las coordenadas del usuario
-            val coordinates = searchCoordinates(user.address, context)
+            val coordinates = saveCoordinates(user.address, context)
             val userWithCoordinates = user.copy(latitude = coordinates?.latitude.toString(), longitude = coordinates?.longitude.toString())
 
             // Actualizamos los datos del usuario
@@ -126,12 +126,12 @@ class ProfileViewModel(
                 ValidationUtils.isPostalValid(profileDetails.postal)
     }
 
-    private suspend fun searchCoordinates(searchQuery: String, context: Context): LatLng? {
+    private suspend fun saveCoordinates(address: String, context: Context): LatLng? {
         val placesClient = Places.createClient(context)
         val fields = listOf(Place.Field.LAT_LNG)
 
         val request = FindAutocompletePredictionsRequest.builder()
-            .setQuery(searchQuery)
+            .setQuery(address)
             .build()
 
         return suspendCoroutine { continuation ->

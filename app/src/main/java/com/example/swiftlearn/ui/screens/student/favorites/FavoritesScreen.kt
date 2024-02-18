@@ -140,7 +140,7 @@ fun FavoritesScreen(
                         // Mostramos detalles de un anuncio específico
                         AdvertDetail(
                             windowSize = windowSize,
-                            studentId = favoritesUiState.user._id,
+                            userLogged = favoritesUiState.userLogged,
                             advert = favoritesUiState.currentAdvert,
                             professor = professor,
                             onRequestConfirm = {

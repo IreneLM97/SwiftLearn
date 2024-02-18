@@ -34,12 +34,12 @@ class MyClassesViewModel(
         viewModelScope.launch {
             try {
                 // Obtenemos el usuario autentificado
-                val user = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
+                val userLogged = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
                 // Actualizar el estado de la pantalla con el usuario
-                _myClassesUiState.update { it.copy(user = user) }
+                _myClassesUiState.update { it.copy(userLogged = userLogged) }
 
                 // Obtenemos lista de anuncios del profesor
-                val advertsList = advertRepository.getAllAdvertsByProfId(user._id)
+                val advertsList = advertRepository.getAllAdvertsByProfId(userLogged._id)
                 // Actualizar el estado de la pantalla con la lista de anuncios
                 _myClassesUiState.update { it.copy(advertsList = advertsList) }
 

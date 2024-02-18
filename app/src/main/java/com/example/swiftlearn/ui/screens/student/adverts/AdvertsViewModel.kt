@@ -37,15 +37,15 @@ class AdvertsViewModel(
         viewModelScope.launch {
             try {
                 // Obtenemos el usuario autentificado
-                val user = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
+                val userLogged = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
                 // Actualizar el estado de la pantalla con el usuario
-                _advertsUiState.update { it.copy(user = user) }
+                _advertsUiState.update { it.copy(userLogged = userLogged) }
 
                 // Combina los flujos de datos de profesores, anuncios y favoritos
                 combine(
                     userRepository.getAllProfessors(),
                     advertRepository.getAllAdverts(),
-                    favoriteRepository.getAllFavoritesByUser(user._id)
+                    favoriteRepository.getAllFavoritesByUser(userLogged._id)
                 ) { professors, adverts, favorites  ->
                     Triple(professors, adverts, favorites)
                 }.collect { (professors, adverts, favorites) ->
@@ -92,7 +92,7 @@ class AdvertsViewModel(
         viewModelScope.launch {
             // Si ese anuncio era favorito -> Se elimina el favorito
             // Si ese anuncio no era favorito (get devuelve null) -> Se inserta el favorito
-            val userId = _advertsUiState.value.user._id
+            val userId = _advertsUiState.value.userLogged._id
             favoriteRepository.getFavoriteByInfo(userId = userId, advertId = advert._id)?.let { favorite ->
                 favoriteRepository.deleteFavorite(favorite)
             } ?: favoriteRepository.insertFavorite(Favorite(userId = userId, advertId = advert._id))

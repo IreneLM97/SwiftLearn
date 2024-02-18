@@ -80,7 +80,7 @@ fun MyAdvertsScreen(
 
             // Lista de anuncios del profesor
             MyAdvertsList(
-                professor = myAdvertsUiState.user,
+                professor = myAdvertsUiState.userLogged,
                 advertsList = myAdvertsUiState.myAdvertsList,
                 notFoundMessage = stringResource(R.string.not_adverts_yet),
                 onEditButtonClick = {

@@ -76,7 +76,7 @@ class RegisterViewModel(
         val userWithAuthId = user.copy(authId = authId.toString())
 
         // Asignamos coordenadas de la dirección al usuario
-        val coordinates = searchCoordinates(user.address, context)
+        val coordinates = saveCoordinates(user.address, context)
         val userWithCoordinates = userWithAuthId.copy(latitude = coordinates?.latitude.toString(), longitude = coordinates?.longitude.toString())
 
         // Agregamos el usuario a la colección
@@ -99,12 +99,12 @@ class RegisterViewModel(
                 ValidationUtils.isConfirmPasswordValid(registerDetails.password, registerDetails.confirmPassword)
     }
 
-    private suspend fun searchCoordinates(searchQuery: String, context: Context): LatLng? {
+    private suspend fun saveCoordinates(address: String, context: Context): LatLng? {
         val placesClient = Places.createClient(context)
         val fields = listOf(Place.Field.LAT_LNG)
 
         val request = FindAutocompletePredictionsRequest.builder()
-            .setQuery(searchQuery)
+            .setQuery(address)
             .build()
 
         return suspendCoroutine { continuation ->

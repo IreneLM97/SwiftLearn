@@ -34,15 +34,15 @@ class ClassesViewModel(
         viewModelScope.launch {
             try {
                 // Obtenemos el usuario autentificado
-                val user = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
+                val userLogged = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
                 // Actualizar el estado de la pantalla con el usuario
-                _classesUiState.update { it.copy(user = user) }
+                _classesUiState.update { it.copy(userLogged = userLogged) }
 
                 // Combina los flujos de datos de profesores, anuncios y solicitudes
                 combine(
                     userRepository.getAllProfessors(),
                     advertRepository.getAllAdverts(),
-                    requestRepository.getAllRequestsByStudentId(user._id)
+                    requestRepository.getAllRequestsByStudentId(userLogged._id)
                 ) { professors, adverts, requests ->
                     val advertsByRequests = adverts.filter { advert ->
                         requests.find { it.advertId == advert._id } != null

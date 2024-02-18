@@ -148,7 +148,7 @@ private fun ProfileForm(
             title = stringResource(id = R.string.delete_profile_title),
             textMessage = stringResource(id = R.string.sure_delete_profile_label),
             onConfirm = {
-                onDeleteClick(profileUiState.user)
+                onDeleteClick(profileUiState.userLogged)
                 showDialogProfile = false
             },
             onCancel = {
@@ -178,7 +178,7 @@ private fun ProfileForm(
     ) {
         // Email del usuario
         Text(
-            text = profileUiState.user.email,
+            text = profileUiState.userLogged.email,
             fontSize = 20.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -275,7 +275,7 @@ private fun ProfileForm(
                         .fillMaxWidth()
                         .clickable(
                             onClick = {
-                                onSaveClick(profileDetails.updateUser(profileUiState.user))
+                                onSaveClick(profileDetails.updateUser(profileUiState.userLogged))
                             }
                         )
                 )

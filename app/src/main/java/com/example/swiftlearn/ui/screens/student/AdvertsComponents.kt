@@ -1,8 +1,6 @@
 package com.example.swiftlearn.ui.screens.student
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.location.Geocoder
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -53,7 +51,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -200,7 +197,7 @@ fun AdvertsList(
 
                     // Comprobamos si es favorito o no
                     val favoritesList = advertsUiState?.favoritesList ?: favoritesUiState?.favoritesList ?: emptyList()
-                    val user = advertsUiState?.user ?: favoritesUiState?.user ?: User()
+                    val user = advertsUiState?.userLogged ?: favoritesUiState?.userLogged ?: User()
                     val isFavorite = favoritesList.any {
                         it.userId == user._id && it.advertId == advert._id
                     }
@@ -393,7 +390,7 @@ fun AdvertItem(
 @Composable
 fun AdvertDetail(
     windowSize: WindowWidthSizeClass,
-    studentId: String,
+    userLogged: User,
     advert: Advert,
     professor: User,
     onRequestConfirm: (Request) -> Unit,
@@ -410,7 +407,7 @@ fun AdvertDetail(
     if (showDialog) {
         RequestClassDialog (
             windowSize = windowSize,
-            studentId = studentId,
+            studentId = userLogged._id,
             advertId = advert._id,
             onRequestConfirm = onRequestConfirm,
             onRequestCancel = {
@@ -625,6 +622,7 @@ fun AdvertDetail(
 
             // Mostramos el mapa con la ubicación de ese profesor
             ShowMap(
+                userLogged = userLogged,
                 professor = professor
             )
             Spacer(Modifier.height(20.dp))
@@ -690,7 +688,7 @@ fun AdvertsListAndDetail(
         )
 
         // Obtener la información necesaria para mostrar detalles del anuncio
-        val studentId = advertsUiState?.user?._id ?: favoritesUiState?.user?._id ?: ""
+        val userLogged = advertsUiState?.userLogged ?: favoritesUiState?.userLogged ?: User()
         val currentAdvert = advertsUiState?.currentAdvert ?: favoritesUiState?.currentAdvert ?: Advert()
         val professorsList = advertsUiState?.professorsList ?: favoritesUiState?.professorsList ?: emptyList()
         val professor = professorsList.find { it._id == currentAdvert.profId }
@@ -698,7 +696,7 @@ fun AdvertsListAndDetail(
             // Representa los detalles de un anuncio específico
             AdvertDetail(
                 windowSize = windowSize,
-                studentId = studentId,
+                userLogged = userLogged,
                 advert = currentAdvert,
                 professor = professor,
                 onRequestConfirm = onRequestConfirm,
@@ -741,15 +739,13 @@ fun IconWithText(
 
 @Composable
 fun ShowMap(
+    userLogged: User,
     professor: User
 ) {
-    // Obtenemos coordenadas del profesor
-    val coordinates = searchCoordinates(searchQuery = professor.address, context = LocalContext.current)
-
-    // Posicionamos la cámara del mapa en esa ubicación
+    // Posicionamos la cámara del mapa en la ubicación del usuario
     val cameraPositionState = CameraPositionState(
         position = CameraPosition.Builder()
-            .target(LatLng(coordinates?.latitude ?: 0.0, coordinates?.longitude ?: 0.0))
+            .target(LatLng(userLogged.latitude.toDoubleOrNull() ?: 0.0, userLogged.longitude.toDoubleOrNull() ?: 0.0))
             .zoom(14f)
             .build()
     )
@@ -763,27 +759,17 @@ fun ShowMap(
             .fillMaxWidth()
             .height(500.dp)
     ) {
-        if (coordinates != null) {
-            Marker(
-                position = LatLng(coordinates.latitude, coordinates.longitude),
-                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
-            )
-        }
-    }
-}
+        // Colocamos un marcador rojo en la posición del usuario
+        Marker(
+            position = LatLng(userLogged.latitude.toDoubleOrNull() ?: 0.0, userLogged.longitude.toDoubleOrNull() ?: 0.0)
+        )
 
-@Composable
-private fun searchCoordinates(searchQuery: String, context: Context): LatLng? {
-    val geocoder = Geocoder(context)
-
-    // Intentamos obtener las coordenadas desde la dirección proporcionada
-    val addresses = geocoder.getFromLocationName(searchQuery, 1)
-    if (!addresses.isNullOrEmpty()) {
-        val lat = addresses[0].latitude
-        val lng = addresses[0].longitude
-        return LatLng(lat, lng)
+        // Colocamos un marcador morado en la posición del profesor
+        Marker(
+            position = LatLng(professor.latitude.toDoubleOrNull() ?: 0.0, professor.longitude.toDoubleOrNull() ?: 0.0),
+            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
+        )
     }
-    return null
 }
 
 /**
@@ -813,7 +799,7 @@ fun AdvertItemPreview() {
 fun AdvertDetailPreview() {
     AdvertDetail(
         windowSize = WindowWidthSizeClass.Medium,
-        studentId = "",
+        userLogged = User(),
         advert = Advert(
             subject = "Lengua",
             price = 12,
