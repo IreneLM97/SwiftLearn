@@ -1,6 +1,8 @@
 package com.example.swiftlearn
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -28,6 +30,10 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
  * Esta clase extiende [Application] y se utiliza para realizar inicializaciones globales.
  */
 class SwiftLearnApplication : Application() {
+    companion object {
+        const val FCM_CHANNEL_ID = "FCM_CHANNEL_ID"
+    }
+
     // Instancia de [AppContainer] utilizada por el resto de las clases para obtener dependencias
     lateinit var container: AppContainer
 
@@ -45,5 +51,11 @@ class SwiftLearnApplication : Application() {
         container = AppDataContainer(this)
         userPreferencesRepository = UserPreferencesRepository(dataStore)
         Places.initialize(applicationContext, getString(R.string.google_maps_key))
+
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val fcmChannel = NotificationChannel(FCM_CHANNEL_ID, "FCM_CHANNEL", NotificationManager.IMPORTANCE_HIGH)
+            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(fcmChannel)
+        }
     }
 }
