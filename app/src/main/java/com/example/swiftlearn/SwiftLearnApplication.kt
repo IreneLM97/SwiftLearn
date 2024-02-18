@@ -8,6 +8,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.swiftlearn.data.datastore.UserPreferencesRepository
 import com.example.swiftlearn.di.AppContainer
 import com.example.swiftlearn.di.AppDataContainer
+import com.google.android.libraries.places.api.Places
 
 /**
  * Nombre del archivo de preferencias de la aplicación.
@@ -43,5 +44,6 @@ class SwiftLearnApplication : Application() {
         // Inicialización del contenedor de la aplicación y del repositorio de preferencias del usuario
         container = AppDataContainer(this)
         userPreferencesRepository = UserPreferencesRepository(dataStore)
+        Places.initialize(applicationContext, getString(R.string.google_maps_key))
     }
 }

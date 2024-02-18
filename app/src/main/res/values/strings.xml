@@ -151,4 +151,5 @@
     <string name="snackbar_accepted">Solicitud aceptada</string>
     <string name="snackbar_cancelled">Solicitud cancelada</string>
     <string name="snackbar_accept_button">Aceptar</string>
+    <string name="google_maps_key">AIzaSyCJpgVYixVDpzkNCYu3Pwbz6bzCYqGwFmQ</string>
 </resources>

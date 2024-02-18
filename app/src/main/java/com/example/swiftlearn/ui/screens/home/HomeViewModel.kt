@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.model.Role
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,15 +21,12 @@ class HomeViewModel(
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState = _homeUiState.asStateFlow()
 
-    // Variable para la autentificación de usuarios
-    private val auth: FirebaseAuth = Firebase.auth
-
     // Inicialización del ViewModel
     init {
         viewModelScope.launch {
             try {
                 // Obtener los datos del usuario desde el repositorio
-                val role = userRepository.getUserByAuthId(auth.currentUser?.uid.toString())?.role
+                val role = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString())?.role
 
                 // Actualizar el estado de la pantalla con los datos del usuario obtenidos
                 _homeUiState.update { it.copy(role = role ?: Role.None) }

@@ -91,6 +91,7 @@ dependencies {
 
     // Permisos
     implementation("com.google.accompanist:accompanist-permissions:0.19.0")
+    implementation("com.google.android.libraries.places:places:3.3.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

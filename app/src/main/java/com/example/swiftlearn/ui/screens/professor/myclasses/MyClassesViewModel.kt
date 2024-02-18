@@ -43,6 +43,12 @@ class MyClassesViewModel(
                 // Actualizar el estado de la pantalla con la lista de anuncios
                 _myClassesUiState.update { it.copy(advertsList = advertsList) }
 
+                // Si la lista de anuncios está vacía, actualizar el estado de la pantalla y salir del ViewModelScope
+                if (advertsList.isEmpty()) {
+                    _myClassesUiState.update { it.copy(isLoading = false) }
+                    return@launch
+                }
+
                 // Obtenemos la lista de Ids de los anuncios del profesor
                 val advertIds = advertsList.map { it._id }
 
@@ -63,7 +69,7 @@ class MyClassesViewModel(
                             acceptedRequests = requests.filter { request -> request.status == Status.Aceptada.toString() },
                             deniedRequests = requests.filter { request -> request.status == Status.Rechazada.toString() },
                         ) }
-
+                    
                     delay(500)
                     _myClassesUiState.update { it.copy(isLoading = false) }
                 }

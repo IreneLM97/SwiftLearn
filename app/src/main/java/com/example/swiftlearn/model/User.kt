@@ -13,6 +13,8 @@ data class User(
     val phone: String = "",
     val address: String = "",
     val postal: String = "",
+    val latitude: String = "",
+    val longitude: String = "",
     val email: String = "",
     val password: String = "",
     val role: Role = Role.None
@@ -25,6 +27,8 @@ data class User(
             "phone" to this.phone,
             "address" to this.address,
             "postal" to this.postal,
+            "latitude" to this.latitude,
+            "longitude" to this.longitude,
             "email" to this.email,
             "role" to this.role
         )
