@@ -1,6 +1,8 @@
 package com.example.swiftlearn.ui.screens.student
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.location.Geocoder
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -51,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -76,6 +79,14 @@ import com.example.swiftlearn.ui.components.SearchTextField
 import com.example.swiftlearn.ui.screens.student.adverts.AdvertsUiState
 import com.example.swiftlearn.ui.screens.student.favorites.FavoritesUiState
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
 
 /**
  * Función que representa la barra superior de la pantalla.
@@ -139,6 +150,7 @@ fun AdvertsList(
 ) {
     Column(
         modifier = modifier
+            .padding(top = 20.dp)
     ) {
         Spacer(modifier = modifier.height(20.dp))
 
@@ -611,6 +623,12 @@ fun AdvertDetail(
             )
             Spacer(Modifier.height(20.dp))
 
+            // Mostramos el mapa con la ubicación de ese profesor
+            ShowMap(
+                professor = professor
+            )
+            Spacer(Modifier.height(20.dp))
+
             // Botón para solicitar una clase (versión tablet)
             if(windowSize == WindowWidthSizeClass.Expanded) {
                 ButtonWithText(
@@ -620,7 +638,6 @@ fun AdvertDetail(
                     onClick = { showDialog = true }
                 )
             }
-
             Spacer(Modifier.height(80.dp))
         }
     }
@@ -720,6 +737,53 @@ fun IconWithText(
         )
     }
     Spacer(modifier = Modifier.height(10.dp))
+}
+
+@Composable
+fun ShowMap(
+    professor: User
+) {
+    // Obtenemos coordenadas del profesor
+    val coordinates = searchCoordinates(searchQuery = professor.address, context = LocalContext.current)
+
+    // Posicionamos la cámara del mapa en esa ubicación
+    val cameraPositionState = CameraPositionState(
+        position = CameraPosition.Builder()
+            .target(LatLng(coordinates?.latitude ?: 0.0, coordinates?.longitude ?: 0.0))
+            .zoom(14f)
+            .build()
+    )
+
+    // Dibujamos el mapa
+    GoogleMap(
+        cameraPositionState = cameraPositionState,
+        properties = MapProperties(isMyLocationEnabled = true),
+        uiSettings = MapUiSettings(zoomControlsEnabled = true),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(500.dp)
+    ) {
+        if (coordinates != null) {
+            Marker(
+                position = LatLng(coordinates.latitude, coordinates.longitude),
+                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
+            )
+        }
+    }
+}
+
+@Composable
+private fun searchCoordinates(searchQuery: String, context: Context): LatLng? {
+    val geocoder = Geocoder(context)
+
+    // Intentamos obtener las coordenadas desde la dirección proporcionada
+    val addresses = geocoder.getFromLocationName(searchQuery, 1)
+    if (!addresses.isNullOrEmpty()) {
+        val lat = addresses[0].latitude
+        val lng = addresses[0].longitude
+        return LatLng(lat, lng)
+    }
+    return null
 }
 
 /**

@@ -37,8 +37,4 @@ class HomeViewModel(
             } catch (_: Exception) {}
         }
     }
-
-    fun onMenuItemSelected(route: String) {
-        _homeUiState.update { it.copy(route = route) }
-    }
 }

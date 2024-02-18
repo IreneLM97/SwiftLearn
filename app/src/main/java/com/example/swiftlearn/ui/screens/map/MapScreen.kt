@@ -19,16 +19,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.swiftlearn.R
 import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.SearchTextField
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
-import kotlinx.coroutines.tasks.await
 
-@OptIn(ExperimentalPermissionsApi::class)
 @SuppressLint("MissingPermission")
 @Composable
 fun MapScreen(
@@ -39,12 +34,6 @@ fun MapScreen(
 
     // Guardamos el contexto de la aplicación
     val context = LocalContext.current
-
-    // Proveedor de servicios de ubicación
-    val fusedLocationProvider = remember { LocationServices.getFusedLocationProviderClient(context) }
-
-    // Estado del permiso de ubicación
-    val locationPermissionState = rememberPermissionState(android.Manifest.permission.ACCESS_FINE_LOCATION)
 
     // Iniciamos la posición de la cámara en función de donde nos encontremos
     val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -63,21 +52,6 @@ fun MapScreen(
                 14f
             )
             cameraPositionState.position = cameraPosition
-        }
-    }
-
-    // Efecto de lanzamiento para solicitar permisos de ubicación si no los tuviera
-    LaunchedEffect(locationPermissionState) {
-        if (locationPermissionState.hasPermission) {
-            // Si tiene permisos de ubicación, enfocamos la cámara en la última ubicación conocida del usuario
-            val location = fusedLocationProvider.lastLocation.await()
-            location?.let {
-                val latLng = LatLng(it.latitude, it.longitude)
-                cameraPositionState.position = CameraPosition.fromLatLngZoom(latLng, 15f)
-            }
-        } else {
-            // Si no tiene permisos, entonces solicitamos permisos de ubicación al usuario
-            locationPermissionState.launchPermissionRequest()
         }
     }
 
