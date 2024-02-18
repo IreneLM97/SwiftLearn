@@ -71,7 +71,7 @@ class ProfileViewModel(
         viewModelScope.launch {
             // Actualizamos las coordenadas del usuario
             val coordinates = saveCoordinates(user.address, context)
-            val userWithCoordinates = user.copy(latitude = coordinates?.latitude.toString(), longitude = coordinates?.longitude.toString())
+            val userWithCoordinates = user.copy(latitude = coordinates?.latitude ?: 0.0, longitude = coordinates?.longitude ?: 0.0)
 
             // Actualizamos los datos del usuario
             userRepository.updateUser(userWithCoordinates)

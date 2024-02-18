@@ -77,7 +77,7 @@ class RegisterViewModel(
 
         // Asignamos coordenadas de la dirección al usuario
         val coordinates = saveCoordinates(user.address, context)
-        val userWithCoordinates = userWithAuthId.copy(latitude = coordinates?.latitude.toString(), longitude = coordinates?.longitude.toString())
+        val userWithCoordinates = userWithAuthId.copy(latitude = coordinates?.latitude ?: 0.0, longitude = coordinates?.longitude ?: 0.0)
 
         // Agregamos el usuario a la colección
         userRepository.insertUser(userWithCoordinates)

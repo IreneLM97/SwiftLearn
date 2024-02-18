@@ -13,8 +13,8 @@ data class User(
     val phone: String = "",
     val address: String = "",
     val postal: String = "",
-    val latitude: String = "",
-    val longitude: String = "",
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
     val email: String = "",
     val password: String = "",
     val role: Role = Role.None

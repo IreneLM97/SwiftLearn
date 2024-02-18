@@ -123,10 +123,7 @@ class MapViewModel(
 
                 // Filtrar la lista de profesores basándose en la distancia
                 _mapUiState.value.professorsList.forEach { professor ->
-                    val professorLatLng = LatLng(
-                        professor.latitude.toDoubleOrNull() ?: 0.0,
-                        professor.longitude.toDoubleOrNull() ?: 0.0
-                    )
+                    val professorLatLng = LatLng(professor.latitude, professor.longitude)
                     if (calculateDistance(currentLatLng, professorLatLng) <= 25.0) {
                         nearbyProfessors.add(professor)
                     }

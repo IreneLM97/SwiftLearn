@@ -33,12 +33,9 @@ fun MapScreen(
     val context = LocalContext.current
 
     // Iniciamos la posición de la cámara en la ubicación del usuario autentificado
-    val cameraPositionState = CameraPositionState(
-        position = CameraPosition.Builder()
-            .target(LatLng(mapUiState.userLogged.latitude.toDoubleOrNull() ?: 0.0, mapUiState.userLogged.longitude.toDoubleOrNull() ?: 0.0))
-            .zoom(14f)
-            .build()
-    )
+    val cameraPositionState = rememberCameraPositionState {
+        CameraPosition.Builder().target(LatLng(mapUiState.userLogged.latitude, mapUiState.userLogged.longitude)).zoom(15f).build()
+    }
 
     // Efecto de lanzamiento para actualizar la posición de la cámara cuando cambien las coordenadas
     LaunchedEffect(mapUiState.searchCoordinates) {
@@ -102,19 +99,13 @@ fun MapContent(
             // Agregamos marcadores para cada profesor cercano
             mapUiState.nearbyProfessors.forEach { professor ->
                 Marker(
-                    position = LatLng(
-                        professor.latitude.toDoubleOrNull() ?: 0.0,
-                        professor.longitude.toDoubleOrNull() ?: 0.0
-                    ),
+                    position = LatLng(professor.latitude, professor.longitude),
                     icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
                 )
 
                 // Mostrar el nombre del profesor y su información de contacto en el marcador
                 MarkerInfoWindowContent(
-                    position = LatLng(
-                        professor.latitude.toDoubleOrNull() ?: 0.0,
-                        professor.longitude.toDoubleOrNull() ?: 0.0
-                    ),
+                    position = LatLng(professor.latitude, professor.longitude),
                     icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
                 ) {
                     Column {

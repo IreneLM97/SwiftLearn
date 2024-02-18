@@ -745,7 +745,7 @@ fun ShowMap(
     // Posicionamos la cámara del mapa en la ubicación del usuario
     val cameraPositionState = CameraPositionState(
         position = CameraPosition.Builder()
-            .target(LatLng(userLogged.latitude.toDoubleOrNull() ?: 0.0, userLogged.longitude.toDoubleOrNull() ?: 0.0))
+            .target(LatLng(userLogged.latitude, userLogged.longitude))
             .zoom(14f)
             .build()
     )
@@ -761,12 +761,12 @@ fun ShowMap(
     ) {
         // Colocamos un marcador rojo en la posición del usuario
         Marker(
-            position = LatLng(userLogged.latitude.toDoubleOrNull() ?: 0.0, userLogged.longitude.toDoubleOrNull() ?: 0.0)
+            position = LatLng(userLogged.latitude, userLogged.longitude)
         )
 
         // Colocamos un marcador morado en la posición del profesor
         Marker(
-            position = LatLng(professor.latitude.toDoubleOrNull() ?: 0.0, professor.longitude.toDoubleOrNull() ?: 0.0),
+            position = LatLng(professor.latitude, professor.longitude),
             icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
         )
     }
