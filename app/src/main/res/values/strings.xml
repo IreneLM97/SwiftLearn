@@ -89,7 +89,7 @@
     <!-- Label para lista de anuncios y anuncios favoritos -->
     <string name="search_label">¿Qué asignatura quieres buscar?</string>
     <string name="icon_euro_hour">%1$s €/h</string>
-    <string name="direction_info">%1$s, %2$s</string>
+    <string name="direction_info">%1$s (%2$s)</string>
     <string name="advert_summary">Asignatura: %1$s \nPrecio: %2$s \nProfesor: %3$s \nTeléfono: %4$s \nEmail: %5$s</string>
     <string name="not_found_adverts">No se han encontrado anuncios con esa búsqueda.</string>
     <string name="not_found_favorites">Aún no has marcado ningún favorito.</string>
