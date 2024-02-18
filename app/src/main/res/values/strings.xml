@@ -135,6 +135,8 @@
     <string name="not_found_declined">No hay solicitudes rechazadas.</string>
 
     <!-- Label para pantalla de mapa -->
+    <string name="google_maps_key">AIzaSyCJpgVYixVDpzkNCYu3Pwbz6bzCYqGwFmQ</string>
+    <string name="you_are_here">Estás aquí</string>
     <string name="search_map_label">¿Qué dirección quieres buscar?</string>
 
     <!-- Enviar información a otra aplicación -->
@@ -151,5 +153,4 @@
     <string name="snackbar_accepted">Solicitud aceptada</string>
     <string name="snackbar_cancelled">Solicitud cancelada</string>
     <string name="snackbar_accept_button">Aceptar</string>
-    <string name="google_maps_key">AIzaSyCJpgVYixVDpzkNCYu3Pwbz6bzCYqGwFmQ</string>
 </resources>

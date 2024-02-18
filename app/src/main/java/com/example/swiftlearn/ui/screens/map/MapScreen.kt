@@ -1,9 +1,6 @@
 package com.example.swiftlearn.ui.screens.map
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.location.Location
-import android.location.LocationManager
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,14 +32,13 @@ fun MapScreen(
     // Guardamos el contexto de la aplicación
     val context = LocalContext.current
 
-    // Iniciamos la posición de la cámara en función de donde nos encontremos
-    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    val locationSystem: Location? = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-    val cameraPositionState = rememberCameraPositionState {
-        if (locationSystem != null) {
-            CameraPosition.fromLatLngZoom(LatLng(locationSystem.latitude, locationSystem.longitude), 14f)
-        }
-    }
+    // Iniciamos la posición de la cámara en la ubicación del usuario autentificado
+    val cameraPositionState = CameraPositionState(
+        position = CameraPosition.Builder()
+            .target(LatLng(mapUiState.userLogged.latitude.toDoubleOrNull() ?: 0.0, mapUiState.userLogged.longitude.toDoubleOrNull() ?: 0.0))
+            .zoom(14f)
+            .build()
+    )
 
     // Efecto de lanzamiento para actualizar la posición de la cámara cuando cambien las coordenadas
     LaunchedEffect(mapUiState.searchCoordinates) {
@@ -71,7 +67,6 @@ fun MapScreen(
             onQueryChange = viewModel::onQueryChange,
             onSearch = {
                 viewModel.updateSearchCoordinates(it, context)
-                viewModel.loadProfessorsAddresses(context)
             }
         )
     }
@@ -99,43 +94,35 @@ fun MapContent(
             // Si hay coordenadas, agregamos un marcador en esa ubicación
             mapUiState.searchCoordinates?.let { coordinates ->
                 Marker(
-                    position = LatLng(coordinates.latitude, coordinates.longitude)
+                    position = LatLng(coordinates.latitude, coordinates.longitude),
+                    title = stringResource(R.string.you_are_here)
                 )
-                // Mostramos un texto en el marcador
-                MarkerInfoWindowContent(
-                    position = LatLng(coordinates.latitude, coordinates.longitude)
-                ) {
-                    Text(
-                        text = mapUiState.searchQuery
-                    )
-                }
             }
 
-            // Agregamos marcadores para cada dirección en la lista de direcciones de los profesores cercanos
-            mapUiState.nearbyProfCoordinates.forEachIndexed { index, coordinates ->
-                coordinates.let {
-                    val professor = mapUiState.nearbyProfList.getOrNull(index)
+            // Agregamos marcadores para cada profesor cercano
+            mapUiState.nearbyProfessors.forEach { professor ->
+                Marker(
+                    position = LatLng(
+                        professor.latitude.toDoubleOrNull() ?: 0.0,
+                        professor.longitude.toDoubleOrNull() ?: 0.0
+                    ),
+                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
+                )
 
-                    // Verificar si se encontró un profesor para este índice
-                    if (professor != null) {
-                        Marker(
-                            position = LatLng(it.latitude, it.longitude),
-                            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
-                        )
-
-                        // Mostrar el nombre del profesor y su información de contacto en el marcador
-                        MarkerInfoWindowContent(
-                            position = LatLng(it.latitude, it.longitude),
-                            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
-                        ) {
-                            Column {
-                                Text(text = professor.username, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Text(text = professor.email, fontSize = 12.sp)
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Text(text = professor.phone, fontSize = 12.sp)
-                            }
-                        }
+                // Mostrar el nombre del profesor y su información de contacto en el marcador
+                MarkerInfoWindowContent(
+                    position = LatLng(
+                        professor.latitude.toDoubleOrNull() ?: 0.0,
+                        professor.longitude.toDoubleOrNull() ?: 0.0
+                    ),
+                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
+                ) {
+                    Column {
+                        Text(text = professor.username, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(text = professor.email, fontSize = 12.sp)
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(text = professor.phone, fontSize = 12.sp)
                     }
                 }
             }

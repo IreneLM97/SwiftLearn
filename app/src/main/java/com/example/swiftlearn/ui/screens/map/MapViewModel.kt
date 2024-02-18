@@ -1,18 +1,26 @@
 package com.example.swiftlearn.ui.screens.map
 
 import android.content.Context
-import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.model.User
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.tasks.Task
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.FetchPlaceResponse
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -28,21 +36,17 @@ class MapViewModel(
     private val _mapUiState = MutableStateFlow(MapUiState())
     val mapUiState = _mapUiState.asStateFlow()
 
-    // Lista de direcciones de los profesores
-    private var professorsAddresses = mutableListOf<String>()
-
     // Inicialización del ViewModel
     init {
         viewModelScope.launch {
             try {
                 // Obtener los datos del usuario desde el repositorio
-                val user = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString())
+                val userLogged = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString())
                 // Actualizar el estado de la pantalla con los datos del usuario obtenidos
-                _mapUiState.update { it.copy(user = user ?: User()) }
+                _mapUiState.update { it.copy(userLogged = userLogged ?: User()) }
 
                 // Obtenemos el flujo de datos de los profesores
                 userRepository.getAllProfessors().collect { professors ->
-                    professorsAddresses.addAll(professors.map { it.address })
                     _mapUiState.update { it.copy(professorsList = professors) }
 
                     // Actualizamos estado de cargando a false
@@ -62,53 +66,77 @@ class MapViewModel(
     }
 
     fun updateSearchCoordinates(searchQuery: String, context: Context) {
-        val searchCoordinates = searchCoordinates(searchQuery, context)
-        _mapUiState.update { it.copy(searchCoordinates = searchCoordinates, isLoading = false) }
+        viewModelScope.launch {
+            val searchCoordinates = searchCoordinates(searchQuery, context)
+            searchCoordinates?.let {
+                _mapUiState.update { it.copy(searchCoordinates = searchCoordinates, isLoading = false) }
+                loadNearbyProfessors(searchCoordinates)
+            }
+
+        }
     }
 
-    // Función para buscar coordenadas a partir de una dirección
-    private fun searchCoordinates(searchQuery: String, context: Context): LatLng? {
-        val geocoder = Geocoder(context)
+    private suspend fun searchCoordinates(searchQuery: String, context: Context): LatLng? {
+        val placesClient = Places.createClient(context)
+        val fields = listOf(Place.Field.LAT_LNG)
 
-        // Intentamos obtener las coordenadas desde la dirección proporcionada
-        val addresses = geocoder.getFromLocationName(searchQuery, 1)
-        if (!addresses.isNullOrEmpty()) {
-            val lat = addresses[0].latitude
-            val lng = addresses[0].longitude
-            return LatLng(lat, lng)
+        val request = FindAutocompletePredictionsRequest.builder()
+            .setQuery(searchQuery)
+            .build()
+
+        return suspendCoroutine { continuation ->
+            placesClient.findAutocompletePredictions(request)
+                .addOnCompleteListener { task: Task<FindAutocompletePredictionsResponse> ->
+                    if (task.isSuccessful) {
+                        val response = task.result
+                        if (response != null && !response.autocompletePredictions.isNullOrEmpty()) {
+                            val prediction = response.autocompletePredictions[0]
+                            val placeId = prediction.placeId
+
+                            placesClient.fetchPlace(
+                                FetchPlaceRequest.newInstance(placeId, fields)
+                            ).addOnCompleteListener { fetchTask: Task<FetchPlaceResponse> ->
+                                if (fetchTask.isSuccessful) {
+                                    val place = fetchTask.result?.place
+                                    val latLng = place?.latLng
+                                    continuation.resume(latLng)
+                                }
+                            }
+                        }
+                    } else {
+                        continuation.resume(null)
+                    }
+                }
         }
-
-        // Si no se encontraron coordenadas, marcamos isLoading como false para detener el indicador de carga
-        _mapUiState.update { it.copy(isLoading = false) }
-        return null
     }
 
     /**
-     * Función para cargar las direcciones de los profesores y mostrar las que están dentro de 10 km de distancia.
+     * Función para cargar los profesores que se encuentren cerca de la ubicación de búsqueda.
      *
-     * @param context Contexto de la aplicación.
      */
-    fun loadProfessorsAddresses(context: Context) {
-        try {
-            val location = _mapUiState.value.searchCoordinates
-            val currentLatLng = LatLng(location?.latitude ?: 0.0, location?.longitude ?: 0.0)
+    private fun loadNearbyProfessors(location: LatLng?) {
+        viewModelScope.launch {
+            try {
+                val currentLatLng = LatLng(location?.latitude ?: 0.0, location?.longitude ?: 0.0)
 
-            val nearbyProfessors = mutableListOf<User>()
-            val nearbyCoordinates = mutableListOf<LatLng>()
+                val nearbyProfessors = mutableListOf<User>()
 
-            // Filtrar la lista de profesores basándose en la distancia
-            professorsAddresses.forEach { address ->
-                val professorLatLng = searchCoordinates(address, context)
-                if (professorLatLng != null && calculateDistance(currentLatLng, professorLatLng) <= 25.0) {
-                    nearbyCoordinates.add(professorLatLng)
-                    val professor = _mapUiState.value.professorsList.find { it.address == address }
-                    professor?.let { nearbyProfessors.add(it) }
+                // Filtrar la lista de profesores basándose en la distancia
+                _mapUiState.value.professorsList.forEach { professor ->
+                    val professorLatLng = LatLng(
+                        professor.latitude.toDoubleOrNull() ?: 0.0,
+                        professor.longitude.toDoubleOrNull() ?: 0.0
+                    )
+                    if (calculateDistance(currentLatLng, professorLatLng) <= 25.0) {
+                        nearbyProfessors.add(professor)
+                    }
                 }
-            }
 
-            // Actualizar el estado con la lista de profesores cerca del lugar
-            _mapUiState.update { it.copy(nearbyProfList = nearbyProfessors, nearbyProfCoordinates = nearbyCoordinates) }
-        } catch (_: SecurityException) {}
+                // Actualizar el estado con la lista de profesores cerca del lugar
+                _mapUiState.update { it.copy(nearbyProfessors = nearbyProfessors) }
+            } catch (_: SecurityException) {
+            }
+        }
     }
 
     private fun calculateDistance(
