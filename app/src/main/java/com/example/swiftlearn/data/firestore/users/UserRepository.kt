@@ -4,7 +4,7 @@ import com.example.swiftlearn.model.User
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Interfaz que define las operaciones para gestionar usuarios en Firestore.
+ * [UserRepository] es una interfaz que define las operaciones para gestionar la colección de usuarios en Firestore.
  */
 interface UserRepository {
     /**

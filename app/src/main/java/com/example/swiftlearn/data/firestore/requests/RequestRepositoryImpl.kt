@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 /**
- * Implementación de [RequestRepository] que permite gestionar la colección solicitudes en Firestore.
+ * [RequestRepositoryImpl] es la implementación de [RequestRepository] que permite gestionar la colección solicitudes en Firestore.
  */
 class RequestRepositoryImpl: RequestRepository {
     // Obtenemos una instancia de FirebaseFirestore

@@ -36,17 +36,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
 
+/**
+ * [ButtonWithText] es una función para crear un botón con texto en su interior.
+ *
+ * @param text Texto del botón.
+ * @param buttonColor Color del fondo del botón.
+ * @param borderButtonColor Color del borde del botón.
+ * @param textColor Color del texto del botón.
+ * @param isEnabled Indica si el botón está habilitado o no.
+ * @param onClick Función que se ejecuta al hacer click en el botón.
+ */
 @Composable
 fun ButtonWithText(
-    label: String,
+    text: String,
     buttonColor: Color,
     borderButtonColor: Color = Color.Transparent,
     textColor: Color,
     isEnabled: Boolean = true,
     onClick: () -> Unit = {}
 ) {
+    // Definimos el color del botón en función de si está habilitado o no
     val color = if (isEnabled) buttonColor else colorResource(id = R.color.my_gray_purple)
 
+    // Creamos el botón con las características dadas
     Button(
         onClick = onClick,
         enabled = isEnabled,
@@ -62,14 +74,25 @@ fun ButtonWithText(
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(color)
     ) {
+        // Texto dentro del botón
         Text(
-            text = label,
+            text = text,
             style = TextStyle(color = textColor),
             fontSize = 20.sp
         )
     }
 }
 
+/**
+ * [ButtonWithTextAndImage] es una función para crear un botón con texto e imagen en su interior.
+ *
+ * @param label Texto del botón.
+ * @param image Imagen del botón.
+ * @param buttonColor Color del fondo del botón.
+ * @param borderButtonColor Color del borde del botón.
+ * @param textColor Color del texto del botón.
+ * @param onClick Función que se ejecuta al hacer click en el botón.
+ */
 @Composable
 fun ButtonWithTextAndImage(
     label: String,
@@ -79,6 +102,7 @@ fun ButtonWithTextAndImage(
     textColor: Color,
     onClick: () -> Unit = {}
 ) {
+    // Creamos el botón con las características dadas
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -97,6 +121,7 @@ fun ButtonWithTextAndImage(
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(buttonColor)
     ) {
+        // Imagen dentro del botón
         Image(
             painter = image,
             contentDescription = stringResource(R.string.description_google_icon),
@@ -104,7 +129,7 @@ fun ButtonWithTextAndImage(
                 .height(30.dp)
                 .padding(end = 8.dp)
         )
-
+        // Texto dentro del botón
         Text(
             text = label,
             style = TextStyle(color = textColor),
@@ -113,11 +138,18 @@ fun ButtonWithTextAndImage(
     }
 }
 
+/**
+ * [ToggleButton] es una función para crear un botón de alternancia (toggle button).
+ *
+ * @param isActivate Estado actual de la activación.
+ * @param onToggleChecked Función que se ejecuta al cambiar el estado de activación.
+ */
 @Composable
 fun ToggleButton(
     isActivate: Boolean = false,
-    onToggleCkecked: (Boolean) -> Unit = {}
+    onToggleChecked: (Boolean) -> Unit = {}
 ) {
+    // Fila contenedora del botón
     Row(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -126,10 +158,12 @@ fun ToggleButton(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
+        // Creamos el botón de alternancia
         Switch(
             checked = isActivate,
-            onCheckedChange = onToggleCkecked,
-            thumbContent = if (isActivate) {
+            onCheckedChange = onToggleChecked,
+            thumbContent =
+            if (isActivate) {
                 { Icon(
                     imageVector = Icons.Filled.Check,
                     contentDescription = null,
@@ -141,6 +175,7 @@ fun ToggleButton(
             }
         )
         Spacer(modifier = Modifier.width(8.dp))
+        // Creamos un texto descriptivo para el botón
         Text(
             text = stringResource(R.string.remember_me_label),
             color = colorResource(id = R.color.my_dark_gray),
@@ -149,11 +184,14 @@ fun ToggleButton(
     }
 }
 
+/**
+ * [ButtonWithTextPreview] es una función para previsualizar un botón con texto.
+ */
 @Preview
 @Composable
 fun ButtonWithTextPreview() {
     ButtonWithText(
-        label = stringResource(R.string.login_label),
+        text = stringResource(R.string.login_label),
         buttonColor = colorResource(id = R.color.my_dark_purple),
         textColor = colorResource(id = R.color.white),
         isEnabled = true,
@@ -162,6 +200,9 @@ fun ButtonWithTextPreview() {
     )
 }
 
+/**
+ * [ButtonWithTextAndImagePreview] es una función para previsualizar un botón con texto e imagen.
+ */
 @Preview
 @Composable
 fun ButtonWithTextAndImagePreview() {

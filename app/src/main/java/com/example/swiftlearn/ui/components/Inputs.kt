@@ -47,17 +47,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
 
+/**
+ * [SearchTextField] es una función para crear un campo de texto de búsqueda.
+ *
+ * @param placeholder Texto descriptivo que se muestra cuando el campo está vacío.
+ * @param query Valor actual del campo de búsqueda.
+ * @param onQueryChange Acción al cambiar el valor del campo de búsqueda.
+ * @param onSearch Acción para manejar el evento de búsqueda.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTextField(
     placeholder: String,
-    query: String = "",
+    query: String,
     onQueryChange: (String) -> Unit = {},
     onSearch: (String) -> Unit = {}
 ) {
+    // Administrador del foco local
     val focusManager = LocalFocusManager.current
 
-    // Campo de texto para ingresar la consulta de búsqueda
+    // Creamos el campo de texto para ingresar la consulta de búsqueda
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
@@ -68,7 +77,7 @@ fun SearchTextField(
             keyboardType = KeyboardType.Text
         ),
         keyboardActions = KeyboardActions(
-            // Maneja evento al pulsar el icono Search del teclado
+            // Maneja el evento al pulsar el icono Search del teclado
             onSearch = {
                 focusManager.clearFocus()
                 onSearch(query)
@@ -104,6 +113,18 @@ fun SearchTextField(
     )
 }
 
+/**
+ * [InputField] es una función para crear un campo de entrada genérico con opciones configurables.
+ *
+ * @param label Etiqueta que describe el campo.
+ * @param value Valor actual del campo de entrada.
+ * @param onValueChange Función que se ejecuta al cambiar el valor del campo.
+ * @param isValid Indica si el valor actual del campo es válido.
+ * @param errorMessage Mensaje de error que se muestra si el campo no es válido.
+ * @param isSingleLine Indica si el campo debe ser de una sola línea.
+ * @param leadingIcon Icono que se muestra antes del texto del campo.
+ * @param keyboardType Tipo de teclado que se muestra al interactuar con el campo.
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun InputField(
@@ -125,6 +146,7 @@ fun InputField(
     // Estado para verificar si el campo tiene el foco
     var isFocused by remember { mutableStateOf(false) }
 
+    // Creamos el campo de entrada genérico
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -176,6 +198,7 @@ fun InputField(
         )
     )
 
+    // Mostramos el mensaje de error si el campo no es válido y no está enfocado
     if (!isValid && !isFocused) {
         errorMessage?.let {
             ShowErrorMessage(errorMessage = it)
@@ -183,6 +206,17 @@ fun InputField(
     }
 }
 
+/**
+ * [PasswordField] es una función para crear un campo de entrada de contraseña con opciones configurables.
+ *
+ * @param label Etiqueta que describe el campo.
+ * @param password Contraseña actual.
+ * @param passwordVisible Estado mutable que indica si la contraseña debe ser visible o no.
+ * @param onPasswordChange Función que se ejecuta al cambiar el valor de la contraseña.
+ * @param isValid Indica si la contraseña actual es válida.
+ * @param errorMessage Mensaje de error que se muestra si la contraseña no es válida.
+ * @param leadingIcon Icono que se muestra antes del campo de contraseña.
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun PasswordField(
@@ -208,6 +242,7 @@ fun PasswordField(
         if(passwordVisible.value) VisualTransformation.None
         else PasswordVisualTransformation()
 
+    // Creamos el campo de entrada de contraseña
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
@@ -256,6 +291,7 @@ fun PasswordField(
         )
     )
 
+    // Mostramos el mensaje de error si el campo no es válido y no está enfocado
     if (!isValid && !isFocused) {
         errorMessage?.let {
             ShowErrorMessage(errorMessage = it)
@@ -263,14 +299,21 @@ fun PasswordField(
     }
 }
 
+/**
+ * [PasswordVisibleIcon] es una función para crear un icono permite alternar la visibilidad de un campo contraseña.
+ *
+ * @param passwordVisible Estado mutable que indica si la contraseña debe ser visible o no.
+ */
 @Composable
 private fun PasswordVisibleIcon(
     passwordVisible: MutableState<Boolean>
 ) {
+    // Determinamos qué icono mostrar en función de la visibilidad de la contraseña
     val image =
         if(passwordVisible.value) Icons.Default.VisibilityOff
         else Icons.Default.Visibility
 
+    // Icono que cambia la visibilidad de la contraseña cuando se pulsa
     IconButton(
         onClick = { passwordVisible.value = !passwordVisible.value }
     ) {
@@ -281,10 +324,16 @@ private fun PasswordVisibleIcon(
     }
 }
 
+/**
+ * [ShowErrorMessage] es una función que muestra un mensaje de error.
+ *
+ * @param errorMessage Mensaje de error que se quiere mostrar.
+ */
 @Composable
 private fun ShowErrorMessage(
     errorMessage: String
 ) {
+    // Creamos el texto con el mensaje a mostrar
     Text(
         text = errorMessage,
         color = Color.Red,
@@ -296,10 +345,14 @@ private fun ShowErrorMessage(
     )
 }
 
+/**
+ * [SearchTextFieldPreview] es una función para previsualizar el campo de texto de búsqueda.
+ */
 @Preview
 @Composable
 fun SearchTextFieldPreview() {
     SearchTextField(
-        placeholder = stringResource(id = R.string.search_label)
+        placeholder = stringResource(id = R.string.search_label),
+        query = ""
     )
 }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 /**
- * Implementación de [UserRepository] que permite gestionar la colección usuarios en Firestore.
+ * [UserRepositoryImpl] es la implementación de [UserRepository] que permite gestionar la colección usuarios en Firestore.
  */
 class UserRepositoryImpl: UserRepository {
     // Obtenemos una instancia de FirebaseFirestore

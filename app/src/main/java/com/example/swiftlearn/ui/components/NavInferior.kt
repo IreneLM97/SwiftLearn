@@ -29,11 +29,18 @@ import com.example.swiftlearn.ui.navigation.MenuItems
 import com.example.swiftlearn.ui.navigation.professorMenuItems
 import com.example.swiftlearn.ui.navigation.studentMenuItems
 
+/**
+ * [NavInfProfessor] es una función para crear la navegación inferior de los usuarios con rol Profesor.
+ *
+ * @param navController NavController para manejar la navegación.
+ * @param menuItems Lista de elementos de navegación para el profesor.
+ */
 @Composable
 fun NavInfProfessor(
     navController: NavHostController,
     menuItems: List<MenuItems>
 ) {
+    // Creamos barra inferior de navegación
     BottomAppBar(
         cutoutShape = MaterialTheme.shapes.small.copy(
             CornerSize(percent = 50)
@@ -43,6 +50,7 @@ fun NavInfProfessor(
         modifier = Modifier
             .height(60.dp)
     ) {
+        // Botón de navegación
         BottomNavigation(
             backgroundColor = colorResource(id = R.color.my_white),
             elevation = 0.dp,
@@ -51,8 +59,11 @@ fun NavInfProfessor(
                 .padding(0.dp, 0.dp, 60.dp, 0.dp)
         ) {
             val currentItem by navController.currentBackStackEntryAsState()
+            // Recorremos las opciones del menú
             menuItems.forEach { item ->
+                // Comprobamos si la opción está seleccionada
                 val selected = currentItem?.destination?.route == item.route
+                // Creamos la opción del menú
                 BottomNavigationItem(
                     selected = selected,
                     onClick = { navController.navigate(item.route) },
@@ -81,17 +92,25 @@ fun NavInfProfessor(
     }
 }
 
+/**
+ * [NavInfStudent] es una función para crear la navegación inferior de los usuarios con rol Alumno.
+ *
+ * @param navController NavController para manejar la navegación.
+ * @param menuItems Lista de elementos de navegación para el alumno.
+ */
 @Composable
 fun NavInfStudent(
     navController: NavHostController,
     menuItems: List<MenuItems>
 ) {
+    // Creamos barra inferior de navegación
     BottomAppBar(
         backgroundColor = colorResource(id = R.color.my_white),
         elevation = 8.dp,
         modifier = Modifier
             .height(60.dp)
     ) {
+        // Botón de navegación
         BottomNavigation(
             backgroundColor = colorResource(id = R.color.my_white),
             elevation = 0.dp,
@@ -99,8 +118,11 @@ fun NavInfStudent(
                 .height(60.dp)
         ) {
             val currentItem by navController.currentBackStackEntryAsState()
+            // Recorremos las opciones del menú
             menuItems.forEach { item ->
+                // Comprobamos si la opción está seleccionada
                 val selected = currentItem?.destination?.route == item.route
+                // Creamos la opción del menú
                 BottomNavigationItem(
                     selected = selected,
                     onClick = { navController.navigate(item.route) },
@@ -129,16 +151,23 @@ fun NavInfStudent(
     }
 }
 
+/**
+ * [FloatingButtonNavigation] es una función para mostrar el botón de acción flotante para la navegación.
+ *
+ * @param navController NavController para manejar la navegación.
+ */
 @Composable
 fun FloatingButtonNavigation(
     navController: NavHostController
 ) {
+    // Creamos botón de acción flotante para la navegación
     FloatingActionButton(
         onClick = {
             navController.navigate(MenuItems.NewAdvertItem.route)
         },
         backgroundColor = colorResource(id = R.color.my_dark_purple)
     ) {
+        // Icono del botón flotante
         Icon(
             painter = painterResource(R.drawable.icon_add),
             contentDescription = stringResource(id = R.string.title_new_advert),
@@ -150,12 +179,18 @@ fun FloatingButtonNavigation(
     }
 }
 
+/**
+ * [NavInfProfessorPreview] es una función para previsualizar la navegación inferior del profesor.
+ */
 @Preview
 @Composable
 fun NavInfProfessorPreview() {
     NavInfProfessor(rememberNavController(), professorMenuItems)
 }
 
+/**
+ * [NavInfStudentPreview] es una función para previsualizar la navegación inferior del alumno.
+ */
 @Preview
 @Composable
 fun NavInfStudentPreview() {

@@ -1,7 +1,7 @@
 package com.example.swiftlearn.model
 
 /**
- * Clase que representa un favorito.
+ * [Favorite] es una clase que representa un favorito.
  *
  * @property _id ID del favorito.
  * @property studentId ID del alumno que marcó como favorito el anuncio.

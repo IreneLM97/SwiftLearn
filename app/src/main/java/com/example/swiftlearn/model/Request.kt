@@ -10,7 +10,7 @@ enum class Status {
 }
 
 /**
- * Clase que representa una solicitud.
+ * [Request] es un clase que representa una solicitud.
  *
  * @property _id ID de la solicitud.
  * @property studentId ID del alumno que realizó la solicitud.

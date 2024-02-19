@@ -22,7 +22,7 @@ enum class Level {
 }
 
 /**
- * Clase que representa un anuncio.
+ * [Advert] es una clase que representa un anuncio.
  *
  * @property _id ID del anuncio.
  * @property profId ID del profesor que publicó el anuncio.

@@ -4,7 +4,7 @@ import com.example.swiftlearn.model.Advert
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Interfaz que define las operaciones para gestionar anuncios en Firestore.
+ * [AdvertRepository] es una interfaz que define las operaciones para gestionar la colección anuncios en Firestore.
  */
 interface AdvertRepository {
     /**

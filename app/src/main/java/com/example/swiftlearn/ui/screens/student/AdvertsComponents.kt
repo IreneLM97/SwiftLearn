@@ -630,7 +630,7 @@ fun AdvertDetail(
             // Botón para solicitar una clase (versión tablet)
             if(windowSize == WindowWidthSizeClass.Expanded) {
                 ButtonWithText(
-                    label = stringResource(R.string.request_button_label),
+                    text = stringResource(R.string.request_button_label),
                     buttonColor = colorResource(id = R.color.my_dark_purple),
                     textColor = Color.White,
                     onClick = { showDialog = true }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 /**
- * Implementación de [FavoriteRepository] que permite gestionar la colección favoritos en Firestore.
+ * [FavoriteRepositoryImpl] es la implementación de [FavoriteRepository] que permite gestionar la colección favoritos en Firestore.
  */
 class FavoriteRepositoryImpl: FavoriteRepository {
     // Obtenemos una instancia de FirebaseFirestore

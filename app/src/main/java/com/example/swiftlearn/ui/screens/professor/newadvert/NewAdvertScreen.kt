@@ -17,13 +17,9 @@ import androidx.compose.material.icons.filled.EuroSymbol
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -199,7 +195,7 @@ fun AdvertForm(
 
         // Botón para guardar la información
         ButtonWithText(
-            label = stringResource(R.string.save_advert_label),
+            text = stringResource(R.string.save_advert_label),
             buttonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
             isEnabled = advertUiState.isEntryValid,

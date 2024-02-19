@@ -10,7 +10,7 @@ enum class Role {
 }
 
 /**
- * Clase que representa a un usuario.
+ * [User] es un clase que representa a un usuario.
  *
  * @property _id ID del usuario.
  * @property authId ID de autenticación en Firebase del usuario.

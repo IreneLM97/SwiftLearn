@@ -55,6 +55,14 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+/**
+ * [ConfirmationDialog] es una función que muestra un diálogo de confirmación.
+ *
+ * @param title Título del diálogo de confirmación.
+ * @param textMessage Mensaje de texto del diálogo de confirmación.
+ * @param onConfirm Función que se ejecuta cuando se confirma el diálogo.
+ * @param onCancel Función que se ejecuta cuando se cancela el diálogo.
+ */
 @Composable
 fun ConfirmationDialog(
     title: String,
@@ -62,6 +70,7 @@ fun ConfirmationDialog(
     onConfirm: () -> Unit,
     onCancel: () -> Unit
 ) {
+    // Creamos el diálogo de confirmación
     AlertDialog(
         onDismissRequest = {},
         title = {
@@ -105,6 +114,15 @@ fun ConfirmationDialog(
     )
 }
 
+/**
+ * [RequestClassDialog] es una función que muestra un diálogo para solicitar una clase.
+ *
+ * @param windowSize Clase de tamaño de la ventana actual.
+ * @param studentId ID del alumno que solicita la clase.
+ * @param advertId ID del anuncio asociado a la clase.
+ * @param onRequestConfirm Función que se ejecuta cuando se confirma la solicitud de clase.
+ * @param onRequestCancel Función que se ejecuta cuando se cancela la solicitud de clase.
+ */
 @Composable
 fun RequestClassDialog(
     windowSize: WindowWidthSizeClass,
@@ -159,7 +177,7 @@ fun RequestClassDialog(
                 )
                 Spacer(modifier = Modifier.height(15.dp))
 
-                // Mostramos el calendario
+                // Mostramos el calendario para seleccionar fecha
                 CalendarComponent(
                     cellSize = cellSize,
                     fontSize = fontSize,
@@ -173,7 +191,7 @@ fun RequestClassDialog(
                     }
                 )
 
-                // Mostramos selección de hora
+                // Mostramos las select de las horas para seleccionar hora
                 HourComponent(
                     cellSize = cellSize,
                     fontSize = fontSize,
@@ -182,7 +200,7 @@ fun RequestClassDialog(
                 )
                 Spacer(modifier = Modifier.height(15.dp))
 
-                // Mostramos resumen de solicitud del alumno
+                // Mostramos la fecha seleccionada
                 Text(
                     text = stringResource(
                         R.string.date_request_class,
@@ -192,7 +210,7 @@ fun RequestClassDialog(
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
-                // Mostramos la hora de la clase seleccionada
+                // Mostramos la hora seleccionada
                 Text(
                     text = stringResource(
                         R.string.hour_request_class,
@@ -237,6 +255,15 @@ fun RequestClassDialog(
     )
 }
 
+/**
+ * [CalendarComponent] es una función que muestra un calendario y permite seleccionar una fecha.
+ *
+ * @param cellSize Tamaño de cada celda del calendario.
+ * @param fontSize Tamaño de fuente para el texto del calendario.
+ * @param selectedDate Fecha seleccionada actualmente.
+ * @param onDateSelected Función que se ejecuta cuando se selecciona una fecha.
+ * @param onMonthChanged Función que se ejecuta cuando se cambia de mes en el calendario.
+ */
 @Composable
 fun CalendarComponent(
     cellSize: Dp,
@@ -381,6 +408,18 @@ fun CalendarComponent(
     }
 }
 
+/**
+ * [DayCell] es una función que representa una celda de día en el calendario.
+ *
+ * @param cellSize Tamaño de la celda.
+ * @param fontSize Tamaño de la fuente para el texto del día.
+ * @param day Instancia de Calendar que representa el día.
+ * @param isSelected Indica si el día está seleccionado.
+ * @param isSelectable Indica si el día es seleccionable.
+ * @param isPastDate Indica si el día es pasado.
+ * @param isInMonth Indica si el día pertenece al mes actual.
+ * @param onDateSelected Función que se ejecuta cuando se selecciona el día.
+ */
 @Composable
 fun DayCell(
     cellSize: Dp,
@@ -392,10 +431,13 @@ fun DayCell(
     isInMonth: Boolean = true,
     onDateSelected: (Calendar) -> Unit = {}
 ) {
+    // Caja contenedora del día
     Box(
         modifier = Modifier
             .padding(4.dp)
-            .clickable(enabled = isSelectable, onClick = { if (isSelectable) onDateSelected(day) })
+            .clickable(
+                enabled = isSelectable,
+                onClick = { if (isSelectable) onDateSelected(day) })
             .background(
                 color =
                 if (isSelected) colorResource(id = R.color.my_dark_purple)
@@ -419,6 +461,14 @@ fun DayCell(
     }
 }
 
+/**
+ * [HourComponent] es una función que representa el componente para seleccionar la hora.
+ *
+ * @param cellSize Tamaño de la celda que contiene horas y minutos.
+ * @param fontSize Tamaño de la fuente para la hora y los minutos.
+ * @param selectedHour Estado mutable que representa la hora seleccionada.
+ * @param selectedMinute Estado mutable que representa los minutos seleccionados.
+ */
 @Composable
 fun HourComponent(
     cellSize: Dp,
@@ -431,7 +481,7 @@ fun HourComponent(
     // Estado para manejar la expansión del menú de minutos
     var isMinuteMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
-    // Selector de hora y minutos en una fila
+    // Fila contenedora para el selector de horas y minutos
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
@@ -536,7 +586,17 @@ fun HourComponent(
     Spacer(modifier = Modifier.height(10.dp))
 }
 
-private fun formatHourMinute(hour: Int, minute: Int): String {
+/**
+ * Función para formatear la hora y los minutos en un formato de cadena.
+ *
+ * @param hour Hora seleccionada.
+ * @param minute Minutos seleccionados.
+ * @return Cadena formateada que representa la hora y los minutos en el formato "HH:mm".
+ */
+private fun formatHourMinute(
+    hour: Int,
+    minute: Int
+): String {
     val calendar = Calendar.getInstance().apply {
         set(Calendar.HOUR_OF_DAY, hour)
         set(Calendar.MINUTE, minute)
@@ -545,9 +605,12 @@ private fun formatHourMinute(hour: Int, minute: Int): String {
     return dateFormat.format(calendar.time)
 }
 
+/**
+ * [ConfirmationDialog] es una función para previsualizar el diálogo de confirmación.
+ */
 @Preview
 @Composable
-fun DeleteConfirmationDialogPreview() {
+fun ConfirmationDialog() {
     ConfirmationDialog(
         title = stringResource(id = R.string.close_session_title),
         textMessage = stringResource(id = R.string.sure_close_session_label),
@@ -556,6 +619,9 @@ fun DeleteConfirmationDialogPreview() {
     )
 }
 
+/**
+ * [RequestClassDialogPreview] es una función para previsualizar el diálogo solicitud de clase.
+ */
 @Preview
 @Composable
 fun RequestClassDialogPreview() {

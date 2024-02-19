@@ -230,13 +230,13 @@ private fun LoginForm(
         // Toggle "Recuérdame"
         ToggleButton(
             isActivate = loginUiState.remember,
-            onToggleCkecked = onToggleChecked
+            onToggleChecked = onToggleChecked
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_big)))
 
         // Botón para iniciar sesión
         ButtonWithText(
-            label = stringResource(R.string.login_label),
+            text = stringResource(R.string.login_label),
             buttonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
             isEnabled = loginUiState.isEntryValid,

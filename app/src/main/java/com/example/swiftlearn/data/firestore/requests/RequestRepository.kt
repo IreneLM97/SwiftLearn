@@ -4,7 +4,7 @@ import com.example.swiftlearn.model.Request
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Interfaz que define las operaciones para gestionar solicitudes de clases en Firestore.
+ * [RequestRepository] es una interfaz que define las operaciones para gestionar la colección de solicitudes de clases en Firestore.
  */
 interface RequestRepository {
     /**

@@ -4,7 +4,7 @@ import com.example.swiftlearn.model.Favorite
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Interfaz que define las operaciones para gestionar favoritos en Firestore.
+ * [FavoriteRepository] es una interfaz que define las operaciones para gestionar la colección favoritos en Firestore.
  */
 interface FavoriteRepository {
     /**

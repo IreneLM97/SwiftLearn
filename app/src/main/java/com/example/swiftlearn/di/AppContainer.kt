@@ -11,7 +11,7 @@ import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.data.firestore.users.UserRepositoryImpl
 
 /**
- * Interfaz que define las dependencias de la aplicación.
+ * [AppContainer] es una interfaz que define las dependencias de la aplicación.
  */
 interface AppContainer {
     val userRepository: UserRepository
@@ -21,7 +21,7 @@ interface AppContainer {
 }
 
 /**
- * Implementación de [AppContainer] que proporciona instancias concretas de las dependencias de la aplicación.
+ * [AppDataContainer] es la implementación de [AppContainer] que proporciona instancias concretas de las dependencias de la aplicación.
  *
  * @property context Contexto de la aplicación.
  */

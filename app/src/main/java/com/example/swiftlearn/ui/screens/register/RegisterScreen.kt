@@ -246,7 +246,7 @@ private fun RegisterForm(
 
         // Botón para registrarse
         ButtonWithText(
-            label = stringResource(R.string.register_label),
+            text = stringResource(R.string.register_label),
             buttonColor = colorResource(id = R.color.my_dark_purple),
             textColor = colorResource(id = R.color.white),
             isEnabled = registerUiState.isEntryValid,

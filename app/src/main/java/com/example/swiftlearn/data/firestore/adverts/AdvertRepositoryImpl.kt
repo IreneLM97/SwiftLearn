@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 /**
- * Implementación de [AdvertRepository] que permite gestionar la colección anuncios en Firestore.
+ * [AdvertRepositoryImpl] es la implementación de [AdvertRepository] que permite gestionar la colección anuncios en Firestore.
  */
 class AdvertRepositoryImpl: AdvertRepository {
     // Obtenemos una instancia de FirebaseFirestore
