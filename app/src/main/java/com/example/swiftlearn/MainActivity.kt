@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
     /**
      * Método `onCreate` que se ejecuta al crear la actividad.
      *
-     * @param savedInstanceState objeto Bundle que contiene el estado de la actividad
+     * @param savedInstanceState objeto Bundle que contiene el estado de la actividad.
      */
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
