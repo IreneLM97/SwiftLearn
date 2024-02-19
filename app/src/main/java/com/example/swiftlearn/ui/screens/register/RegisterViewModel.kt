@@ -57,10 +57,10 @@ class RegisterViewModel(
                         viewModelScope.launch {
                             insertUser(registerDetails.toUser(), context)
 
-                            // Actualizar estado de cargando a false
+                            // Actualizamos el estado de cargando a false
                             _registerUiState.update { it.copy(isLoading = false) }
 
-                            // Navegar a Home
+                            // Navegamos a Home
                             navigateToHome()
                         }
                     } else {

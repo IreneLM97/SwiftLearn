@@ -47,11 +47,12 @@ fun <T> Options(
         ) {
             options.forEach { (option, label) ->
                 Surface(
-                    border = BorderStroke(2.dp, if (option == selectedOption) Color(0xFF9C27B0) else colorResource(id = R.color.my_dark_purple)),
+                    border = BorderStroke(2.dp, colorResource(id = R.color.my_dark_purple)),
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
                         .weight(1f)
                         .padding(vertical = 8.dp)
+                        .padding(horizontal = 1.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .clickable { onOptionSelected(option) },
                     color = if (option == selectedOption) colorResource(id = R.color.my_dark_purple) else Color.White

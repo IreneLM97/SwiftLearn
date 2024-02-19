@@ -83,7 +83,7 @@ fun FavoritesScreen(
                     favoritesUiState = favoritesUiState,
                     notFoundMessage =
                         if(favoritesUiState.searchQuery == "") stringResource(id = R.string.not_found_favorites)
-                        else stringResource(id = R.string.not_found_adverts),
+                        else stringResource(id = R.string.not_found_adverts_by_query),
                     onQueryChange = {
                         viewModel.onQueryChange(it)
                         if (it.isEmpty()) focusManager.clearFocus()
@@ -113,7 +113,7 @@ fun FavoritesScreen(
                         favoritesUiState = favoritesUiState,
                         notFoundMessage =
                             if(favoritesUiState.searchQuery == "") stringResource(id = R.string.not_found_favorites)
-                            else stringResource(id = R.string.not_found_adverts),
+                            else stringResource(id = R.string.not_found_adverts_by_query),
                         onQueryChange = {
                             viewModel.onQueryChange(it)
                             if (it.isEmpty()) focusManager.clearFocus()

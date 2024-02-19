@@ -91,8 +91,7 @@ fun ProfileScreen(
                     viewModel.updateUser(it, context)
                 },
                 onDeleteClick = {
-                    viewModel.deleteUser(it)
-                    navigateToLogin()
+                    viewModel.deleteUser(it, navigateToLogin)
                 },
                 onSignOutClick = {
                     viewModel.signOut()
@@ -230,7 +229,11 @@ private fun ProfileForm(
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 5.dp)
+            ) {
                 Text(
                     text = stringResource(R.string.delete_profile_label),
                     color = colorResource(R.color.my_dark_purple),
@@ -253,7 +256,11 @@ private fun ProfileForm(
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 5.dp)
+            ) {
                 Text(
                     text = stringResource(R.string.update_profile_label),
                     color = Color.White,
@@ -287,8 +294,8 @@ private fun ProfileForm(
         ButtonWithTextAndImage(
             label = stringResource(R.string.sign_out_label),
             image = painterResource(R.drawable.icon_sign_out),
-            buttonColor = Color.White,
-            borderButtonColor = Color.White,
+            buttonColor = Color.Transparent,
+            borderButtonColor = Color.Transparent,
             textColor = colorResource(id = R.color.my_red),
             onClick = {
                 showDialogSession = true

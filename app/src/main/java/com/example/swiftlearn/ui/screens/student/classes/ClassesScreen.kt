@@ -322,7 +322,11 @@ private fun ClassItem(
                     Column(modifier = Modifier.weight(1.5f)) {
                         IconWithText(
                             icon = Icons.Outlined.MenuBook,
-                            text = advert.subject
+                            text = stringResource(
+                                R.string.info_advert_request,
+                                advert.subject,
+                                advert.price
+                            )
                         )
                     }
                     // Fecha de la clase
@@ -353,7 +357,11 @@ private fun ClassItem(
                                     .height(35.dp)
                                     .background(Color.White, CircleShape)
                                     .clip(CircleShape)
-                                    .border(2.dp, colorResource(R.color.my_dark_purple), CircleShape)
+                                    .border(
+                                        2.dp,
+                                        colorResource(R.color.my_dark_purple),
+                                        CircleShape
+                                    )
                                     .padding(8.dp)
                                     .fillMaxWidth()
                                     .clickable(onClick = { showDialog = true })
@@ -395,7 +403,7 @@ fun ClassItemPreview() {
     )
 
     val advert = Advert(
-        subject = "Lengua",
+        subject = "Matematicas",
         price = 12,
         classModes = "Presencial, Hibrido",
         levels = "Bachillerato"

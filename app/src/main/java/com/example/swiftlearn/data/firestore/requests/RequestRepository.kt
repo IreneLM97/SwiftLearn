@@ -43,4 +43,25 @@ interface RequestRepository {
      * @param request Solicitud a eliminar.
      */
     suspend fun deleteRequest(request: Request)
+
+    /**
+     * Elimina todas las solicitudes asociadas a un alumno.
+     *
+     * @param studentId ID del alumno.
+     */
+    suspend fun deleteAllRequestsByStudentId(studentId: String)
+
+    /**
+     * Elimina todas las solicitudes asociadas a un anuncio.
+     *
+     * @param advertId ID del anuncio.
+     */
+    suspend fun deleteAllRequestsByAdvertId(advertId: String)
+
+    /**
+     * Elimina todas las solicitudes asociadas a una lista de IDs de anuncios.
+     *
+     * @param advertsIds Lista de IDs de anuncios.
+     */
+    suspend fun deleteAllRequestsByAdvertIds(advertsIds: List<String>)
 }

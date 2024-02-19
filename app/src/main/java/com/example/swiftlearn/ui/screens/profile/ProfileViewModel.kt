@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.data.firestore.adverts.AdvertRepository
 import com.example.swiftlearn.data.firestore.favorites.FavoriteRepository
+import com.example.swiftlearn.data.firestore.requests.RequestRepository
 import com.example.swiftlearn.data.firestore.users.UserRepository
+import com.example.swiftlearn.model.Role
 import com.example.swiftlearn.model.User
 import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 import com.google.android.gms.maps.model.LatLng
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -32,7 +35,8 @@ import kotlin.coroutines.suspendCoroutine
 class ProfileViewModel(
     val userRepository: UserRepository,
     val advertRepository: AdvertRepository,
-    val favoriteRepository: FavoriteRepository
+    val favoriteRepository: FavoriteRepository,
+    val requestRepository: RequestRepository
 ): ViewModel() {
     // Estado de la interfaz de perfil
     private val _profileUiState = MutableStateFlow(ProfileUiState())
@@ -81,30 +85,37 @@ class ProfileViewModel(
         }
     }
 
-    fun deleteUser(user: User) {
-        // Actualizar estado de cargando a true
+    fun deleteUser(
+        user: User,
+        navigateToLogin: () -> Unit
+    ) {
+        // Actualizamos estado de cargando a true
         _profileUiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
             try {
-                // Eliminamos todos los favoritos asociados a los anuncios de este usuario
-                val advertsIds = advertRepository.getAdvertsIdsByProfId(user._id)
-                favoriteRepository.deleteAllFavoritesByAdvertIds(advertsIds)
+                // Eliminar el usuario de la autenticación
+                auth.currentUser?.delete()?.await()
 
-                // Eliminamos todos los anuncios de ese usuario
-                advertRepository.deleteAllAdvertsByProfId(user._id)
+                // Eliminar dependencias según el rol del usuario
+                if (user.role == Role.Profesor) {
+                    val advertsIds = advertRepository.getAdvertsIdsByProfId(user._id)
+                    favoriteRepository.deleteAllFavoritesByAdvertIds(advertsIds)
+                    requestRepository.deleteAllRequestsByAdvertIds(advertsIds)
+                    advertRepository.deleteAllAdvertsByProfId(user._id)
+                } else {
+                    favoriteRepository.deleteAllFavoritesByStudentId(user._id)
+                    requestRepository.deleteAllRequestsByStudentId(user._id)
+                }
 
-                // Eliminamos todos los favoritos de ese usuario
-                favoriteRepository.deleteAllFavoritesByStudentId(user._id)
-
-                // Eliminamos el usuario de la base de datos
+                // Eliminar el usuario de la base de datos
                 userRepository.deleteUser(user)
 
-                // Eliminamos el usuario de la autentificación
-                auth.currentUser?.delete()
-
-                // Actualizar estado de cargando a false
+                // Actualizar estado de carga a false
                 _profileUiState.update { it.copy(isLoading = false) }
+
+                // Navegamos a Login
+                navigateToLogin()
             } catch (_: Exception) {}
         }
     }

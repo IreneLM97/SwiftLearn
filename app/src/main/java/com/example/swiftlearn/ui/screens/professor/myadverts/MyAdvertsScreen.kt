@@ -82,7 +82,7 @@ fun MyAdvertsScreen(
             MyAdvertsList(
                 professor = myAdvertsUiState.userLogged,
                 advertsList = myAdvertsUiState.myAdvertsList,
-                notFoundMessage = stringResource(R.string.not_adverts_yet),
+                notFoundMessage = stringResource(R.string.not_found_adverts_professor),
                 onEditButtonClick = {
                     navigateToEditAdvert(it._id)
                 },

@@ -73,8 +73,16 @@ class FavoriteRepositoryImpl: FavoriteRepository {
         try {
             // Realizamos la consulta a la colección filtrando por studentId
             val query = favoritesCollection.whereEqualTo("studentId", studentId).get().await()
-            // Eliminamos todos los documentos obtenidos en la consulta
-            query.documents.forEach { favoritesCollection.document(it.id).delete() }
+
+            // Inicializamos un nuevo lote
+            val batch = firestore.batch()
+            // Agregamos todas las operaciones de eliminación al lote
+            query.documents.forEach { document ->
+                batch.delete(document.reference)
+            }
+
+            // Commit del lote para ejecutar las operaciones de eliminación
+            batch.commit().await()
         } catch (_: Exception) {}
     }
 
@@ -82,8 +90,16 @@ class FavoriteRepositoryImpl: FavoriteRepository {
         try {
             // Realizamos la consulta a la colección filtrando por advertId
             val query = favoritesCollection.whereEqualTo("advertId", advertId).get().await()
-            // Eliminamos todos los documentos obtenidos en la consulta
-            query.documents.forEach { favoritesCollection.document(it.id).delete() }
+
+            // Inicializamos un nuevo lote
+            val batch = firestore.batch()
+            // Agregamos todas las operaciones de eliminación al lote
+            query.documents.forEach { document ->
+                batch.delete(document.reference)
+            }
+
+            // Commit del lote para ejecutar las operaciones de eliminación
+            batch.commit().await()
         } catch (_: Exception) {}
     }
 

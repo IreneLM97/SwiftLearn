@@ -82,7 +82,7 @@ fun AdvertsScreen(
                 AdvertsListAndDetail(
                     windowSize = windowSize,
                     advertsUiState = advertsUiState,
-                    notFoundMessage = stringResource(id = R.string.not_found_adverts),
+                    notFoundMessage = stringResource(id = R.string.not_found_adverts_by_query),
                     onQueryChange = {
                         viewModel.onQueryChange(it)
                         if (it.isEmpty()) focusManager.clearFocus()
@@ -110,7 +110,9 @@ fun AdvertsScreen(
                     // Mostramos lista de anuncios
                     AdvertsList(
                         advertsUiState = advertsUiState,
-                        notFoundMessage = stringResource(id = R.string.not_found_adverts),
+                        notFoundMessage =
+                            if(advertsUiState.searchQuery == "") stringResource(id = R.string.not_found_adverts_student)
+                            else stringResource(id = R.string.not_found_adverts_by_query),
                         onQueryChange = {
                             viewModel.onQueryChange(it)
                             if (it.isEmpty()) focusManager.clearFocus()

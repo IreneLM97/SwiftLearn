@@ -117,8 +117,16 @@ class AdvertRepositoryImpl: AdvertRepository {
         try {
             // Realizamos la consulta a la colección filtrando por profId
             val query = advertsCollection.whereEqualTo("profId", profId).get().await()
-            // Eliminamos todos los documentos obtenidos en la consulta
-            query.documents.forEach { advertsCollection.document(it.id).delete() }
+
+            // Inicializamos un nuevo lote
+            val batch = firestore.batch()
+            // Agregamos todas las operaciones de eliminación al lote
+            query.documents.forEach { document ->
+                batch.delete(advertsCollection.document(document.id))
+            }
+
+            // Commit del lote para ejecutar las operaciones de eliminación
+            batch.commit().await()
         } catch (_: Exception) {}
     }
 }

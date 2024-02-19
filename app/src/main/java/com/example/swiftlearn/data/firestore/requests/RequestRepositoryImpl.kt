@@ -79,4 +79,46 @@ class RequestRepositoryImpl: RequestRepository {
             requestsCollection.document(request._id).delete().await()
         } catch (_: Exception) {}
     }
+
+    override suspend fun deleteAllRequestsByStudentId(studentId: String) {
+        try {
+            // Realizamos la consulta a la colección filtrando por studentId
+            val query = requestsCollection.whereEqualTo("studentId", studentId).get().await()
+
+            // Inicializamos un nuevo lote
+            val batch = firestore.batch()
+            // Agregamos todas las operaciones de eliminación al lote
+            query.documents.forEach { document ->
+                batch.delete(document.reference)
+            }
+
+            // Commit del lote para ejecutar las operaciones de eliminación
+            batch.commit().await()
+        } catch (_: Exception) {}
+    }
+
+    override suspend fun deleteAllRequestsByAdvertId(advertId: String) {
+        try {
+            // Realizamos la consulta a la colección filtrando por advertId
+            val query = requestsCollection.whereEqualTo("advertId", advertId).get().await()
+
+            // Inicializamos un nuevo lote
+            val batch = firestore.batch()
+            // Agregamos todas las operaciones de eliminación al lote
+            query.documents.forEach { document ->
+                batch.delete(document.reference)
+            }
+
+            // Commit del lote para ejecutar las operaciones de eliminación
+            batch.commit().await()
+        } catch (_: Exception) {}
+    }
+
+    override suspend fun deleteAllRequestsByAdvertIds(advertsIds: List<String>) {
+        // Recorremos la lista de advertsIds
+        for (advertId in advertsIds) {
+            // Eliminamos las solicitudes asociados a ese anuncio
+            deleteAllRequestsByAdvertId(advertId)
+        }
+    }
 }

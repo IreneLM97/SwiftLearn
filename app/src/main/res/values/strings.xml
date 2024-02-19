@@ -91,9 +91,10 @@
     <string name="icon_euro_hour">%1$s €/h</string>
     <string name="direction_info">%1$s (%2$s)</string>
     <string name="advert_summary">Asignatura: %1$s \nPrecio: %2$s \nProfesor: %3$s \nTeléfono: %4$s \nEmail: %5$s</string>
-    <string name="not_found_adverts">No se han encontrado anuncios con esa búsqueda.</string>
+    <string name="not_found_adverts_by_query">No se han encontrado anuncios con esa búsqueda.</string>
     <string name="not_found_favorites">Aún no has marcado ningún favorito.</string>
-    <string name="not_adverts_yet">Aún no has publicado ningún anuncio.</string>
+    <string name="not_found_adverts_professor">Aún no has publicado ningún anuncio.</string>
+    <string name="not_found_adverts_student">No hay anuncios publicados.</string>
 
     <!-- Label para pantalla de detalles del anuncio -->
     <string name="info_contact_label">Información de contacto</string>
@@ -127,6 +128,7 @@
 
     <!-- Label para pantalla de solicitudes de clases -->
     <string name="date_hour_request">%1$s - %2$s</string>
+    <string name="info_advert_request">%1$s (%2$s€)</string>
     <string name="decline_button_label">Rechazar</string>
     <string name="accept_button_label">Aceptar</string>
     <string name="cancel_button_label">Cancelar solicitud</string>
@@ -153,5 +155,7 @@
     <string name="snackbar_accepted">Solicitud aceptada</string>
     <string name="snackbar_cancelled">Solicitud cancelada</string>
     <string name="snackbar_accept_button">Aceptar</string>
+
+    <!-- Canal de notificaciones -->
     <string name="fcm_channel_notifications">fcm_channel_notifications</string>
 </resources>

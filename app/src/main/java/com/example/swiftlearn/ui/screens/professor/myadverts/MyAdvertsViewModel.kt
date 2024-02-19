@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.swiftlearn.data.firestore.adverts.AdvertRepository
 import com.example.swiftlearn.data.firestore.favorites.FavoriteRepository
+import com.example.swiftlearn.data.firestore.requests.RequestRepository
 import com.example.swiftlearn.data.firestore.users.UserRepository
 import com.example.swiftlearn.model.Advert
 import com.example.swiftlearn.model.User
@@ -21,7 +22,8 @@ import kotlinx.coroutines.launch
 class MyAdvertsViewModel(
     val userRepository: UserRepository,
     val advertRepository: AdvertRepository,
-    val favoriteRepository: FavoriteRepository
+    val favoriteRepository: FavoriteRepository,
+    val requestRepository: RequestRepository
 ): ViewModel() {
     // Estado de la interfaz de anuncios
     private val _myAdvertsUiState = MutableStateFlow(MyAdvertsUiState())
@@ -51,8 +53,11 @@ class MyAdvertsViewModel(
         _myAdvertsUiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
-            // Eliminamos los favoritos de ese anuncio
+            // Eliminamos los favoritos asociados a ese anuncio
             favoriteRepository.deleteAllFavoritesByAdvertId(advert._id)
+
+            // Eliminamos las clases asociadas a ese anuncio
+            requestRepository.deleteAllRequestsByAdvertId(advert._id)
 
             // Eliminamos el anuncio seleccionado
             advertRepository.deleteAdvert(advert)
