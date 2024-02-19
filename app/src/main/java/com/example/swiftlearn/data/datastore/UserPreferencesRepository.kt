@@ -1,6 +1,5 @@
 package com.example.swiftlearn.data.datastore
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -9,7 +8,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.swiftlearn.data.datastore.UserPreferencesKeys.EMAIL_VALUE
 import com.example.swiftlearn.data.datastore.UserPreferencesKeys.PASSWORD_VALUE
 import com.example.swiftlearn.data.datastore.UserPreferencesKeys.REMEMBER_VALUE
-import com.example.swiftlearn.data.datastore.UserPreferencesKeys.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -32,7 +30,6 @@ data class UserPreferences(
  * Objeto que contiene claves para las preferencias del usuario.
  */
 object UserPreferencesKeys {
-    const val TAG = "UserPreferencesRepo"
     val EMAIL_VALUE = stringPreferencesKey("email_value")
     val PASSWORD_VALUE = stringPreferencesKey("password_value")
     val REMEMBER_VALUE = stringPreferencesKey("remember_value")
@@ -73,7 +70,6 @@ class UserPreferencesRepository(
     val userPreferences: Flow<UserPreferences> = dataStore.data
         .catch {
             if (it is IOException) {
-                Log.e(TAG, "Error reading preferences", it)
                 emit(emptyPreferences())
             } else {
                 throw it

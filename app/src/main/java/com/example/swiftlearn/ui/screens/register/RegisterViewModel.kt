@@ -53,15 +53,21 @@ class RegisterViewModel(
 
             auth.createUserWithEmailAndPassword(registerDetails.email, registerDetails.password)
                 .addOnCompleteListener {task ->
-                    // Actualizar estado de cargando a false
-                    _registerUiState.update { it.copy(isLoading = false) }
-
                     if(task.isSuccessful) {
                         viewModelScope.launch {
                             insertUser(registerDetails.toUser(), context)
+
+                            // Actualizar estado de cargando a false
+                            _registerUiState.update { it.copy(isLoading = false) }
+
+                            // Navegar a Home
                             navigateToHome()
                         }
                     } else {
+                        // Actualizar estado de cargando a false
+                        _registerUiState.update { it.copy(isLoading = false) }
+
+                        // Actualizar mensaje de error
                         _registerUiState.update { it.copy(errorMessage = context.getString(R.string.error_register_label)) }
                     }
                 }

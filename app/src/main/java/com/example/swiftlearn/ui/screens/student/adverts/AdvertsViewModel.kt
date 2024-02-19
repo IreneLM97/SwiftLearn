@@ -45,7 +45,7 @@ class AdvertsViewModel(
                 combine(
                     userRepository.getAllProfessors(),
                     advertRepository.getAllAdverts(),
-                    favoriteRepository.getAllFavoritesByUser(userLogged._id)
+                    favoriteRepository.getAllFavoritesByStudentId(userLogged._id)
                 ) { professors, adverts, favorites  ->
                     Triple(professors, adverts, favorites)
                 }.collect { (professors, adverts, favorites) ->
@@ -93,9 +93,9 @@ class AdvertsViewModel(
             // Si ese anuncio era favorito -> Se elimina el favorito
             // Si ese anuncio no era favorito (get devuelve null) -> Se inserta el favorito
             val userId = _advertsUiState.value.userLogged._id
-            favoriteRepository.getFavoriteByInfo(userId = userId, advertId = advert._id)?.let { favorite ->
+            favoriteRepository.getFavoriteByInfo(studentId = userId, advertId = advert._id)?.let { favorite ->
                 favoriteRepository.deleteFavorite(favorite)
-            } ?: favoriteRepository.insertFavorite(Favorite(userId = userId, advertId = advert._id))
+            } ?: favoriteRepository.insertFavorite(Favorite(studentId = userId, advertId = advert._id))
         }
     }
 

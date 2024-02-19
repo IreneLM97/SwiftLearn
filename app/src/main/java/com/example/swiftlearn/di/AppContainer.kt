@@ -28,18 +28,22 @@ interface AppContainer {
 class AppDataContainer (
     private val context: Context
 ) : AppContainer {
+    // Repositorio de usuarios
     override val userRepository: UserRepository by lazy {
         UserRepositoryImpl()
     }
 
+    // Repositorio de anuncios
     override val advertRepository: AdvertRepository by lazy {
         AdvertRepositoryImpl()
     }
 
+    // Repositorio de favoritos
     override val favoriteRepository: FavoriteRepository by lazy {
         FavoriteRepositoryImpl()
     }
 
+    // Repositorio de solicitudes
     override val requestRepository: RequestRepository by lazy {
         RequestRepositoryImpl()
     }

@@ -95,7 +95,7 @@ class ProfileViewModel(
                 advertRepository.deleteAllAdvertsByProfId(user._id)
 
                 // Eliminamos todos los favoritos de ese usuario
-                favoriteRepository.deleteAllFavoritesByUserId(user._id)
+                favoriteRepository.deleteAllFavoritesByStudentId(user._id)
 
                 // Eliminamos el usuario de la base de datos
                 userRepository.deleteUser(user)

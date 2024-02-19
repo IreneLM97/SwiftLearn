@@ -199,7 +199,7 @@ fun AdvertsList(
                     val favoritesList = advertsUiState?.favoritesList ?: favoritesUiState?.favoritesList ?: emptyList()
                     val user = advertsUiState?.userLogged ?: favoritesUiState?.userLogged ?: User()
                     val isFavorite = favoritesList.any {
-                        it.userId == user._id && it.advertId == advert._id
+                        it.studentId == user._id && it.advertId == advert._id
                     }
 
                     // Comprobamos si está seleccionado el item y estamos en vista ListAndDetail

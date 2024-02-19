@@ -7,34 +7,47 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
+/**
+ * Implementación de [FavoriteRepository] que permite gestionar la colección favoritos en Firestore.
+ */
 class FavoriteRepositoryImpl: FavoriteRepository {
+    // Obtenemos una instancia de FirebaseFirestore
     private val firestore = FirebaseFirestore.getInstance()
+    // Obtenemos la colección de favoritos
     private val favoritesCollection = firestore.collection("favorites")
 
-    override suspend fun getFavoriteByInfo(userId: String, advertId: String): Favorite? {
+    override suspend fun getFavoriteByInfo(studentId: String, advertId: String): Favorite? {
         return try {
+            // Realizamos la consulta a la colección filtrando por studentId y advertId
             val query = favoritesCollection
-                .whereEqualTo("userId", userId)
-                .whereEqualTo("advertId", advertId)
+                .whereEqualTo("studentId", studentId) // Aplicamos el filtro de studentId
+                .whereEqualTo("advertId", advertId) // Aplicamos el filtro de advertId
                 .get()
                 .await()
+            // Convertimos el resultado obtenido a la clase Favorite
             query.documents.firstOrNull()?.toObject(Favorite::class.java)
         } catch (e: Exception) {
+            // En caso de error, devolvemos null
             null
         }
     }
 
-    override fun getAllFavoritesByUser(userId: String): Flow<List<Favorite>> = callbackFlow {
+    override fun getAllFavoritesByStudentId(studentId: String): Flow<List<Favorite>> = callbackFlow {
+        // Agregamos listener para los cambios en la colección de favoritos
         val subscription = favoritesCollection
-            .whereEqualTo("userId", userId)
+            .whereEqualTo("studentId", studentId) // Aplicamos el filtro de studentId
             .addSnapshotListener { querySnapshot, _ ->
+                // Inicializamos lista mutable para almacenar los favoritos
                 val favoritesList = mutableListOf<Favorite>()
+                // Recorremos los documentos obtenidos de la consulta y los agregamos a la lista
                 querySnapshot?.documents?.forEach { documentSnapshot ->
                     val favorite = documentSnapshot.toObject(Favorite::class.java)
                     favorite?.let { favoritesList.add(it) }
                 }
+                // Intentemos enviar la lista a través del flujo
                 trySend(favoritesList).isSuccess
             }
+        // Esperamos a que se cierre el flujo para eliminar el listener
         awaitClose {
             subscription.remove()
         }
@@ -42,7 +55,9 @@ class FavoriteRepositoryImpl: FavoriteRepository {
 
     override suspend fun insertFavorite(favorite: Favorite) {
         try {
+            // Agregamos a la colección el nuevo favorito
             val document = favoritesCollection.add(favorite).await()
+            // Actualizamos el favorito copiando el ID asignado por Firestore al insertarlo
             val favoriteWithId = favorite.copy(_id = document.id)
             favoritesCollection.document(document.id).set(favoriteWithId)
         } catch (_: Exception) {}
@@ -54,30 +69,28 @@ class FavoriteRepositoryImpl: FavoriteRepository {
         } catch (_: Exception) {}
     }
 
-    override suspend fun deleteAllFavoritesByUserId(userId: String) {
+    override suspend fun deleteAllFavoritesByStudentId(studentId: String) {
         try {
-            val query = favoritesCollection.whereEqualTo("userId", userId).get().await()
-            val batch = firestore.batch()
-            query.documents.forEach { document ->
-                batch.delete(document.reference)
-            }
-            batch.commit().await()
+            // Realizamos la consulta a la colección filtrando por studentId
+            val query = favoritesCollection.whereEqualTo("studentId", studentId).get().await()
+            // Eliminamos todos los documentos obtenidos en la consulta
+            query.documents.forEach { favoritesCollection.document(it.id).delete() }
         } catch (_: Exception) {}
     }
 
     override suspend fun deleteAllFavoritesByAdvertId(advertId: String) {
         try {
+            // Realizamos la consulta a la colección filtrando por advertId
             val query = favoritesCollection.whereEqualTo("advertId", advertId).get().await()
-            val batch = firestore.batch()
-            query.documents.forEach { document ->
-                batch.delete(document.reference)
-            }
-            batch.commit().await()
+            // Eliminamos todos los documentos obtenidos en la consulta
+            query.documents.forEach { favoritesCollection.document(it.id).delete() }
         } catch (_: Exception) {}
     }
 
     override suspend fun deleteAllFavoritesByAdvertIds(advertsIds: List<String>) {
+        // Recorremos la lista de advertsIds
         for (advertId in advertsIds) {
+            // Eliminamos los favoritos asociados a ese anuncio
             deleteAllFavoritesByAdvertId(advertId)
         }
     }

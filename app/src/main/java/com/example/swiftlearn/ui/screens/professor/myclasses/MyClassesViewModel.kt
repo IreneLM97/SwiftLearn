@@ -55,7 +55,7 @@ class MyClassesViewModel(
                 // Combina los flujos de datos de alumnos y solicitudes
                 combine(
                     userRepository.getAllStudents(),
-                    requestRepository.getAllRequestsByAdvertsId(advertIds)
+                    requestRepository.getAllRequestsByAdvertIds(advertIds)
                 ) { students, requests ->
                     val studentsWithRequests = students.filter { student ->
                         requests.find { it.studentId == student._id } != null

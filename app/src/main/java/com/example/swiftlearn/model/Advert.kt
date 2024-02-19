@@ -1,11 +1,17 @@
 package com.example.swiftlearn.model
 
+/**
+ * Enumeración con todos los modos de clase posibles.
+ */
 enum class ClassMode {
     Presencial,
     Online,
     Hibrido
 }
 
+/**
+ * Enumeración con todos los niveles educativos posibles.
+ */
 enum class Level {
     Primaria,
     ESO,
@@ -15,6 +21,17 @@ enum class Level {
     Adultos
 }
 
+/**
+ * Clase que representa un anuncio.
+ *
+ * @property _id ID del anuncio.
+ * @property profId ID del profesor que publicó el anuncio.
+ * @property subject Asignatura del anuncio.
+ * @property price Precio del servicio ofrecido en el anuncio.
+ * @property classModes Modos de clase ofrecidos en el anuncio (separados por coma si son múltiples).
+ * @property levels Niveles educativos a los que se dirige el anuncio (separados por coma si son múltiples).
+ * @property description Descripción del servicio ofrecido en el anuncio.
+ */
 data class Advert(
     val _id: String = "",
     val profId: String = "",
