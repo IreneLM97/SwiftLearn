@@ -323,7 +323,7 @@ private fun ProfileForm(
 }
 
 /**
- * [ProfileScreenPreview] es una función para previsualizar la pantalla de perfil de usuario.
+ * Función para previsualizar la pantalla de perfil de usuario.
  */
 @Preview
 @Composable

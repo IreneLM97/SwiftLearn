@@ -6,12 +6,12 @@ import com.google.android.gms.maps.model.LatLng
 /**
  * Estado de la interfaz de usuario para la pantalla del mapa.
  *
- * @param userLogged Usuario autentificado.
- * @param searchQuery Consulta de búsqueda.
- * @param searchCoordinates Coordenadas de la búsqueda.
- * @param nearbyProfessors Lista de profesores cercanos.
- * @param professorsList Lista de profesores.
- * @param isLoading Indica si la pantalla está en estado de carga.
+ * @property userLogged Usuario autentificado.
+ * @property searchQuery Consulta de búsqueda.
+ * @property searchCoordinates Coordenadas de la búsqueda.
+ * @property nearbyProfessors Lista de profesores cercanos.
+ * @property professorsList Lista de profesores.
+ * @property isLoading Indica si la pantalla está en estado de carga.
  */
 data class MapUiState(
     val userLogged: User = User(),

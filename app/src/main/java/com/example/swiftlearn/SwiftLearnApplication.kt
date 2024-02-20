@@ -30,6 +30,9 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
  * Esta clase extiende [Application] y se utiliza para realizar inicializaciones globales.
  */
 class SwiftLearnApplication : Application() {
+    /**
+     * ID del canal de notificaciones para Firebase Cloud Messaging.
+     */
     companion object {
         const val FCM_CHANNEL_ID = "FCM_CHANNEL_ID"
     }
@@ -37,7 +40,7 @@ class SwiftLearnApplication : Application() {
     // Instancia de [AppContainer] utilizada por el resto de las clases para obtener dependencias
     lateinit var container: AppContainer
 
-    // Repositorio de preferencias del usuario que se utiliza para gestionar las preferencias de la aplicación
+    // Repositorio de preferencias del usuario que se utiliza para gestionar las preferencias del usuario
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
     /**
@@ -47,14 +50,22 @@ class SwiftLearnApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Inicialización del contenedor de la aplicación y del repositorio de preferencias del usuario
+        // Inicialización del contenedor de la aplicación
         container = AppDataContainer(this)
+
+        // Inicialización del repositorio de preferencias del usuario
         userPreferencesRepository = UserPreferencesRepository(dataStore)
+
+        // Inicialización del servicio de Places de Google (con API_KEY)
         Places.initialize(applicationContext, getString(R.string.google_maps_key))
 
+        // Verificamos si la versión de Android es igual o superior a Oreo (API 26)
         if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            // Creamos canal de notificación para FCM
             val fcmChannel = NotificationChannel(FCM_CHANNEL_ID, "FCM_CHANNEL", NotificationManager.IMPORTANCE_HIGH)
+            // Obtenemos una referencia al servicio de gestión de notificaciones del sistema
             val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            // Creamos el canal de notificaciones
             manager.createNotificationChannel(fcmChannel)
         }
     }

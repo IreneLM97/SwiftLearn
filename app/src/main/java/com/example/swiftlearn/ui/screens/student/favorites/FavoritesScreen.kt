@@ -25,11 +25,12 @@ import com.example.swiftlearn.ui.screens.student.AdvertsBar
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 
 /**
- * Función que representa la pantalla principal de los anuncios favoritos del usuario.
+ * [FavoritesScreen] define la pantalla de muestra de los anuncios favoritos.
  *
- * @param viewModel ViewModel que gestiona el estado de la interfaz de usuario.
- * @param windowSize Clasificación del tamaño de la ventana.
- * @param onSendButtonClick Función lambda que se invoca cuando se hace click en el botón de enviar.
+ * @param windowSize Tamaño de la ventana donde se está mostrando la aplicación.
+ * @param onSendButtonClick Función que se ejecuta al pulsar el botón de compartir.
+ * @param navigateToClasses Función de navegación para ir a la pantalla de clases.
+ * @param viewModel ViewModel para gestionar la pantalla de anuncios favoritos.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,8 +57,8 @@ fun FavoritesScreen(
         else -> AdvertsContentType.ListOnly
     }
 
-    // Mostramos el icono cargando si está cargando
     if(favoritesUiState.isLoading) {
+        // Mostramos el icono cargando si está cargando
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -65,6 +66,7 @@ fun FavoritesScreen(
             CircularProgressIndicator()
         }
     } else {
+        // Mostramos lista de anuncios favoritos si no está cargando
         Scaffold(
             topBar = {
                 if (contentType == AdvertsContentType.ListOnly && !favoritesUiState.isShowingListPage) {
@@ -76,8 +78,8 @@ fun FavoritesScreen(
             }
         ) { innerPadding ->
             // Contenido principal de la pantalla en función del tamaño de la pantalla
-            if (contentType == AdvertsContentType.ListAndDetail) { // tamaño pantalla expanded
-                // Mostramos lista y detalles de anuncios
+            if (contentType == AdvertsContentType.ListAndDetail) { // Tamaño pantalla expanded
+                // Mostramos lista y detalles de anuncios favoritos
                 AdvertsListAndDetail(
                     windowSize = windowSize,
                     favoritesUiState = favoritesUiState,
@@ -106,9 +108,9 @@ fun FavoritesScreen(
                     contentType = contentType,
                     modifier = Modifier.fillMaxWidth()
                 )
-            } else { // tamaño pantalla standard
+            } else { // Tamaño pantalla standard
                 if (favoritesUiState.isShowingListPage) {
-                    // Mostramos lista de anuncios
+                    // Mostramos lista de anuncios favoritos
                     AdvertsList(
                         favoritesUiState = favoritesUiState,
                         notFoundMessage =
@@ -134,7 +136,7 @@ fun FavoritesScreen(
                         modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
                     )
                 } else {
-                    // Obtener el profesor correspondiente al anuncio
+                    // Obtenemos el profesor correspondiente al anuncio
                     val professor = favoritesUiState.professorsList.find { it._id == favoritesUiState.currentAdvert.profId }
                     professor?.let {
                         // Mostramos detalles de un anuncio específico

@@ -20,8 +20,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.example.swiftlearn.ui.navigation.SwiftLearnNavigation
 
-/**
- * Top level composable that represents screens for the application.
+/** [SwiftLearnApp] define el punto de entrada principal de la aplicación SwiftLearn.
+ *
+ * @param windowSize Tamaño de la ventana donde se está mostrando la aplicación.
+ * @param navController Controlador de navegación.
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -32,6 +34,14 @@ fun SwiftLearnApp(
     SwiftLearnNavigation(windowSize = windowSize, navController = navController)
 }
 
+/** Función para definir la barra superior de la aplicación SwiftLearn.
+ *
+ * @param title Título que se mostrará en la barra de la aplicación.
+ * @param canNavigateBack Indica si la pantalla es navegable hacia atrás.
+ * @param modifier Modificador de diseño.
+ * @param scrollBehavior Comportamiento de desplazamiento de la barra superior.
+ * @param navigateBack Función de navegación hacia atrás.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwiftLearnTopAppBar(

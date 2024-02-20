@@ -315,7 +315,7 @@ private fun LoginToRegister(
 }
 
 /**
- * [LoginScreenPreview] es una función para previsualizar la pantalla de inicio de sesión.
+ * Función para previsualizar la pantalla de inicio de sesión.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview

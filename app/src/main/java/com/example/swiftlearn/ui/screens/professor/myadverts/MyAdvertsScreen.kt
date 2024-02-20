@@ -353,7 +353,7 @@ private fun MyAdvertItem(
 }
 
 /**
- * [MyAdvertItemPreview] es una función para previsualizar un elemento de la lista de anuncios.
+ * Función para previsualizar un elemento de la lista de anuncios.
  */
 @Preview
 @Composable

@@ -5,10 +5,10 @@ import com.example.swiftlearn.model.User
 /**
  * Estado de la interfaz de usuario para la pantalla de perfil de usuario.
  *
- * @param userLogged Usuario autentificado.
- * @param profileDetails Detalles del perfil del usuario.
- * @param isEntryValid Indica si el formulario es válido.
- * @param isLoading Indica si la pantalla está en estado de carga.
+ * @property userLogged Usuario autentificado.
+ * @property profileDetails Detalles del perfil del usuario.
+ * @property isEntryValid Indica si el formulario es válido.
+ * @property isLoading Indica si la pantalla está en estado de carga.
  */
 data class ProfileUiState(
     val userLogged: User = User(),
@@ -20,10 +20,10 @@ data class ProfileUiState(
 /**
  * Clase que representa los detalles del perfil.
  *
- * @param username Nombre del usuario.
- * @param phone Número de teléfono del usuario.
- * @param address Dirección del usuario.
- * @param postal Código postal del usuario.
+ * @property username Nombre del usuario.
+ * @property phone Número de teléfono del usuario.
+ * @property address Dirección del usuario.
+ * @property postal Código postal del usuario.
  */
 data class ProfileDetails(
     val username: String = "",

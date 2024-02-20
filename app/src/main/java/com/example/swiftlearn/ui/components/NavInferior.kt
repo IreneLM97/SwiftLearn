@@ -30,7 +30,7 @@ import com.example.swiftlearn.ui.navigation.professorMenuItems
 import com.example.swiftlearn.ui.navigation.studentMenuItems
 
 /**
- * [NavInfProfessor] es una función para crear la navegación inferior de los usuarios con rol Profesor.
+ * Función para crear la navegación inferior de los usuarios con rol Profesor.
  *
  * @param navController NavController para manejar la navegación.
  * @param menuItems Lista de elementos de navegación para el profesor.
@@ -93,7 +93,7 @@ fun NavInfProfessor(
 }
 
 /**
- * [NavInfStudent] es una función para crear la navegación inferior de los usuarios con rol Alumno.
+ * Función para crear la navegación inferior de los usuarios con rol Alumno.
  *
  * @param navController NavController para manejar la navegación.
  * @param menuItems Lista de elementos de navegación para el alumno.
@@ -152,7 +152,7 @@ fun NavInfStudent(
 }
 
 /**
- * [FloatingButtonNavigation] es una función para mostrar un botón flotante en la navegación inferior.
+ * Función para mostrar un botón flotante en la navegación inferior.
  *
  * @param navController NavController para manejar la navegación.
  */
@@ -180,7 +180,7 @@ fun FloatingButtonNavigation(
 }
 
 /**
- * [NavInfProfessorPreview] es una función para previsualizar la navegación inferior del profesor.
+ * Función para previsualizar la navegación inferior del profesor.
  */
 @Preview
 @Composable
@@ -189,7 +189,7 @@ fun NavInfProfessorPreview() {
 }
 
 /**
- * [NavInfStudentPreview] es una función para previsualizar la navegación inferior del alumno.
+ * Función para previsualizar la navegación inferior del alumno.
  */
 @Preview
 @Composable

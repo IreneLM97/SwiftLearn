@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
 
 /**
- * [Options] es una función para mostrar opciones seleccionables de selección única.
+ * Función para mostrar opciones seleccionables de selección única.
  *
  * @param options Lista de pares de opciones con sus etiquetas.
  * @param selectedOption Opción seleccionada actualmente.
@@ -83,7 +83,7 @@ fun <T> Options(
 }
 
 /**
- * [MultiOptions] es una función para mostrar opciones seleccionables de selección múltiple.
+ * Función para mostrar opciones seleccionables de selección múltiple.
  *
  * @param title Título que describe las opciones.
  * @param fontSize Tamaño de la fuente para el título.
@@ -163,7 +163,7 @@ fun <T> MultiOptions(
 }
 
 /**
- * [MultiOptionsSection] es una función para mostrar una sección de múltiples opciones seleccionables.
+ * Función para mostrar una sección de múltiples opciones seleccionables.
  *
  * @param title Título para la sección de opciones.
  * @param options Lista de pares de opciones con sus etiquetas.
@@ -206,7 +206,7 @@ fun <T : Enum<T>> MultiOptionsSection(
 }
 
 /**
- * [MultiOptionsSectionImmutable] es una función para mostrar una sección de múltiples opciones no seleccionables.
+ * Función para mostrar una sección de múltiples opciones no seleccionables.
  *
  * @param title Título para la sección de opciones.
  * @param fontSize Tamaño de fuente para el texto de las opciones.

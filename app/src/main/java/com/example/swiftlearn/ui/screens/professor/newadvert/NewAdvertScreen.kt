@@ -221,7 +221,7 @@ fun AdvertForm(
 }
 
 /**
- * [NewAdvertScreenPreview] es una función para previsualizar la pantalla de crear nuevo anuncio.
+ * Función para previsualizar la pantalla de crear nuevo anuncio.
  */
 @Preview
 @Composable

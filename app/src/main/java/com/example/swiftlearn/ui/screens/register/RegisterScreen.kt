@@ -298,7 +298,7 @@ private fun RoleOptions(
 }
 
 /**
- * [RegisterScreenPreview] es una función para previsualizar la pantalla de registro.
+ * Función para previsualizar la pantalla de registro.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview

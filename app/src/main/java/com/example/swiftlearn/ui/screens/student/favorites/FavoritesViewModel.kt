@@ -20,7 +20,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla de anuncios.
+ * [FavoritesViewModel] es un [ViewModel] que gestiona el estado y la lógica de la pantalla de anuncios favoritos.
+ *
+ * @param userRepository Repositorio para gestionar la colección usuarios.
+ * @param advertRepository Repositorio para gestionar la colección anuncios.
+ * @param favoriteRepository Repositorio para gestionar la colección favoritos.
+ * @param requestRepository Repositorio para gestionar la colección solicitudes.
  */
 class FavoritesViewModel(
     val userRepository: UserRepository,
@@ -36,23 +41,24 @@ class FavoritesViewModel(
     init {
         viewModelScope.launch {
             try {
-                // Obtenemos el usuario autentificado
+                // Obtenemos los datos del usuario autentificado
                 val userLogged = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
-                // Actualizar el estado de la pantalla con el usuario
+                // Actualizamos el estado de la pantalla con los datos del usuario obtenidos
                 _favoritesUiState.update { it.copy(userLogged = userLogged) }
 
-                // Combina los flujos de datos de profesores, anuncios y favoritos
+                // Combinamos los flujos de datos de profesores, anuncios y favoritos
                 combine(
                     userRepository.getAllProfessors(),
                     advertRepository.getAllAdverts(),
                     favoriteRepository.getAllFavoritesByStudentId(userLogged._id)
                 ) { professors, adverts, favorites  ->
+                    // Filtramos los anuncios por anuncios favoritos
                     val favoritesAdverts = adverts.filter { advert ->
                         favorites.find { it.advertId == advert._id } != null
                     }
                     Triple(professors, favoritesAdverts, favorites)
                 }.collect { (professors, favoritesAdverts, favorites) ->
-                    // Actualiza el estado de sesión con los flujos obtenidos
+                    // Actualizamos el estado de la interfaz con los flujos obtenidos
                     _favoritesUiState.update {
                         it.copy(
                             professorsList = professors,
@@ -63,6 +69,7 @@ class FavoritesViewModel(
                     }
 
                     delay(1000)
+                    // Actualizamos estado de cargando a false
                     _favoritesUiState.update { it.copy(isLoading = false) }
                 }
             } catch (_: Exception) {}
@@ -75,21 +82,22 @@ class FavoritesViewModel(
      * @param searchQuery Consulta de búsqueda actual.
      */
     fun onQueryChange(searchQuery: String) {
-        // Actualizamos el texto de búsqueda
         _favoritesUiState.update { it.copy(searchQuery = searchQuery) }
     }
 
     /**
-     * Actualiza el anuncio actual en el estado de la interfaz de usuario.
+     * Función que actualiza el anuncio seleccionado.
      *
-     * @param selectedAdvert lugar seleccionado por el usuario
+     * @param selectedAdvert Anuncio seleccionado.
      */
     fun updateCurrentAdvert(selectedAdvert: Advert) {
         _favoritesUiState.update { it.copy(currentAdvert = selectedAdvert) }
     }
 
     /**
-     * Actualiza el estado de favorito de un anuncio.
+     * Función que actualiza el estado de favorito de un anuncio.
+     *
+     * @param advert Anuncio en el que se pulsa favorito.
      */
     fun toggleAdvertFavoriteState(advert: Advert) {
         viewModelScope.launch {
@@ -102,6 +110,11 @@ class FavoritesViewModel(
         }
     }
 
+    /**
+     * Función para insertar una nueva solicitud de clase.
+     *
+     * @param request Solicitud de clase a insertar.
+     */
     fun insertRequest(request: Request) {
         viewModelScope.launch {
             requestRepository.insertRequest(request)
@@ -109,7 +122,7 @@ class FavoritesViewModel(
     }
 
     /**
-     * Navega a la página que muestra la lista de anuncios.
+     * Navega a la página que muestra la lista de anuncios favoritos.
      */
     fun navigateToListAdvertsPage() {
         _favoritesUiState.update { it.copy(isShowingListPage = true) }

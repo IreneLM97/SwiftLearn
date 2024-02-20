@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
 
 /**
- * [TabItem] es una función para crear una pestaña de un menú de pestañas.
+ * Función para crear una pestaña de un menú de pestañas.
  *
  * @param text Texto a mostrar en la pestaña.
  * @param isSelected Indica si la pestaña está seleccionada.

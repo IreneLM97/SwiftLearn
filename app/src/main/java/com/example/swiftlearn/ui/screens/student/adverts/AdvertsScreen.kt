@@ -25,11 +25,12 @@ import com.example.swiftlearn.ui.screens.student.AdvertsListAndDetail
 import com.example.swiftlearn.ui.screens.utils.AdvertsContentType
 
 /**
- * Función que representa la pantalla principal de los anuncios.
+ * [AdvertsScreen] define la pantalla de muestra de los anuncios.
  *
- * @param viewModel ViewModel que gestiona el estado de la interfaz de usuario.
- * @param windowSize Clasificación del tamaño de la ventana.
- * @param onSendButtonClick Función lambda que se invoca cuando se hace click en el botón de enviar.
+ * @param windowSize Tamaño de la ventana donde se está mostrando la aplicación.
+ * @param onSendButtonClick Función que se ejecuta al pulsar el botón de compartir.
+ * @param navigateToClasses Función de navegación para ir a la pantalla de clases.
+ * @param viewModel ViewModel para gestionar la pantalla de anuncios.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +66,7 @@ fun AdvertsScreen(
             CircularProgressIndicator()
         }
     } else {
-        // Mostramos lista de anuncios
+        // Mostramos lista de anuncios si no está cargando
         Scaffold(
             topBar = {
                 if (contentType == AdvertsContentType.ListOnly && !advertsUiState.isShowingListPage) {
@@ -77,12 +78,14 @@ fun AdvertsScreen(
             }
         ) { innerPadding ->
             // Contenido principal de la pantalla en función del tamaño de la pantalla
-            if (contentType == AdvertsContentType.ListAndDetail) { // tamaño pantalla expanded
+            if (contentType == AdvertsContentType.ListAndDetail) { // Tamaño pantalla expanded
                 // Mostramos lista y detalles de anuncios
                 AdvertsListAndDetail(
                     windowSize = windowSize,
                     advertsUiState = advertsUiState,
-                    notFoundMessage = stringResource(id = R.string.not_found_adverts_by_query),
+                    notFoundMessage =
+                        if(advertsUiState.searchQuery == "") stringResource(id = R.string.not_found_adverts_student)
+                        else stringResource(id = R.string.not_found_adverts_by_query),
                     onQueryChange = {
                         viewModel.onQueryChange(it)
                         if (it.isEmpty()) focusManager.clearFocus()
@@ -105,7 +108,7 @@ fun AdvertsScreen(
                     contentType = contentType,
                     modifier = Modifier.fillMaxWidth()
                 )
-            } else { // tamaño pantalla standard
+            } else { // Tamaño pantalla standard
                 if (advertsUiState.isShowingListPage) {
                     // Mostramos lista de anuncios
                     AdvertsList(
@@ -133,7 +136,7 @@ fun AdvertsScreen(
                         modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
                     )
                 } else {
-                    // Obtener el profesor correspondiente al anuncio
+                    // Obtenemos el profesor correspondiente al anuncio
                     val professor = advertsUiState.professorsList.find { it._id == advertsUiState.currentAdvert.profId }
                     professor?.let {
                         // Mostramos detalles de un anuncio específico

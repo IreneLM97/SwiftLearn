@@ -56,7 +56,7 @@ import java.util.Calendar
 import java.util.Locale
 
 /**
- * [ConfirmationDialog] es una función que muestra un diálogo de confirmación.
+ * Función para mostrar un diálogo de confirmación.
  *
  * @param title Título del diálogo de confirmación.
  * @param textMessage Mensaje de texto del diálogo de confirmación.
@@ -115,7 +115,7 @@ fun ConfirmationDialog(
 }
 
 /**
- * [RequestClassDialog] es una función que muestra un diálogo para solicitar una clase.
+ * Función para mostrar un diálogo para solicitar una clase.
  *
  * @param windowSize Clase de tamaño de la ventana actual.
  * @param studentId ID del alumno que solicita la clase.
@@ -256,7 +256,7 @@ fun RequestClassDialog(
 }
 
 /**
- * [CalendarComponent] es una función que muestra un calendario y permite seleccionar una fecha.
+ * Función que muestra un calendario y permite seleccionar una fecha.
  *
  * @param cellSize Tamaño de cada celda del calendario.
  * @param fontSize Tamaño de fuente para el texto del calendario.
@@ -409,7 +409,7 @@ fun CalendarComponent(
 }
 
 /**
- * [DayCell] es una función que representa una celda de día en el calendario.
+ * Función que representa una celda de día en el calendario.
  *
  * @param cellSize Tamaño de la celda.
  * @param fontSize Tamaño de la fuente para el texto del día.
@@ -462,7 +462,7 @@ fun DayCell(
 }
 
 /**
- * [HourComponent] es una función que representa el componente para seleccionar la hora.
+ * Función que representa el componente para seleccionar la hora.
  *
  * @param cellSize Tamaño de la celda que contiene horas y minutos.
  * @param fontSize Tamaño de la fuente para la hora y los minutos.
@@ -606,7 +606,7 @@ private fun formatHourMinute(
 }
 
 /**
- * [ConfirmationDialog] es una función para previsualizar el diálogo de confirmación.
+ * Función para previsualizar el diálogo de confirmación.
  */
 @Preview
 @Composable
@@ -620,7 +620,7 @@ fun ConfirmationDialog() {
 }
 
 /**
- * [RequestClassDialogPreview] es una función para previsualizar el diálogo solicitud de clase.
+ * Función para previsualizar el diálogo solicitud de clase.
  */
 @Preview
 @Composable

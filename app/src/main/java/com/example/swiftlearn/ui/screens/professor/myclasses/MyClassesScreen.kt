@@ -461,7 +461,7 @@ private fun MyClassItem(
 }
 
 /**
- * [MyClassItemPreview] es una función para previsualizar elementos de la lista de solicitudes.
+ * Función para previsualizar elementos de la lista de solicitudes.
  */
 @Preview
 @Composable

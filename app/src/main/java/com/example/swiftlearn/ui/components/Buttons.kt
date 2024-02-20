@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
 
 /**
- * [ButtonWithText] es una función para crear un botón con texto en su interior.
+ * Función para crear un botón con texto en su interior.
  *
  * @param text Texto del botón.
  * @param buttonColor Color del fondo del botón.
@@ -84,7 +84,7 @@ fun ButtonWithText(
 }
 
 /**
- * [ButtonWithTextAndImage] es una función para crear un botón con texto e imagen en su interior.
+ * Función para crear un botón con texto e imagen en su interior.
  *
  * @param label Texto del botón.
  * @param image Imagen del botón.
@@ -139,7 +139,7 @@ fun ButtonWithTextAndImage(
 }
 
 /**
- * [ToggleButton] es una función para crear un botón de alternancia (toggle button).
+ * Función para crear un botón de alternancia (toggle button).
  *
  * @param isActivate Estado actual de la activación.
  * @param onToggleChecked Función que se ejecuta al cambiar el estado de activación.
@@ -185,7 +185,7 @@ fun ToggleButton(
 }
 
 /**
- * [ButtonWithTextPreview] es una función para previsualizar un botón con texto.
+ * Función para previsualizar un botón con texto.
  */
 @Preview
 @Composable
@@ -201,7 +201,7 @@ fun ButtonWithTextPreview() {
 }
 
 /**
- * [ButtonWithTextAndImagePreview] es una función para previsualizar un botón con texto e imagen.
+ * Función para previsualizar un botón con texto e imagen.
  */
 @Preview
 @Composable

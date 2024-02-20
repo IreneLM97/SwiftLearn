@@ -6,10 +6,10 @@ import com.example.swiftlearn.model.User
 /**
  * Estado de la interfaz de usuario para la pantalla de registro.
  *
- * @param registerDetails Detalles del registro.
- * @param isEntryValid Indica si el formulario es válido.
- * @param errorMessage Mensaje de error si no se ha podido registrar.
- * @param isLoading Indica si la pantalla está en estado de carga.
+ * @property registerDetails Detalles del registro.
+ * @property isEntryValid Indica si el formulario es válido.
+ * @property errorMessage Mensaje de error si no se ha podido registrar.
+ * @property isLoading Indica si la pantalla está en estado de carga.
  */
 data class RegisterUiState(
     val registerDetails: RegisterDetails = RegisterDetails(),
@@ -21,14 +21,14 @@ data class RegisterUiState(
 /**
  * Clase que representa los detalles del registro.
  *
- * @param username Nombre de usuario.
- * @param phone Número de teléfono del usuario.
- * @param address Dirección del usuario.
- * @param postal Código postal del usuario.
- * @param email Correo electrónico del usuario.
- * @param password Contraseña del usuario.
- * @param confirmPassword Confirmación de la contraseña.
- * @param role Rol del usuario al registrarse. Por defecto es alumno.
+ * @property username Nombre de usuario.
+ * @property phone Número de teléfono del usuario.
+ * @property address Dirección del usuario.
+ * @property postal Código postal del usuario.
+ * @property email Correo electrónico del usuario.
+ * @property password Contraseña del usuario.
+ * @property confirmPassword Confirmación de la contraseña.
+ * @property role Rol del usuario al registrarse. Por defecto es alumno.
  */
 data class RegisterDetails(
     val username: String = "",

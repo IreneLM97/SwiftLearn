@@ -88,7 +88,7 @@ import com.google.maps.android.compose.Marker
 /**
  * Función que representa la barra superior de la pantalla.
  *
- * @param onBackButtonClick Función lambda que se invoca al pulsar el botón de retroceso.
+ * @param onBackButtonClick Función que se ejecuta al pulsar el botón de retroceso.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,10 +126,17 @@ fun AdvertsBar(
 /**
  * Función que representa la lista de anuncios.
  *
- * @param modifier Modificador opcional para aplicar al diseño de la lista.
- * @param onAdvertClick Función lambda que se invoca cuando se hace click en un anuncio.
- * @param contentPadding Espaciado alrededor del contenido de la lista.
+ * @param notFoundMessage Mensaje a mostrar cuando no se encuentran anuncios.
+ * @param onQueryChange Función que se ejecuta al cambiar el valor del campo de búsqueda.
+ * @param onSearch Función para manejar el evento de búsqueda.
+ * @param onAdvertClick Función que se ejecuta al pulsar un anuncio.
+ * @param onFavoriteButtonClick Función que se ejecuta al pulsar un favorito.
+ * @param onSendButtonClick Función que se ejecuta al pulsar el botón de compartir.
+ * @param modifier Modificador de diseño.
+ * @param contentPadding Espaciado alrededor del contenido.
  * @param contentType Indica tipo de contenido de la pantalla (ListOnly o ListAndDetail).
+ * @param advertsUiState Estado de la interfaz de usuario de los anuncios.
+ * @param favoritesUiState Estado de la interfaz de usuario de los favoritos.
  */
 @Composable
 fun AdvertsList(
@@ -145,6 +152,7 @@ fun AdvertsList(
     advertsUiState: AdvertsUiState? = null,
     favoritesUiState: FavoritesUiState? = null
 ) {
+    // Columna contenedora de la lista
     Column(
         modifier = modifier
             .padding(top = 20.dp)
@@ -170,7 +178,7 @@ fun AdvertsList(
         }
 
         if (filteredAdverts.isEmpty()) {
-            // Mostrar mensaje cuando no se encuentran anuncios que coincidan con la asignatura
+            // Mostramos mensaje cuando no se encuentran anuncios que coincidan con la asignatura
             Text(
                 text = notFoundMessage,
                 textAlign = TextAlign.Center,
@@ -181,7 +189,7 @@ fun AdvertsList(
                     .height(700.dp)
             )
         } else {
-            // Mostrar la lista de anuncios filtrada
+            // Mostramos la lista de anuncios filtrada
             LazyColumn(
                 contentPadding = contentPadding,
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
@@ -191,7 +199,7 @@ fun AdvertsList(
                     .height(700.dp)
             ) {
                 items(filteredAdverts) { advert ->
-                    // Obtener el profesor correspondiente al anuncio
+                    // Obtenemos el profesor correspondiente al anuncio
                     val professorsList = advertsUiState?.professorsList ?: favoritesUiState?.professorsList ?: emptyList()
                     val professor = professorsList.find { it._id == advert.profId }
 
@@ -208,7 +216,7 @@ fun AdvertsList(
                     val isSelected = currentAdvert._id == advert._id && contentType == AdvertsContentType.ListAndDetail
 
                     professor?.let {
-                        // Representa un elemento de la lista
+                        // Mostramos el anuncio en la lista
                         AdvertItem(
                             professor = it,
                             advert = advert,
@@ -223,18 +231,22 @@ fun AdvertsList(
             }
         }
 
-        // Agrega margen al final de la lista de anuncios
+        // Agregamos margen al final de la lista de anuncios
         Spacer(modifier = modifier.height(40.dp))
     }
 }
 
 /**
- * Función que representa un elemento individual en la lista de lugares.
+ * Función que representa un elemento individual de la lista de anuncios.
  *
- * @param modifier Modificador opcional para aplicar al diseño del elemento.
- * @param advert Anuncio que se está representando.
- * @param onAdvertClick Función lambda que se invoca cuando se hace click en un anuncio.
- * @param onFavoriteButtonClick Función lambda que se invoca cuando se hace click en el botón de favorito.
+ * @param professor Profesor asociado al anuncio.
+ * @param advert Anuncio a mostrar.
+ * @param isFavorite Indica si el anuncio es favorito.
+ * @param isSelected Indica si el anuncio está seleccionado.
+ * @param onAdvertClick Función que se ejecuta al pulsar un anuncio.
+ * @param onFavoriteButtonClick Función que se ejecuta al pulsar un favorito.
+ * @param onSendButtonClick Función que se ejecuta al pulsar el botón de compartir.
+ * @param modifier Modificador de diseño.
  */
 @Composable
 fun AdvertItem(
@@ -282,6 +294,7 @@ fun AdvertItem(
                 modifier = Modifier
                     .padding(10.dp)
             ) {
+                // Fila contenedora del nombre del profesor y los botones
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth(),
@@ -295,7 +308,6 @@ fun AdvertItem(
                         fontStyle = FontStyle.Italic,
                         modifier = Modifier.weight(1f)
                     )
-
                     // Botón del icono de favorito
                     IconButton(
                         onClick = { onFavoriteButtonClick(advert) },
@@ -309,7 +321,6 @@ fun AdvertItem(
                             contentDescription = null
                         )
                     }
-
                     // Botón del icono de compartir
                     IconButton(
                         onClick = { onSendButtonClick(advertSummary) },
@@ -326,18 +337,20 @@ fun AdvertItem(
                 }
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Asignatura y precio del anuncio
+                // Fila contenedora de la asignatura y precio
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    // Asignatura del anuncio
                     Text(
                         text = advert.subject,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                     )
+                    // Precio del anuncio
                     Text(
                         text = stringResource(
                             id = R.string.icon_euro_hour,
@@ -379,12 +392,15 @@ fun AdvertItem(
 }
 
 /**
- * Función que representa la pantalla de detalles de un lugar concreto.
+ * Función que muestra todos los detalles de un anuncio concreto.
  *
- * @param advert Anuncio del que se muestran detalles.
- * @param professor Profesor que publicó el anuncio del que se muestran los detalles.
- * @param modifier Modificador opcional para aplicar al diseño.
- * @param contentPadding Espaciado alrededor del contenido de la pantalla de detalles.
+ * @param windowSize Tamaño de la ventana donde se está mostrando la aplicación.
+ * @param userLogged Usuario autentificado.
+ * @param advert Anuncio a mostrar.
+ * @param professor Profesor asociado al anuncio.
+ * @param onRequestConfirm Función que se ejecuta al confirmar la solicitud de una clase.
+ * @param modifier Modificador de diseño.
+ * @param contentPadding Espaciado alrededor del contenido.
  */
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -416,7 +432,7 @@ fun AdvertDetail(
         )
     }
 
-    // Botón para solicitar una clase (versión movil)
+    // Botón para solicitar una clase (versión móvil)
     if(windowSize != WindowWidthSizeClass.Expanded) {
         Box(
             modifier = Modifier
@@ -511,7 +527,7 @@ fun AdvertDetail(
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
 
-                // Email del profesor
+                // Correo electrónico del profesor
                 IconWithText(
                     icon = Icons.Outlined.Email,
                     text = professor.email,
@@ -553,14 +569,14 @@ fun AdvertDetail(
                         .fillMaxWidth()
                         .padding(10.dp)
                 ) {
-                    // Asignatura
+                    // Asignatura del anuncio
                     Text(
                         text = advert.subject,
                         color = colorResource(id = R.color.my_dark_gray),
                         fontSize = 20.sp,
                         modifier = Modifier.weight(1f)
                     )
-                    // Precio
+                    // Precio del anuncio
                     Text(
                         text = stringResource(
                             id = R.string.icon_euro_hour,
@@ -620,10 +636,10 @@ fun AdvertDetail(
             )
             Spacer(Modifier.height(20.dp))
 
-            // Mostramos el mapa con la ubicación de ese profesor
+            // Mostramos el mapa con la ubicación del profesor y el alumno
             ShowMap(
-                userLogged = userLogged,
-                professor = professor
+                studentLocation = LatLng(userLogged.latitude, userLogged.longitude),
+                professorLocation = LatLng(professor.latitude, professor.longitude)
             )
             Spacer(Modifier.height(20.dp))
 
@@ -642,14 +658,21 @@ fun AdvertDetail(
 }
 
 /**
- * Función que representa la pantalla de lista de anuncios y detalles de un anuncio.
+ * Función que muestra la lista de anuncios junto con los detalles de un anuncio específico.
  *
- * @param modifier Modificador opcional para aplicar al diseño.
- * @param onAdvertClick Función lambda que se invoca cuando se hace click en un anuncio de la lista.
- * @param onFavoriteButtonClick Función lambda que se ejecuta cuando se marca como favorito un anuncio.
- * @param onSendButtonClick Función lambda que se invoca cuando se hace click en el botón de enviar.
- * @param contentPadding Espaciado alrededor del contenido de la pantalla.
+ * @param windowSize Tamaño de la ventana donde se está mostrando la aplicación.
+ * @param notFoundMessage Mensaje a mostrar cuando no se encuentran anuncios.
+ * @param onQueryChange Función que se ejecuta al cambiar el valor del campo de búsqueda.
+ * @param onSearch Función para manejar el evento de búsqueda.
+ * @param onAdvertClick Función que se ejecuta al pulsar un anuncio.
+ * @param onFavoriteButtonClick Función que se ejecuta al pulsar un favorito.
+ * @param onRequestConfirm Función que se ejecuta al confirmar la solicitud de una clase.
+ * @param onSendButtonClick Función que se ejecuta al pulsar el botón de compartir.
+ * @param modifier Modificador de diseño.
+ * @param contentPadding Espaciado alrededor del contenido.
  * @param contentType Indica tipo de contenido de la pantalla (ListOnly o ListAndDetail).
+ * @param advertsUiState Estado de la interfaz de usuario de los anuncios.
+ * @param favoritesUiState Estado de la interfaz de usuario de los favoritos.
  */
 @Composable
 fun AdvertsListAndDetail(
@@ -670,7 +693,7 @@ fun AdvertsListAndDetail(
     Row(
         modifier = modifier
     ) {
-        // Representa la lista de anuncios
+        // Mostramos la lista de anuncios
         AdvertsList(
             advertsUiState = advertsUiState,
             favoritesUiState = favoritesUiState,
@@ -687,13 +710,14 @@ fun AdvertsListAndDetail(
             contentType = contentType
         )
 
-        // Obtener la información necesaria para mostrar detalles del anuncio
+        // Obtenemos la información necesaria para mostrar detalles del anuncio
         val userLogged = advertsUiState?.userLogged ?: favoritesUiState?.userLogged ?: User()
         val currentAdvert = advertsUiState?.currentAdvert ?: favoritesUiState?.currentAdvert ?: Advert()
         val professorsList = advertsUiState?.professorsList ?: favoritesUiState?.professorsList ?: emptyList()
         val professor = professorsList.find { it._id == currentAdvert.profId }
+
         professor?.let {
-            // Representa los detalles de un anuncio específico
+            // Representamos los detalles de un anuncio específico
             AdvertDetail(
                 windowSize = windowSize,
                 userLogged = userLogged,
@@ -707,6 +731,17 @@ fun AdvertsListAndDetail(
     }
 }
 
+/**
+ * Función para mostrar un icono junto con un texto.
+ *
+ * @param icon Vector de imagen del icono a mostrar.
+ * @param text Texto a mostrar junto al icono.
+ * @param modifier Modificador de diseño.
+ * @param iconSize Tamaño del icono.
+ * @param textSize Tamaño del texto.
+ * @param iconColor Color del icono.
+ * @param textColor Color del texto.
+ */
 @Composable
 fun IconWithText(
     icon: ImageVector,
@@ -720,6 +755,7 @@ fun IconWithText(
     Row(
         verticalAlignment = Alignment.Top
     ) {
+        // Mostramos el icono
         Icon(
             imageVector = icon,
             contentDescription = null,
@@ -728,6 +764,7 @@ fun IconWithText(
                 .size(iconSize)
                 .padding(end = 4.dp)
         )
+        // Mostramos el texto
         Text(
             text = text,
             fontSize = textSize,
@@ -737,15 +774,21 @@ fun IconWithText(
     Spacer(modifier = Modifier.height(10.dp))
 }
 
+/**
+ * Función que muestra un mapa con marcadores en la ubicación del alumno y del profesor.
+ *
+ * @param studentLocation Coordenadas de ubicación del alumno.
+ * @param professorLocation Coordenadas de ubicación del profesor.
+ */
 @Composable
 fun ShowMap(
-    userLogged: User,
-    professor: User
+    studentLocation: LatLng,
+    professorLocation: LatLng
 ) {
     // Posicionamos la cámara del mapa en la ubicación del usuario
     val cameraPositionState = CameraPositionState(
         position = CameraPosition.Builder()
-            .target(LatLng(userLogged.latitude, userLogged.longitude))
+            .target(studentLocation)
             .zoom(14f)
             .build()
     )
@@ -759,21 +802,21 @@ fun ShowMap(
             .fillMaxWidth()
             .height(500.dp)
     ) {
-        // Colocamos un marcador rojo en la posición del usuario
+        // Colocamos un marcador rojo en la posición del alumno
         Marker(
-            position = LatLng(userLogged.latitude, userLogged.longitude)
+            position = studentLocation
         )
 
         // Colocamos un marcador morado en la posición del profesor
         Marker(
-            position = LatLng(professor.latitude, professor.longitude),
+            position = professorLocation,
             icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
         )
     }
 }
 
 /**
- * Función que previsualiza la lista de anuncios.
+ * Función para previsualizar un elemento de la lista de anuncios.
  */
 @Preview
 @Composable
@@ -791,31 +834,5 @@ fun AdvertItemPreview() {
         onAdvertClick = {},
         onFavoriteButtonClick = {},
         onSendButtonClick = {}
-    )
-}
-
-@Preview
-@Composable
-fun AdvertDetailPreview() {
-    AdvertDetail(
-        windowSize = WindowWidthSizeClass.Medium,
-        userLogged = User(),
-        advert = Advert(
-            subject = "Lengua",
-            price = 12,
-            classModes = "Presencial, Hibrido",
-            levels = "Bachillerato",
-            description = "Esto es una prueba de una descripción muy larga para ver" +
-                    " como se comporta el diseño de la aplicación"
-        ),
-        professor = User(
-            _id = "1",
-            username = "Maria",
-            phone = "657565343",
-            address = "Calle Real",
-            postal = "56474",
-            email = "maria@gmail.com"
-        ),
-        onRequestConfirm = {}
     )
 }

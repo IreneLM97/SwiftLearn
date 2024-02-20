@@ -7,9 +7,9 @@ import com.example.swiftlearn.model.Level
 /**
  * Estado de la interfaz de usuario para las pantallas de nuevo anuncio y editar anuncio.
  *
- * @param advertDetails Detalles del anuncio.
- * @param isEntryValid Indica si el formulario es válido.
- * @param isLoading Indica si la pantalla está en estado de carga.
+ * @property advertDetails Detalles del anuncio.
+ * @property isEntryValid Indica si el formulario es válido.
+ * @property isLoading Indica si la pantalla está en estado de carga.
  */
 data class AdvertUiState(
     val advertDetails: AdvertDetails = AdvertDetails(),
@@ -20,13 +20,13 @@ data class AdvertUiState(
 /**
  * Clase que representa los detalles de un anuncio.
  *
- * @param _id ID del anuncio.
- * @param profId ID del profesor asociado al anuncio.
- * @param subject Asignatura del anuncio.
- * @param price Precio del anuncio.
- * @param classModes Modos de clase del anuncio.
- * @param levels Niveles educativos del anuncio.
- * @param description Descripción del anuncio.
+ * @property _id ID del anuncio.
+ * @property profId ID del profesor asociado al anuncio.
+ * @property subject Asignatura del anuncio.
+ * @property price Precio del anuncio.
+ * @property classModes Modos de clase del anuncio.
+ * @property levels Niveles educativos del anuncio.
+ * @property description Descripción del anuncio.
  */
 data class AdvertDetails(
     val _id: String = "",

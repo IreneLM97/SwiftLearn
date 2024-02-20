@@ -1,6 +1,7 @@
 package com.example.swiftlearn.ui
 
 import android.app.Application
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -21,7 +22,7 @@ import com.example.swiftlearn.ui.screens.student.classes.ClassesViewModel
 import com.example.swiftlearn.ui.screens.student.favorites.FavoritesViewModel
 
 /**
- * Fábrica que crea instancias de ViewModel para toda la aplicación.
+ * [AppViewModelProvider] es una fábrica que crea instancias de [ViewModel] para toda la aplicación.
  */
 object AppViewModelProvider {
     val Factory: ViewModelProvider.Factory = viewModelFactory {

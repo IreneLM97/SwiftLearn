@@ -18,7 +18,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla de clases del profesor.
+ * [ClassesViewModel] es un [ViewModel] que gestiona el estado y la lógica de la pantalla de solicitudes de clases.
+ *
+ * @param userRepository Repositorio para gestionar la colección usuarios.
+ * @param advertRepository Repositorio para gestionar la colección anuncios.
+ * @param requestRepository Repositorio para gestionar la colección solicitudes.
  */
 class ClassesViewModel(
     val userRepository: UserRepository,
@@ -33,17 +37,18 @@ class ClassesViewModel(
     init {
         viewModelScope.launch {
             try {
-                // Obtenemos el usuario autentificado
+                // Obtenemos los datos del usuario autentificado
                 val userLogged = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
-                // Actualizar el estado de la pantalla con el usuario
+                // Actualizamos el estado de la pantalla con los datos del usuario obtenidos
                 _classesUiState.update { it.copy(userLogged = userLogged) }
 
-                // Combina los flujos de datos de profesores, anuncios y solicitudes
+                // Combinamos los flujos de datos de profesores, anuncios y solicitudes
                 combine(
                     userRepository.getAllProfessors(),
                     advertRepository.getAllAdverts(),
                     requestRepository.getAllRequestsByStudentId(userLogged._id)
                 ) { professors, adverts, requests ->
+                    // Filtramos anuncios y profesores asociados a alguna solicitud
                     val advertsByRequests = adverts.filter { advert ->
                         requests.find { it.advertId == advert._id } != null
                     }
@@ -52,6 +57,7 @@ class ClassesViewModel(
                     }
                     Triple(professorsByAdverts, advertsByRequests, requests)
                 }.collect { (professorsByAdverts, advertsByRequests, requests) ->
+                    // Actualizamos el estado de la interfaz
                     _classesUiState.update {
                         it.copy(
                             advertsList = advertsByRequests,
@@ -62,12 +68,18 @@ class ClassesViewModel(
                         ) }
 
                     delay(500)
+                    // Actualizamos estado de cargando a false
                     _classesUiState.update { it.copy(isLoading = false) }
                 }
             } catch (_: Exception) {}
         }
     }
 
+    /**
+     * Función para eliminar una solicitud de clase.
+     *
+     * @param request Solicitud a eliminar.
+     */
     fun deleteRequest(request: Request) {
         viewModelScope.launch {
             requestRepository.deleteRequest(request)

@@ -29,19 +29,29 @@ import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
+/**
+ * Destino de navegación para la pantalla splash de arranque.
+ */
 object SplashDestination : NavigationDestination {
     override val titleRes = null
     override val route = "splash"
 }
 
+/**
+ * [SplashScreen] define la pantalla splash que aparece al arrancar la aplicación.
+ *
+ * @param navController Controlador de navegación.
+ */
 @Composable
 fun SplashScreen(
     navController: NavController
 ) {
-    val scale = remember {
-        Animatable(1f)
-    }
+    // Animación de escala para la imagen del splash screen
+    val scale = remember { Animatable(1f) }
+
+    // Efecto lanzado cuando el componente se crea
     LaunchedEffect(key1 = true) {
+        // Animación de escala para reducir el tamaño de la imagen
         scale.animateTo(
             targetValue = 0.9f,
             animationSpec = tween(
@@ -54,12 +64,12 @@ fun SplashScreen(
         )
         delay(2000L)
 
-        // Comprobamos si está autentificado el usuario
-        //   -> si no está autentificado se manda a la pantalla de inicio de sesión
-        //   -> si está autentificado se manda a la pantalla principal de la aplicación
+        // Comprobamos si el usuario está autentificado
         if(FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()) {
+            // Si no está autentificado, navegamos a la pantalla de inicio de sesión
             navController.navigate(LoginDestination.route)
         } else {
+            // Si está autentificado, navegamos a la pantalla principal de la aplicación
             navController.navigate(HomeDestination.route) {
                 // Evitamos que si damos hacia atrás en el dispositivo vuelva a salir el splash
                 popUpTo(SplashDestination.route) {
@@ -67,8 +77,9 @@ fun SplashScreen(
                 }
             }
         }
-        //navController.navigate(LoginDestination.route)
     }
+
+    // Diseño del splash screen
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -79,6 +90,7 @@ fun SplashScreen(
                 .padding(top = 150.dp)
                 .scale(scale.value),
         ) {
+            // Imagen del logo de la aplicación
             Image(
                 painter = painterResource(id = R.drawable.icon_swiftlearn),
                 contentDescription = stringResource(R.string.description_logo_icon),
@@ -90,6 +102,9 @@ fun SplashScreen(
     }
 }
 
+/**
+ * Función para previsualizar la pantalla splash de arranque.
+ */
 @Preview
 @Composable
 fun SplashScreenPreview() {

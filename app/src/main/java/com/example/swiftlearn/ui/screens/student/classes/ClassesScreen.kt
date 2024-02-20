@@ -70,6 +70,11 @@ import com.example.swiftlearn.ui.components.TabItem
 import com.example.swiftlearn.ui.screens.student.IconWithText
 import kotlinx.coroutines.launch
 
+/**
+ * [ClassesScreen] define la pantalla de muestra de las solicitudes de clases.
+ *
+ * @param viewModel ViewModel para gestionar la pantalla de clases.
+ */
 @Composable
 fun ClassesScreen(
     viewModel: ClassesViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -164,7 +169,7 @@ fun ClassesScreen(
             ClassesList(
                 tabIndex = selectedTabIndex.value,
                 classesUiState = classesUiState,
-                onDeleteButtonClick = {
+                onCancelButtonClick = {
                     viewModel.deleteRequest(it)
                     showSnackbarCancelled.value = true
                 }
@@ -173,11 +178,18 @@ fun ClassesScreen(
     }
 }
 
+/**
+ * Función que representa la lista de solicitudes de clases.
+ *
+ * @param tabIndex Indice de la pestaña seleccionada.
+ * @param classesUiState Estado de la interfaz de usuario.
+ * @param onCancelButtonClick Función que se ejecuta al pulsar el botón de cancelar.
+ */
 @Composable
 private fun ClassesList(
     tabIndex: Int,
     classesUiState: ClassesUiState,
-    onDeleteButtonClick: (Request) -> Unit
+    onCancelButtonClick: (Request) -> Unit
 ) {
     // Filtramos la lista de solicitudes de clases en función del tab seleccionado
     val filteredRequests = when (tabIndex) {
@@ -230,19 +242,28 @@ private fun ClassesList(
                     professor = professor,
                     advert = advert,
                     request = request,
-                    onDeleteButtonClick = onDeleteButtonClick
+                    onCancelButtonClick = onCancelButtonClick
                 )
             }
         }
     }
 }
 
+/**
+ * Función que representa un elemento individual de la lista de solicitudes de clases.
+ *
+ * @param professor Profesor asociado al anuncio de la solicitud.
+ * @param advert Anuncio asociado a la solicitud.
+ * @param request Solicitud de clase.
+ * @param onCancelButtonClick Función que se ejecuta al pulsar el botón de cancelar.
+ * @param modifier Modificador de diseño.
+ */
 @Composable
 private fun ClassItem(
     professor: User,
     advert: Advert,
     request: Request,
-    onDeleteButtonClick: (Request) -> Unit,
+    onCancelButtonClick: (Request) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Estado booleano para controlar si el diálogo de confirmación está abierto o no
@@ -256,7 +277,7 @@ private fun ClassItem(
             .padding(horizontal = dimensionResource(R.dimen.padding_medium)),
         shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
     ) {
-        // Columna para datos del profesor y de la clase
+        // Fila contenedora de la información
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -277,7 +298,7 @@ private fun ClassItem(
                     shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
                 )
         ) {
-            // Información del profesor
+            // Columna con información del profesor
             Column(
                 modifier = Modifier
                     .padding(10.dp)
@@ -292,19 +313,19 @@ private fun ClassItem(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Información del teléfono
+                // Teléfono del profesor
                 IconWithText(
                     icon = Icons.Outlined.Phone,
                     text = professor.phone
                 )
 
-                // Información del email
+                // Correo electrónico del profesor
                 IconWithText(
                     icon = Icons.Outlined.Email,
                     text = professor.email
                 )
 
-                // Información de la dirección
+                // Dirección del profesor
                 IconWithText(
                     icon = Icons.Outlined.LocationOn,
                     text = stringResource(
@@ -314,7 +335,7 @@ private fun ClassItem(
                     )
                 )
 
-                // Información de la clase
+                // Fila contenedora de la información de la clase
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -342,7 +363,7 @@ private fun ClassItem(
                     }
                 }
 
-                // Botón de Cancelar solicitud si está en estado Pendiente
+                // Botón de cancelar solicitud si está en estado Pendiente
                 if(request.status == Status.Pendiente.toString()) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Row(
@@ -381,7 +402,7 @@ private fun ClassItem(
             title = stringResource(id = R.string.cancel_request_title),
             textMessage = stringResource(id = R.string.sure_cancel_request_label),
             onConfirm = {
-                onDeleteButtonClick(request)
+                onCancelButtonClick(request)
                 showDialog = false
             },
             onCancel = {
@@ -391,6 +412,9 @@ private fun ClassItem(
     }
 }
 
+/**
+ * Función para previsualizar varios elementos de la lista de solicitudes de clases.
+ */
 @Preview
 @Composable
 fun ClassItemPreview() {
@@ -420,21 +444,21 @@ fun ClassItemPreview() {
             professor = professor,
             advert = advert,
             request = request,
-            onDeleteButtonClick = {}
+            onCancelButtonClick = {}
         )
         Spacer(modifier = Modifier.height(16.dp))
         ClassItem(
             professor = professor,
             advert = advert,
             request = request.copy(status = Status.Aceptada.toString()),
-            onDeleteButtonClick = {}
+            onCancelButtonClick = {}
         )
         Spacer(modifier = Modifier.height(16.dp))
         ClassItem(
             professor = professor,
             advert = advert,
             request = request.copy(status = Status.Rechazada.toString()),
-            onDeleteButtonClick = {}
+            onCancelButtonClick = {}
         )
     }
 }

@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.sp
 import com.example.swiftlearn.R
 
 /**
- * [SearchTextField] es una función para crear un campo de texto de búsqueda.
+ * Función para crear un campo de texto de búsqueda.
  *
  * @param placeholder Texto descriptivo que se muestra cuando el campo está vacío.
  * @param query Valor actual del campo de búsqueda.
@@ -114,7 +114,7 @@ fun SearchTextField(
 }
 
 /**
- * [InputField] es una función para crear un campo de entrada genérico con opciones configurables.
+ * Función para crear un campo de entrada genérico con opciones configurables.
  *
  * @param label Etiqueta que describe el campo.
  * @param value Valor actual del campo de entrada.
@@ -207,7 +207,7 @@ fun InputField(
 }
 
 /**
- * [PasswordField] es una función para crear un campo de entrada de contraseña con opciones configurables.
+ * Función para crear un campo de entrada de contraseña con opciones configurables.
  *
  * @param label Etiqueta que describe el campo.
  * @param password Contraseña actual.
@@ -300,7 +300,7 @@ fun PasswordField(
 }
 
 /**
- * [PasswordVisibleIcon] es una función para crear un icono permite alternar la visibilidad de un campo contraseña.
+ * Función para crear un icono permite alternar la visibilidad de un campo contraseña.
  *
  * @param passwordVisible Estado mutable que indica si la contraseña debe ser visible o no.
  */
@@ -325,7 +325,7 @@ private fun PasswordVisibleIcon(
 }
 
 /**
- * [ShowErrorMessage] es una función que muestra un mensaje de error.
+ * Función para mostrar un mensaje de error.
  *
  * @param errorMessage Mensaje de error que se quiere mostrar.
  */
@@ -346,7 +346,7 @@ private fun ShowErrorMessage(
 }
 
 /**
- * [SearchTextFieldPreview] es una función para previsualizar el campo de texto de búsqueda.
+ * Función para previsualizar el campo de texto de búsqueda.
  */
 @Preview
 @Composable
