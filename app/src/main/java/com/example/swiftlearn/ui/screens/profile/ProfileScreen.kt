@@ -54,6 +54,12 @@ import com.example.swiftlearn.ui.components.ConfirmationDialog
 import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 
+/**
+ * [ProfileScreen] define la pantalla de perfil de usuario.
+ *
+ * @param navigateToLogin Función de navegación para ir a la pantalla de inicio de sesión.
+ * @param viewModel ViewModel para gestionar la pantalla de perfil de usuario.
+ */
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ProfileScreen(
@@ -66,24 +72,24 @@ fun ProfileScreen(
     // Guardamos el contexto de la aplicación
     val context = LocalContext.current
 
-    // Mostramos el icono cargando si está cargando
     if(profileUiState.isLoading) {
+        // Mostramos el icono cargando si está cargando
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
-    // Mostramos el formulario de perfil si no está cargando
     } else {
+        // Mostramos el formulario de perfil si no está cargando
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         ) {
-            // Cabecera del perfil
+            // Cabecera de la pantalla
             ProfileHeader()
 
-            // Formulario del perfil
+            // Formulario del perfil de usuario
             ProfileForm(
                 profileUiState = profileUiState,
                 onFieldChanged = viewModel::onFieldChanged,
@@ -115,7 +121,7 @@ private fun ProfileHeader() {
     ) {
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
 
-        // Texto de nueva cuenta
+        // Texto de mi perfil
         Text(
             text = stringResource(R.string.profile_label),
             color = colorResource(id = R.color.my_dark_purple),
@@ -126,6 +132,15 @@ private fun ProfileHeader() {
     }
 }
 
+/**
+ * Función que representa el formulario de perfil de usuario.
+ *
+ * @param profileUiState Estado de la interfaz de usuario.
+ * @param onFieldChanged Función para manejar cambios en los campos del formulario.
+ * @param onSaveClick Función para manejar evento click en el botón de guardar.
+ * @param onDeleteClick Función para manejar evento click en el botón de eliminar.
+ * @param onSignOutClick Función para manejar evento click en el botón de cerrar sesión.
+ */
 @Composable
 private fun ProfileForm(
     profileUiState: ProfileUiState = ProfileUiState(),
@@ -175,7 +190,7 @@ private fun ProfileForm(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Email del usuario
+        // Correo electrónico del usuario
         Text(
             text = profileUiState.userLogged.email,
             fontSize = 20.sp,
@@ -226,9 +241,11 @@ private fun ProfileForm(
         )
         Spacer(modifier = Modifier.height(10.dp))
 
+        // Fila contenedora de los botones
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
+            // Botón Eliminar perfil
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -253,9 +270,9 @@ private fun ProfileForm(
                         )
                 )
             }
-
             Spacer(modifier = Modifier.width(10.dp))
 
+            // Botón Guardar
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -305,6 +322,9 @@ private fun ProfileForm(
     }
 }
 
+/**
+ * [ProfileScreenPreview] es una función para previsualizar la pantalla de perfil de usuario.
+ */
 @Preview
 @Composable
 fun ProfileScreenPreview() {

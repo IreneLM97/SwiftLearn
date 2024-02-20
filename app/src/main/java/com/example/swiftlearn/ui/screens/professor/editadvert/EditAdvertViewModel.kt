@@ -15,7 +15,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla de editar anuncio.
+ * [EditAdvertViewModel] es un [ViewModel] que gestiona el estado y la lógica de la pantalla de editar anuncio.
+ *
+ * @param savedStateHandle Maneja el estado guardado de la aplicación.
+ * @param advertRepository Repositorio para gestionar la colección anuncios.
  */
 class EditAdvertViewModel(
     savedStateHandle: SavedStateHandle,
@@ -38,19 +41,30 @@ class EditAdvertViewModel(
         }
     }
 
+    /**
+     * Función que se ejecuta cuando cambia un campo del formulario.
+     *
+     * @param advertDetails Detalles del formulario.
+     */
     fun onFieldChanged(advertDetails: AdvertDetails) {
+        // Actualizamos el estado de la interfaz
         _advertUiState.update { it.copy(advertDetails = advertDetails, isEntryValid = validateForm(advertDetails)) }
     }
 
+    /**
+     * Función que actualiza un anuncio con nuevos datos.
+     *
+     * @param advert Anuncio con los datos actualizados.
+     */
     fun updateAdvert(advert: Advert) {
-        // Actualizar estado de cargando a true
+        // Actualizamos estado de cargando a true
         _advertUiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
             // Actualizamos el anuncio con los nuevos datos
             advertRepository.updateAdvert(advert)
 
-            // Actualizar estado de cargando a false
+            // Actualizamos estado de cargando a false
             _advertUiState.update { it.copy(isLoading = false) }
         }
     }

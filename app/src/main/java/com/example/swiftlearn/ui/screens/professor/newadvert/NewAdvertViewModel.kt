@@ -15,7 +15,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla de nuevo anuncio.
+ * [NewAdvertViewModel] es un [ViewModel] que gestiona el estado y la lógica de la pantalla de crear nuevo anuncio.
+ *
+ * @param userRepository Repositorio para gestionar la colección usuarios.
+ * @param advertRepository Repositorio para gestionar la colección anuncios.
  */
 class NewAdvertViewModel(
     val userRepository: UserRepository,
@@ -25,18 +28,27 @@ class NewAdvertViewModel(
     private val _advertUiState = MutableStateFlow(AdvertUiState())
     val advertUiState = _advertUiState.asStateFlow()
 
-    // Variable para el control de la autentificación de usuarios
+    // Variable para la autentificación de usuarios
     private val auth: FirebaseAuth = Firebase.auth
 
+    /**
+     * Función que se ejecuta cuando cambia un campo del formulario.
+     *
+     * @param advertDetails Detalles del formulario.
+     */
     fun onFieldChanged(advertDetails: AdvertDetails) {
         _advertUiState.update { it.copy(advertDetails = advertDetails, isEntryValid = validateForm(advertDetails)) }
     }
 
+    /**
+     * Función para insertar un nuevo anuncio.
+     *
+     * @param advert Anuncio a insertar.
+     */
     fun insertAdvert(advert: Advert) {
-        // Actualizar estado de cargando a true
+        // Actualizamos estado de cargando a true
         _advertUiState.update { it.copy(isLoading = true) }
 
-        // Agregamos el anuncio a la colección
         viewModelScope.launch {
             // Recogemos el Id del usuario y lo asignamos al profId del anuncio
             val profId = userRepository.getUserByAuthId(auth.currentUser?.uid.toString())?._id
@@ -45,7 +57,7 @@ class NewAdvertViewModel(
             // Insertamos el anuncio en la colección
             advertRepository.insertAdvert(advertWithProfId)
 
-            // Actualizar estado de cargando a false
+            // Actualizamos estado de cargando a false
             _advertUiState.update { it.copy(isLoading = false) }
         }
     }

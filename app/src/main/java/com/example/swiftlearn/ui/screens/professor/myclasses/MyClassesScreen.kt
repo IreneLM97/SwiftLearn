@@ -70,6 +70,11 @@ import com.example.swiftlearn.ui.components.TabItem
 import com.example.swiftlearn.ui.screens.student.IconWithText
 import kotlinx.coroutines.launch
 
+/**
+ * [MyClassesScreen] define la pantalla de la lista de solicitudes de clases a un profesor.
+ *
+ * @param viewModel ViewModel para gestionar la pantalla de mis clases.
+ */
 @Composable
 fun MyClassesScreen(
     viewModel: MyClassesViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -139,9 +144,10 @@ fun MyClassesScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Estado mutable para controlar el índice de la pestaña seleccionada
             val selectedTabIndex = rememberSaveable { mutableStateOf(0) }
 
-            // TabRow para las pestañas
+            // TabRow contenedor para las pestañas
             TabRow(
                 selectedTabIndex = selectedTabIndex.value,
                 backgroundColor = Color.White,
@@ -192,6 +198,14 @@ fun MyClassesScreen(
     }
 }
 
+/**
+ * Función que muestra la lista de solicitudes de clases al profesor filtradas según el tab seleccionado.
+ *
+ * @param tabIndex Índice de la pestaña seleccionada.
+ * @param myClassesUiState Estado de la interfaz de usuario.
+ * @param onAcceptButtonClick Función que se ejecuta al pulsar el botón de aceptar solicitud.
+ * @param onDeclineButtonClick Función que se ejecuta al pulsar el botón de rechazar solicitud.
+ */
 @Composable
 private fun MyClassesList(
     tabIndex: Int,
@@ -258,6 +272,16 @@ private fun MyClassesList(
     }
 }
 
+/**
+ * Función que representa un elemento de la lista de solicitudes del profesor.
+ *
+ * @param student Alumno asociado a la solicitud.
+ * @param advert Anuncio asociado a la solicitud.
+ * @param request Información de la solicitud de clase.
+ * @param onAcceptButtonClick Función que se ejecuta al pulsar el botón de aceptar solicitud.
+ * @param onDeclineButtonClick Función que se ejecuta al pulsar el botón de rechazar solicitud.
+ * @param modifier Modificador de diseño.
+ */
 @Composable
 private fun MyClassItem(
     student: User,
@@ -278,7 +302,7 @@ private fun MyClassItem(
             .padding(horizontal = dimensionResource(R.dimen.padding_medium)),
         shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
     ) {
-        // Columna para datos del alumno y de la clase
+        // Fila contenedora del item de la lista
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -314,19 +338,19 @@ private fun MyClassItem(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Información del teléfono
+                // Teléfono del alumno
                 IconWithText(
                     icon = Icons.Outlined.Phone,
                     text = student.phone
                 )
 
-                // Información del email
+                // Correo electrónico del alumno
                 IconWithText(
                     icon = Icons.Outlined.Email,
                     text = student.email
                 )
 
-                // Información de la dirección
+                // Dirección del alumno
                 IconWithText(
                     icon = Icons.Outlined.LocationOn,
                     text = stringResource(
@@ -366,6 +390,7 @@ private fun MyClassItem(
                     Row(
                         modifier = Modifier.fillMaxWidth()
                     ) {
+                        // Botón Rechazar
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = stringResource(R.string.decline_button_label),
@@ -385,9 +410,9 @@ private fun MyClassItem(
                                     .clickable(onClick = { showDialog = true })
                             )
                         }
-
                         Spacer(modifier = Modifier.width(10.dp))
 
+                        // Botón Aceptar
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = stringResource(R.string.accept_button_label),
@@ -435,6 +460,9 @@ private fun MyClassItem(
     }
 }
 
+/**
+ * [MyClassItemPreview] es una función para previsualizar elementos de la lista de solicitudes.
+ */
 @Preview
 @Composable
 fun MyClassItemPreview() {

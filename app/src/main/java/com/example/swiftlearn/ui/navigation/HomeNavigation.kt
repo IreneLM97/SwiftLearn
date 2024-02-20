@@ -29,6 +29,15 @@ import com.example.swiftlearn.ui.screens.profile.ProfileScreen
 import com.example.swiftlearn.ui.screens.student.classes.ClassesScreen
 import com.example.swiftlearn.ui.screens.student.favorites.FavoritesScreen
 
+/**
+ * [HomeNavigation] maneja la navegación de la aplicación tras iniciar sesión.
+ *
+ * @param homeUiState Estado de la pantalla de inicio.
+ * @param windowSize Clase de tamaño de ventana.
+ * @param navController Controlador de navegación.
+ * @param mainNavController Controlador de navegación principal.
+ * @param modifier Modificador de diseño.
+ */
 @Composable
 fun HomeNavigation(
     homeUiState: HomeUiState,
@@ -40,12 +49,15 @@ fun HomeNavigation(
     // Contexto de la aplicación
     val context = LocalContext.current
 
+    // Configuración del sistema de navegación
     NavHost(
         navController = navController,
         startDestination = MenuItems.AdvertsItem.route,
         modifier = modifier
     ) {
+        // Navegación a la pestaña 'Anuncios'
         composable(route = MenuItems.AdvertsItem.route) {
+            // Distinguimos el contenido que se muestra en función del rol del usuario
             when(homeUiState.role) {
                 Role.Profesor -> {
                     MyAdvertsScreen(
@@ -64,33 +76,37 @@ fun HomeNavigation(
             }
 
         }
+
+        // Navegación a la pestaña 'Clases'
         composable(route = MenuItems.ClassesItem.route) {
+            // Distinguimos el contenido que se muestra en función del rol del usuario
             when(homeUiState.role) {
                 Role.Profesor -> MyClassesScreen()
                 Role.Alumno -> ClassesScreen()
                 Role.None -> null
             }
         }
-        composable(route = MenuItems.FavoritesItem.route) {
-            FavoritesScreen(
-                windowSize = windowSize,
-                onSendButtonClick = { sendAdvert(context, it) },
-                navigateToClasses = { navController.navigate(MenuItems.ClassesItem.route) }
-            )
-        }
+
+        // Navegación a la pestaña 'Mapa'
         composable(route = MenuItems.MapItem.route) {
             MapScreen()
         }
+
+        // Navegación a la pestaña 'Perfil'
         composable(route = MenuItems.ProfileItem.route) {
             ProfileScreen(
                 navigateToLogin = { navigateToLogin(mainNavController) }
             )
         }
+
+        // Navegación a la pestaña 'Nuevo anuncio' (sólo para rol Profesor)
         composable(route = MenuItems.NewAdvertItem.route) {
             NewAdvertScreen(
                 navigateToListAdverts = { navController.navigate(MenuItems.AdvertsItem.route) }
             )
         }
+
+        // Navegación a la pestaña 'Editar anuncio' (sólo para rol Profesor)
         composable(
             route = EditAdvertDestination.routeWithArgs,
             arguments = listOf(navArgument(EditAdvertDestination.advertIdArg) { type = NavType.StringType })
@@ -99,9 +115,23 @@ fun HomeNavigation(
                 navigateToListAdverts = { navController.navigate(MenuItems.AdvertsItem.route) }
             )
         }
+
+        // Navegación a la pestaña 'Favoritos' (sólo para rol Alumno)
+        composable(route = MenuItems.FavoritesItem.route) {
+            FavoritesScreen(
+                windowSize = windowSize,
+                onSendButtonClick = { sendAdvert(context, it) },
+                navigateToClasses = { navController.navigate(MenuItems.ClassesItem.route) }
+            )
+        }
     }
 }
 
+/**
+ * Función para navegar a la pantalla de inicio de sesión.
+ *
+ * @param mainNavController Controlador de navegación principal.
+ */
 fun navigateToLogin(mainNavController: NavHostController) {
     mainNavController.navigate(LoginDestination.route) {
         popUpTo(HomeDestination.route) {

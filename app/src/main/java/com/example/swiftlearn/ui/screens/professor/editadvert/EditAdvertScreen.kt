@@ -27,6 +27,9 @@ import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.navigation.NavigationDestination
 import com.example.swiftlearn.ui.screens.professor.newadvert.AdvertForm
 
+/**
+ * Destino de navegación para la pantalla de editar anuncio.
+ */
 object EditAdvertDestination : NavigationDestination {
     override val titleRes = null
     override val route = "edit_advert"
@@ -34,6 +37,12 @@ object EditAdvertDestination : NavigationDestination {
     val routeWithArgs = "$route/{$advertIdArg}"
 }
 
+/**
+ * [EditAdvertScreen] define la pantalla de editar anuncio existente.
+ *
+ * @param navigateToListAdverts Función de navegación para ir a la lista de anuncios.
+ * @param viewModel ViewModel para gestionar la pantalla de editar anuncio.
+ */
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun EditAdvertScreen(
@@ -43,16 +52,16 @@ fun EditAdvertScreen(
     // Guardamos el estado de la pantalla de editar anuncio
     val advertUiState = viewModel.advertUiState.collectAsState().value
 
-    // Mostramos el icono cargando si está cargando
     if(advertUiState.isLoading) {
+        // Mostramos el icono cargando si está cargando
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
-    // Mostramos el formulario de nuevo anuncio si no está cargando
     } else {
+        // Mostramos el formulario de información del anuncio si no está cargando
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -86,7 +95,7 @@ private fun EditAdvertHeader() {
     ) {
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
 
-        // Texto de nueva cuenta
+        // Texto de editar anuncio
         Text(
             text = stringResource(R.string.edit_advert_label),
             color = colorResource(id = R.color.my_dark_purple),

@@ -41,6 +41,12 @@ import com.example.swiftlearn.ui.components.InputField
 import com.example.swiftlearn.ui.components.MultiOptionsSection
 import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 
+/**
+ * [NewAdvertScreen] define la pantalla de crear nuevo anuncio.
+ *
+ * @param navigateToListAdverts Función de navegación para ir a la lista de anuncios.
+ * @param viewModel ViewModel para gestionar la pantalla de nuevo anuncio.
+ */
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun NewAdvertScreen(
@@ -50,16 +56,16 @@ fun NewAdvertScreen(
     // Guardamos el estado de la pantalla de nuevo anuncio
     val newAdvertUiState = viewModel.advertUiState.collectAsState().value
 
-    // Mostramos el icono cargando si está cargando
     if(newAdvertUiState.isLoading) {
+        // Mostramos el icono cargando si está cargando
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
-    // Mostramos el formulario de nuevo anuncio si no está cargando
     } else {
+        // Mostramos el formulario de nuevo anuncio si no está cargando
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -67,7 +73,7 @@ fun NewAdvertScreen(
             // Cabecera de la pantalla
             NewAdvertHeader()
 
-            // Formulario de anuncio
+            // Formulario de nuevo anuncio
             AdvertForm(
                 advertUiState = newAdvertUiState,
                 onFieldChanged = viewModel::onFieldChanged,
@@ -93,7 +99,7 @@ private fun NewAdvertHeader() {
     ) {
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
 
-        // Texto de nueva cuenta
+        // Texto de nuevo anuncio
         Text(
             text = stringResource(R.string.new_advert_label),
             color = colorResource(id = R.color.my_dark_purple),
@@ -104,6 +110,13 @@ private fun NewAdvertHeader() {
     }
 }
 
+/**
+ * Función que representa el formulario de nuevo anuncio o editar anuncio.
+ *
+ * @param advertUiState Estado de la interfaz de usuario.
+ * @param onFieldChanged Función para manejar cambios en los campos del formulario.
+ * @param onSaveClick Función para manejar evento click en el botón de guardar.
+ */
 @Composable
 fun AdvertForm(
     advertUiState: AdvertUiState,
@@ -151,7 +164,7 @@ fun AdvertForm(
             }
         )
 
-        // Opciones de niveles
+        // Opciones de niveles educativos
         MultiOptionsSection(
             title = stringResource(id = R.string.levels_label),
             options = listOf(
@@ -169,7 +182,7 @@ fun AdvertForm(
         )
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Text arriba de descripción
+        // Texto arriba de descripción
         Text(
             text = stringResource(id = R.string.description_text_label),
             fontSize = 15.sp,
@@ -207,6 +220,9 @@ fun AdvertForm(
     }
 }
 
+/**
+ * [NewAdvertScreenPreview] es una función para previsualizar la pantalla de crear nuevo anuncio.
+ */
 @Preview
 @Composable
 fun NewAdvertScreenPreview() {

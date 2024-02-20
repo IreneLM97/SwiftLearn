@@ -12,12 +12,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla principal.
+ * [HomeViewModel] es un [ViewModel] que gestiona el estado y la lógica de la pantalla principal.
+ *
+ * @param userRepository Repositorio para gestionar la colección usuarios.
  */
 class HomeViewModel(
     userRepository: UserRepository
 ): ViewModel() {
-    // Estado de la interfaz de pantalla principal
+    // Estado de la interfaz de la pantalla principal
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState = _homeUiState.asStateFlow()
 
@@ -25,10 +27,10 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             try {
-                // Obtener los datos del usuario desde el repositorio
+                // Obtenemos el rol del usuario desde el repositorio
                 val role = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString())?.role
 
-                // Actualizar el estado de la pantalla con los datos del usuario obtenidos
+                // Actualizamos el estado de la pantalla con el rol obtenido
                 _homeUiState.update { it.copy(role = role ?: Role.None) }
             } catch (_: Exception) {}
         }

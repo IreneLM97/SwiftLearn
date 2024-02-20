@@ -17,7 +17,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla de anuncios.
+ * [MyAdvertsViewModel] es un [ViewModel] que gestiona el estado y la lógica de la pantalla de mis anuncios.
+ *
+ * @param userRepository Repositorio para gestionar la colección usuarios.
+ * @param advertRepository Repositorio para gestionar la colección anuncios.
+ * @param favoriteRepository Repositorio para gestionar la colección favoritos.
+ * @param requestRepository Repositorio para gestionar la colección solicitudes.
  */
 class MyAdvertsViewModel(
     val userRepository: UserRepository,
@@ -25,16 +30,17 @@ class MyAdvertsViewModel(
     val favoriteRepository: FavoriteRepository,
     val requestRepository: RequestRepository
 ): ViewModel() {
-    // Estado de la interfaz de anuncios
+    // Estado de la interfaz de mis anuncios
     private val _myAdvertsUiState = MutableStateFlow(MyAdvertsUiState())
     val myAdvertsUiState = _myAdvertsUiState.asStateFlow()
 
+    // Inicialización del ViewModel
     init {
         viewModelScope.launch {
             try {
-                // Obtenemos el usuario autentificado
+                // Obtenemos los datos del usuario desde el repositorio
                 val userLogged = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
-                // Actualizar el estado de la pantalla con el usuario
+                // Actualizamos el estado de la pantalla con los datos del usuario obtenidos
                 _myAdvertsUiState.update { it.copy(userLogged = userLogged) }
 
                 // Obtenemos flujo de datos con los anuncios del profesor
@@ -42,12 +48,18 @@ class MyAdvertsViewModel(
                     _myAdvertsUiState.update { it.copy(myAdvertsList = adverts) }
 
                     delay(500)
+                    // Actualizamos estado de cargando a false
                     _myAdvertsUiState.update { it.copy(isLoading = false) }
                 }
             } catch (_: Exception) {}
         }
     }
 
+    /**
+     * Función para eliminar un anuncio y todas sus referencias asociadas.
+     *
+     * @param advert Anuncio a eliminar.
+     */
     fun deleteAdvert(advert: Advert) {
         // Actualizar estado de cargando a true
         _myAdvertsUiState.update { it.copy(isLoading = true) }

@@ -51,11 +51,21 @@ import com.example.swiftlearn.ui.components.PasswordField
 import com.example.swiftlearn.ui.navigation.NavigationDestination
 import com.example.swiftlearn.ui.screens.utils.ValidationUtils
 
+/**
+ * Destino de navegación para la pantalla de registro.
+ */
 object RegisterDestination : NavigationDestination {
     override val titleRes = R.string.register_app_bar
     override val route = "register"
 }
 
+/**
+ * [RegisterScreen] define la pantalla de registro de usuario.
+ *
+ * @param navigateToHome Función de navegación para ir a la pantalla principal.
+ * @param navigateBack Función de navegación hacia atrás.
+ * @param viewModel ViewModel para gestionar la pantalla de registro.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
@@ -69,7 +79,7 @@ fun RegisterScreen(
     // Guardamos el contexto de la aplicación
     val context = LocalContext.current
 
-    // Diseño de la estructura básica de la pantalla
+    // Diseño de la pantalla
     Scaffold(
         topBar = {
             // Barra superior personalizada
@@ -81,6 +91,7 @@ fun RegisterScreen(
         }
     ) { innerPadding ->
         if(registerUiState.isLoading) {
+            // Mostramos el icono cargando si está cargando
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -88,15 +99,16 @@ fun RegisterScreen(
                 CircularProgressIndicator()
             }
         } else {
+            // Mostramos formulario de registro si no está cargando
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState())
             ) {
-                // Cabecera del registro
+                // Cabecera de la pantalla
                 RegisterHeader()
 
-                // Mostrar mensaje de error si existe
+                // Mostramos mensaje de error si ya existe esa cuenta
                 registerUiState.errorMessage?.let {
                     Text(
                         text = it,
@@ -146,6 +158,13 @@ private fun RegisterHeader() {
     }
 }
 
+/**
+ * Función que representa el formulario de registro.
+ *
+ * @param registerUiState Estado de la interfaz de usuario.
+ * @param onFieldChanged Función para manejar cambios en los campos del formulario.
+ * @param onRegisterClick Función para manejar el evento de registrarse.
+ */
 @Composable
 private fun RegisterForm(
     registerUiState: RegisterUiState = RegisterUiState(),
@@ -256,21 +275,31 @@ private fun RegisterForm(
     }
 }
 
+/**
+ * Función para mostrar opciones de roles para el registro.
+ *
+ * @param registerDetails Detalles del registro.
+ * @param onRoleSelected Función que se ejecuta al seleccionar un rol.
+ */
 @Composable
 private fun RoleOptions(
     registerDetails: RegisterDetails = RegisterDetails(),
     onRoleSelected: (Role) -> Unit = {}
 ) {
+    // Creamos las opciones con los distintos roles
     Options(
         options = listOf(
-            Role.Alumno to stringResource(R.string.student_label),
-            Role.Profesor to stringResource(R.string.professor_label)
+            Role.Alumno to Role.Alumno.toString(),
+            Role.Profesor to Role.Profesor.toString()
         ),
         selectedOption = registerDetails.role,
         onOptionSelected = onRoleSelected
     )
 }
 
+/**
+ * [RegisterScreenPreview] es una función para previsualizar la pantalla de registro.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable

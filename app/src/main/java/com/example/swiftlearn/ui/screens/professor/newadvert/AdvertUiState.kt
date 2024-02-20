@@ -5,15 +5,29 @@ import com.example.swiftlearn.model.ClassMode
 import com.example.swiftlearn.model.Level
 
 /**
- * Clase de estado que representa el estado actual de la pantalla de nuevo anuncio.
+ * Estado de la interfaz de usuario para las pantallas de nuevo anuncio y editar anuncio.
+ *
+ * @param advertDetails Detalles del anuncio.
+ * @param isEntryValid Indica si el formulario es válido.
+ * @param isLoading Indica si la pantalla está en estado de carga.
  */
 data class AdvertUiState(
     val advertDetails: AdvertDetails = AdvertDetails(),
     val isEntryValid: Boolean = false,
-    val isLoading: Boolean = false,
-    val isSavedSuccess: Boolean = false
+    val isLoading: Boolean = false
 )
 
+/**
+ * Clase que representa los detalles de un anuncio.
+ *
+ * @param _id ID del anuncio.
+ * @param profId ID del profesor asociado al anuncio.
+ * @param subject Asignatura del anuncio.
+ * @param price Precio del anuncio.
+ * @param classModes Modos de clase del anuncio.
+ * @param levels Niveles educativos del anuncio.
+ * @param description Descripción del anuncio.
+ */
 data class AdvertDetails(
     val _id: String = "",
     val profId: String = "",
@@ -24,6 +38,11 @@ data class AdvertDetails(
     val description: String = ""
 )
 
+/**
+ * Función que convierte los detalles de un anuncio a un objeto Advert.
+ *
+ * @return Objeto Advert generado a partir de los detalles del anuncio.
+ */
 fun AdvertDetails.toAdvert(): Advert = Advert(
     _id = _id,
     profId = profId,
@@ -34,7 +53,13 @@ fun AdvertDetails.toAdvert(): Advert = Advert(
     description = description
 )
 
+/**
+ * Función que convierte un objeto Advert en sus detalles correspondientes.
+ *
+ * @return Detalles del anuncio generados a partir del objeto Advert.
+ */
 fun Advert.toAdvertDetails(): AdvertDetails {
+    // Obtenemos conjunto de ClassModes a partir del atributo del objeto
     val classModesSet = classModes.split(", ").mapNotNull { str ->
         when (str) {
             "Presencial" -> ClassMode.Presencial
@@ -44,6 +69,7 @@ fun Advert.toAdvertDetails(): AdvertDetails {
         }
     }.toMutableSet()
 
+    // Obtenemos conjunto de Levels a partir del atributo del objeto
     val levelsSet = levels.split(", ").mapNotNull { str ->
         when (str) {
             "Primaria" -> Level.Primaria

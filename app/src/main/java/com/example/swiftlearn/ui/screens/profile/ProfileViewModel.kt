@@ -30,7 +30,12 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla de perfil.
+ * [ProfileViewModel] es un [ViewModel] que gestiona el estado y la lógica de la pantalla de perfil de usuario.
+ *
+ * @param userRepository Repositorio para gestionar la colección usuarios.
+ * @param advertRepository Repositorio para gestionar la colección anuncios.
+ * @param favoriteRepository Repositorio para gestionar la colección favoritos.
+ * @param requestRepository Repositorio para gestionar la colección solicitudes.
  */
 class ProfileViewModel(
     val userRepository: UserRepository,
@@ -49,9 +54,9 @@ class ProfileViewModel(
     init {
         viewModelScope.launch {
             try {
-                // Obtener los datos del usuario desde el repositorio
+                // Obtenemos los datos del usuario desde el repositorio
                 val userLogged = userRepository.getUserByAuthId(auth.currentUser?.uid.toString())
-                // Actualizar el estado de la pantalla con los datos del usuario obtenidos
+                // Actualizamos el estado de la pantalla con los datos del usuario obtenidos
                 _profileUiState.update {
                     val profileDetails = userLogged?.toProfileDetails() ?: ProfileDetails()
                     it.copy(
@@ -64,27 +69,47 @@ class ProfileViewModel(
         }
     }
 
+    /**
+     * Función que se ejecuta cuando cambia un campo del formulario.
+     *
+     * @param profileDetails Detalles del formulario.
+     */
     fun onFieldChanged(profileDetails: ProfileDetails) {
         _profileUiState.update { it.copy(profileDetails = profileDetails, isEntryValid = validateForm(profileDetails)) }
     }
 
-    fun updateUser(user: User, context: Context) {
-        // Actualizar estado de cargando a true
+    /**
+     * Función que actualiza un usuario con nuevos datos.
+     *
+     * @param user Usuario con los datos actualizados.
+     * @param context Contexto de la aplicación.
+     */
+    fun updateUser(
+        user: User,
+        context: Context
+    ) {
+        // Actualizamos estado de cargando a true
         _profileUiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
             // Actualizamos las coordenadas del usuario
-            val coordinates = saveCoordinates(user.address, context)
+            val coordinates = getCoordinates(user.address, context)
             val userWithCoordinates = user.copy(latitude = coordinates?.latitude ?: 0.0, longitude = coordinates?.longitude ?: 0.0)
 
-            // Actualizamos los datos del usuario
+            // Actualizamos los datos del usuario en la colección
             userRepository.updateUser(userWithCoordinates)
 
-            // Actualizar estado de cargando a false
+            // Actualizamos estado de cargando a false
             _profileUiState.update { it.copy(isLoading = false) }
         }
     }
 
+    /**
+     * Función para eliminar un usuario y todas sus referencias asociadas.
+     *
+     * @param user Usuario a eliminar.
+     * @param navigateToLogin Función de navegación para ir a la pantalla de inicio de sesión.
+     */
     fun deleteUser(
         user: User,
         navigateToLogin: () -> Unit
@@ -94,10 +119,10 @@ class ProfileViewModel(
 
         viewModelScope.launch {
             try {
-                // Eliminar el usuario de la autenticación
+                // Eliminamos el usuario de la autenticación
                 auth.currentUser?.delete()?.await()
 
-                // Eliminar dependencias según el rol del usuario
+                // Eliminamos dependencias según el rol del usuario
                 if (user.role == Role.Profesor) {
                     val advertsIds = advertRepository.getAdvertsIdsByProfId(user._id)
                     favoriteRepository.deleteAllFavoritesByAdvertIds(advertsIds)
@@ -108,10 +133,10 @@ class ProfileViewModel(
                     requestRepository.deleteAllRequestsByStudentId(user._id)
                 }
 
-                // Eliminar el usuario de la base de datos
+                // Eliminamos el usuario de la colección
                 userRepository.deleteUser(user)
 
-                // Actualizar estado de carga a false
+                // Actualizamos estado de cargando a false
                 _profileUiState.update { it.copy(isLoading = false) }
 
                 // Navegamos a Login
@@ -120,6 +145,9 @@ class ProfileViewModel(
         }
     }
 
+    /**
+     * Función para cerrar la sesión del usuario actual.
+     */
     fun signOut() {
         auth.signOut()
     }
@@ -137,34 +165,51 @@ class ProfileViewModel(
                 ValidationUtils.isPostalValid(profileDetails.postal)
     }
 
-    private suspend fun saveCoordinates(address: String, context: Context): LatLng? {
+    /**
+     * Función para obtener las coordenadas geográficas de una ubicación a partir de una dirección.
+     *
+     * @param address Dirección proporcionada para obtener las coordenadas.
+     * @param context Contexto de la aplicación.
+     * @return Coordenadas geográficas de la ubicación encontrada, o null si no se encuentran coordenadas.
+     */
+    private suspend fun getCoordinates(address: String, context: Context): LatLng? {
+        // Creamos cliente de Places utilizando el contexto proporcionado
         val placesClient = Places.createClient(context)
+        // Definimos los campos que queremos recuperar de la respuesta de búsqueda
         val fields = listOf(Place.Field.LAT_LNG)
 
+        // Creamos una solicitud de predicciones de autocompletado con la consulta de búsqueda
         val request = FindAutocompletePredictionsRequest.builder()
             .setQuery(address)
             .build()
 
         return suspendCoroutine { continuation ->
+            // Realizamos la búsqueda de predicciones y manejamos el resultado obtenido
             placesClient.findAutocompletePredictions(request)
                 .addOnCompleteListener { task: Task<FindAutocompletePredictionsResponse> ->
                     if (task.isSuccessful) {
+                        // Verificamos si se obtuvo una respuesta válida y si hay predicciones disponibles
                         val response = task.result
                         if (response != null && !response.autocompletePredictions.isNullOrEmpty()) {
+                            // Obtenemos la primera predicción de la lista
                             val prediction = response.autocompletePredictions[0]
                             val placeId = prediction.placeId
 
+                            // Utilizamos el placeId para obtener los detalles que queremos del lugar
                             placesClient.fetchPlace(
                                 FetchPlaceRequest.newInstance(placeId, fields)
                             ).addOnCompleteListener { fetchTask: Task<FetchPlaceResponse> ->
                                 if (fetchTask.isSuccessful) {
+                                    // Obtenemos las coordenadas geográficas del lugar
                                     val place = fetchTask.result?.place
                                     val latLng = place?.latLng
+                                    // Continuamos la ejecución con las coordenadas obtenidas
                                     continuation.resume(latLng)
                                 }
                             }
                         }
                     } else {
+                        // Si la tarea no fue exitosa, continuamos la ejecución con un valor nulo
                         continuation.resume(null)
                     }
                 }

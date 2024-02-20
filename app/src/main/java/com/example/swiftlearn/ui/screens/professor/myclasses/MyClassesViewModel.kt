@@ -18,14 +18,18 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla de clases del profesor.
+ * [MyClassesViewModel] es un [ViewModel] que gestiona el estado y la lógica de la pantalla de mis clases.
+ *
+ * @param userRepository Repositorio para gestionar la colección usuarios.
+ * @param advertRepository Repositorio para gestionar la colección anuncios.
+ * @param requestRepository Repositorio para gestionar la colección solicitudes.
  */
 class MyClassesViewModel(
     val userRepository: UserRepository,
     val advertRepository: AdvertRepository,
     val requestRepository: RequestRepository
 ): ViewModel() {
-    // Estado de la interfaz de clases
+    // Estado de la interfaz de mis clases
     private val _myClassesUiState = MutableStateFlow(MyClassesUiState())
     val myClassesUiState = _myClassesUiState.asStateFlow()
 
@@ -33,17 +37,17 @@ class MyClassesViewModel(
     init {
         viewModelScope.launch {
             try {
-                // Obtenemos el usuario autentificado
+                // Obtenemos los datos del usuario desde el repositorio
                 val userLogged = userRepository.getUserByAuthId(Firebase.auth.currentUser?.uid.toString()) ?: User()
-                // Actualizar el estado de la pantalla con el usuario
+                // Actualizamos el estado de la pantalla con los datos del usuario obtenidos
                 _myClassesUiState.update { it.copy(userLogged = userLogged) }
 
-                // Obtenemos lista de anuncios del profesor
+                // Obtenemos la lista de anuncios del profesor
                 val advertsList = advertRepository.getAllAdvertsByProfId(userLogged._id)
-                // Actualizar el estado de la pantalla con la lista de anuncios
+                // Actualizamos el estado de la pantalla con la lista de anuncios
                 _myClassesUiState.update { it.copy(advertsList = advertsList) }
 
-                // Si la lista de anuncios está vacía, actualizar el estado de la pantalla y salir del ViewModelScope
+                // Si la lista de anuncios está vacía, actualizamos el estado de la pantalla y salimos del ViewModelScope
                 if (advertsList.isEmpty()) {
                     _myClassesUiState.update { it.copy(isLoading = false) }
                     return@launch
@@ -52,7 +56,7 @@ class MyClassesViewModel(
                 // Obtenemos la lista de Ids de los anuncios del profesor
                 val advertIds = advertsList.map { it._id }
 
-                // Combina los flujos de datos de alumnos y solicitudes
+                // Combinamos los flujos de datos de alumnos y solicitudes
                 combine(
                     userRepository.getAllStudents(),
                     requestRepository.getAllRequestsByAdvertIds(advertIds)
@@ -62,6 +66,7 @@ class MyClassesViewModel(
                     }
                     Triple(studentsWithRequests, requests, null)
                 }.collect { (studentsWithRequests, requests, _) ->
+                    // Actualizamos el estado de la interfaz
                     _myClassesUiState.update {
                         it.copy(
                             studentsList = studentsWithRequests,
@@ -71,12 +76,18 @@ class MyClassesViewModel(
                         ) }
                     
                     delay(500)
+                    // Actualizamos estado de cargando a false
                     _myClassesUiState.update { it.copy(isLoading = false) }
                 }
             } catch (_: Exception) {}
         }
     }
 
+    /**
+     * Función para actualizar el estado de una solicitud.
+     *
+     * @param request Solicitud a actualizar.
+     */
     fun updateRequest(request: Request) {
         viewModelScope.launch {
             requestRepository.updateRequest(request)

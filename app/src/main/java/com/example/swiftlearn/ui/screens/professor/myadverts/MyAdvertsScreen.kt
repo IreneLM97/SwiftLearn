@@ -55,6 +55,13 @@ import com.example.swiftlearn.ui.AppViewModelProvider
 import com.example.swiftlearn.ui.components.ConfirmationDialog
 import com.example.swiftlearn.ui.screens.student.IconWithText
 
+/**
+ * [MyAdvertsScreen] define la pantalla de la lista de anuncios de un profesor.
+ *
+ * @param navigateToEditAdvert Función de navegación para ir a editar anuncio.
+ * @param onSendButtonClick Función que se ejecuta al pulsar el botón de compartir.
+ * @param viewModel ViewModel para gestionar la pantalla de mis anuncios.
+ */
 @Composable
 fun MyAdvertsScreen(
     navigateToEditAdvert: (String) -> Unit,
@@ -64,24 +71,23 @@ fun MyAdvertsScreen(
     // Guardamos el estado de la pantalla de mis anuncios
     val myAdvertsUiState = viewModel.myAdvertsUiState.collectAsState().value
 
-    // Mostramos el icono cargando si está cargando
     if(myAdvertsUiState.isLoading) {
+        // Mostramos el icono cargando si está cargando
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
-        // Mostramos el formulario de perfil si no está cargando
     } else {
+        // Mostramos la lista de anuncios del profesor si no está cargando
         Column {
-            // Cabecera de mis anuncios
+            // Cabecera de la pantalla
             MyAdvertsHeader()
 
             // Lista de anuncios del profesor
             MyAdvertsList(
-                professor = myAdvertsUiState.userLogged,
-                advertsList = myAdvertsUiState.myAdvertsList,
+                myAdvertsUiState = myAdvertsUiState,
                 notFoundMessage = stringResource(R.string.not_found_adverts_professor),
                 onEditButtonClick = {
                     navigateToEditAdvert(it._id)
@@ -109,7 +115,7 @@ private fun MyAdvertsHeader() {
     ) {
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
 
-        // Texto de nueva cuenta
+        // Texto de mis anuncios
         Text(
             text = stringResource(R.string.my_adverts_label),
             color = colorResource(id = R.color.my_dark_purple),
@@ -119,23 +125,33 @@ private fun MyAdvertsHeader() {
     }
 }
 
+/**
+ * Función que muestra la lista de anuncios de un profesor.
+ *
+ * @param myAdvertsUiState Estado de la interfaz de usuario.
+ * @param notFoundMessage Mensaje a mostrar cuando no hay anuncios disponibles.
+ * @param onEditButtonClick Función que se ejecuta al pulsar el botón de editar anuncio.
+ * @param onDeleteButtonClick Función que se ejecuta al pulsar el botón de eliminar anuncio.
+ * @param onSendButtonClick Función que se ejecuta al pulsar el botón de compartir.
+ * @param modifier Modificador de diseño.
+ */
 @Composable
 private fun MyAdvertsList(
-    professor: User,
-    advertsList: List<Advert>,
+    myAdvertsUiState: MyAdvertsUiState,
     notFoundMessage: String,
     onEditButtonClick: (Advert) -> Unit,
     onDeleteButtonClick: (Advert) -> Unit,
     onSendButtonClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Columna contenedora de la lista
     Column(
         modifier = modifier
     ) {
         Spacer(modifier = modifier.height(20.dp))
 
-        if (advertsList.isEmpty()) {
-            // Mostrar mensaje cuando no se encuentran anuncios
+        if (myAdvertsUiState.myAdvertsList.isEmpty()) {
+            // Mostramos mensaje cuando no se encuentran anuncios
             Text(
                 text = notFoundMessage,
                 textAlign = TextAlign.Center,
@@ -145,7 +161,7 @@ private fun MyAdvertsList(
                     .fillMaxWidth()
             )
         } else {
-            // Mostrar la lista de anuncios de ese profesor
+            // Mostramos la lista de anuncios de ese profesor si no está vacia
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
                 modifier = Modifier
@@ -153,9 +169,9 @@ private fun MyAdvertsList(
                     .padding(bottom = 62.dp)
                     .fillMaxHeight()
             ) {
-                items(advertsList) { advert ->
+                items(myAdvertsUiState.myAdvertsList) { advert ->
                     MyAdvertItem(
-                        professor = professor,
+                        professor = myAdvertsUiState.userLogged,
                         advert = advert,
                         onEditButtonClick = onEditButtonClick,
                         onDeleteButtonClick = onDeleteButtonClick,
@@ -165,11 +181,21 @@ private fun MyAdvertsList(
             }
         }
 
-        // Agrega margen al final de la lista de anuncios
+        // Agregamos margen al final de la lista de anuncios
         Spacer(modifier = modifier.height(20.dp))
     }
 }
 
+/**
+ * Función que representa un elemento de la lista de anuncios del profesor.
+ *
+ * @param professor Usuario profesor propietario del anuncio.
+ * @param advert Anuncio a mostrar.
+ * @param onEditButtonClick Función que se ejecuta al pulsar el botón de editar anuncio.
+ * @param onDeleteButtonClick Función que se ejecuta al pulsar el botón de eliminar anuncio.
+ * @param onSendButtonClick Función que se ejecuta al pulsar el botón de compartir.
+ * @param modifier Modificador de diseño.
+ */
 @Composable
 private fun MyAdvertItem(
     professor: User,
@@ -200,6 +226,7 @@ private fun MyAdvertItem(
             .padding(horizontal = dimensionResource(R.dimen.padding_medium)),
         shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius))
     ) {
+        //  Fila contenedora del item de la lista
         Row(
             modifier = Modifier
                 .background(colorResource(id = R.color.my_light_pink))
@@ -223,10 +250,10 @@ private fun MyAdvertItem(
                     Box(
                         modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
+                        // Icono de compartir
                         IconButton(
                             onClick = { onSendButtonClick(advertSummary) },
                         ) {
-                            // Icono de compartir
                             Icon(
                                 modifier = Modifier.size(30.dp),
                                 imageVector = Icons.Outlined.Share,
@@ -235,7 +262,6 @@ private fun MyAdvertItem(
                             )
                         }
                     }
-
                     // Contenedor de los iconos de editar y eliminar
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -251,7 +277,6 @@ private fun MyAdvertItem(
                                 contentDescription = null
                             )
                         }
-
                         // Icono de eliminar
                         IconButton(
                             onClick = { showDialog = true }
@@ -272,12 +297,14 @@ private fun MyAdvertItem(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    // Asignatura del anuncio
                     Text(
                         text = advert.subject,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                     )
+                    // Precio del anuncio
                     Text(
                         text = stringResource(
                             id = R.string.icon_euro_hour,
@@ -313,13 +340,10 @@ private fun MyAdvertItem(
                     title = stringResource(id = R.string.delete_advert_title),
                     textMessage = stringResource(id = R.string.sure_delete_advert_label),
                     onConfirm = {
-                        // Si el usuario confirma, se llama a la función onDeleteClick
                         onDeleteButtonClick(advert)
-                        // Se cierra el diálogo
                         showDialog = false
                     },
                     onCancel = {
-                        // Si el usuario cancela, se cierra el diálogo
                         showDialog = false
                     }
                 )
@@ -328,6 +352,9 @@ private fun MyAdvertItem(
     }
 }
 
+/**
+ * [MyAdvertItemPreview] es una función para previsualizar un elemento de la lista de anuncios.
+ */
 @Preview
 @Composable
 fun MyAdvertItemPreview() {

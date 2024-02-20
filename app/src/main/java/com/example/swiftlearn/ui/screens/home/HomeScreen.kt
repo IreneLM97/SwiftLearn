@@ -25,11 +25,21 @@ import com.example.swiftlearn.ui.navigation.studentMenuItems
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
+/**
+ * Destino de navegación para la pantalla principal.
+ */
 object HomeDestination : NavigationDestination {
     override val route = "home"
     override val titleRes = R.string.login_title
 }
 
+/**
+ * [HomeScreen] define la pantalla principal de la aplicación tras iniciar sesión.
+ *
+ * @param windowSize Clase de tamaño de ventana.
+ * @param mainNavController Controlador de navegación principal.
+ * @param viewModel ViewModel para gestionar la pantalla principal.
+ */
 @OptIn(ExperimentalPermissionsApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -41,7 +51,7 @@ fun HomeScreen(
     // Guardamos el estado de la pantalla principal
     val homeUiState = viewModel.homeUiState.collectAsState().value
 
-    // Recordar el controlador de navegación
+    // Recordamos el controlador de navegación
     val navController = rememberNavController()
 
     // Estado del permiso de ubicación
@@ -55,8 +65,10 @@ fun HomeScreen(
         }
     }
 
+    // Diseño de la pantalla
     Scaffold(
         bottomBar = {
+            // Barra inferior según el rol del usuario
             when (homeUiState.role) {
                 Role.Profesor -> NavInfProfessor(
                     navController = navController,
@@ -70,10 +82,12 @@ fun HomeScreen(
             }
         },
         floatingActionButton = {
+            // Botón flotante de navegación para profesores
             if (homeUiState.role == Role.Profesor) FloatingButtonNavigation(navController = navController)
         },
         isFloatingActionButtonDocked = homeUiState.role == Role.Profesor
     ) {
+        // Navegación para las opciones del menú
         HomeNavigation(
             homeUiState = homeUiState,
             windowSize = windowSize,

@@ -56,11 +56,21 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 
+/**
+ * Destino de navegación para la pantalla de inicio de sesión.
+ */
 object LoginDestination : NavigationDestination {
     override val titleRes = R.string.login_title
     override val route = "login"
 }
 
+/**
+ * [LoginScreen] define la pantalla de inicio de sesión.
+ *
+ * @param navigateToHome Función de navegación para ir a la pantalla principal.
+ * @param navigateToRegister Función de navegación para ir a la pantalla de registro.
+ * @param viewModel ViewModel para gestionar la pantalla de inicio de sesión.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
@@ -90,7 +100,7 @@ fun LoginScreen(
         } catch(_: Exception) {}
     }
 
-    // Diseño de la estructura básica de la pantalla
+    // Diseño de la pantalla
     Scaffold(
         topBar = {
             // Barra superior personalizada
@@ -101,6 +111,7 @@ fun LoginScreen(
         }
     ) { innerPadding ->
         if(loginUiState.isLoading) {
+            // Mostramos el icono cargando si está cargando
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -108,15 +119,16 @@ fun LoginScreen(
                 CircularProgressIndicator()
             }
         } else {
+            // Mostramos formulario de inicio de sesión si no está cargando
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState())
             ) {
-                // Cabecera del login
+                // Cabecera de la pantalla
                 LoginHeader()
 
-                // Mostrar mensaje de error si existe
+                // Mostramos mensaje de error si no existe esa cuenta
                 loginUiState.errorMessage?.let {
                     Text(
                         text = it,
@@ -158,7 +170,7 @@ fun LoginScreen(
 }
 
 /**
- * Función que representa la cabecera de la pantalla de login.
+ * Función que representa la cabecera de la pantalla de inicio de sesión.
  */
 @Composable
 private fun LoginHeader() {
@@ -190,6 +202,15 @@ private fun LoginHeader() {
     }
 }
 
+/**
+ * Función que representa el formulario de inicio de sesión.
+ *
+ * @param loginUiState Estado de la interfaz de usuario.
+ * @param onFieldChanged Función para manejar cambios en los campos del formulario.
+ * @param onToggleChecked Función para manejar el cambio en el toggle.
+ * @param onLoginClick Función para manejar el evento de inicio de sesión.
+ * @param onGoogleLoginClick Función para manejar el evento de inicio de sesión con Google.
+ */
 @Composable
 private fun LoginForm(
     loginUiState: LoginUiState = LoginUiState(),
@@ -258,6 +279,11 @@ private fun LoginForm(
     }
 }
 
+/**
+ * Función que muestra un mensaje para registrarse si aún no tiene cuenta.
+ *
+ * @param onRegisterClick Función para manejar el evento click en el enlace de registro.
+ */
 @Composable
 private fun LoginToRegister(
     onRegisterClick: () -> Unit = {}
@@ -288,6 +314,9 @@ private fun LoginToRegister(
     Spacer(modifier = Modifier.height(35.dp))
 }
 
+/**
+ * [LoginScreenPreview] es una función para previsualizar la pantalla de inicio de sesión.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable

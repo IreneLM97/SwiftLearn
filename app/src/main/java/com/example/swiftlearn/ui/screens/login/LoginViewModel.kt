@@ -19,9 +19,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla de inicio de sesión.
+ * [LoginViewModel] es un [ViewModel] que gestiona el estado y la lógica de la pantalla de inicio de sesión.
  *
  * @param userPreferencesRepository Repositorio para acceder a las preferencias del usuario.
+ * @param userRepository Repositorio para gestionar la colección usuarios.
  */
 class LoginViewModel(
     val userPreferencesRepository: UserPreferencesRepository,
@@ -53,6 +54,11 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * Función que se ejecuta cuando cambia un campo del formulario.
+     *
+     * @param loginDetails Detalles del formulario.
+     */
     fun onFieldChanged(loginDetails: LoginDetails) {
         _loginUiState.update {it.copy(loginDetails = loginDetails, isEntryValid = validateForm(loginDetails)) }
 
@@ -87,6 +93,13 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * Función para iniciar sesión con correo electrónico y contraseña.
+     *
+     * @param context Contexto de la aplicación.
+     * @param loginDetails Detalles del inicio de sesión (correo electrónico y contraseña).
+     * @param navigateToHome Función de navegación para ir a la pantalla principal.
+     */
     fun signInWithEmailAndPassword(
         context: Context,
         loginDetails: LoginDetails,
@@ -97,14 +110,17 @@ class LoginViewModel(
 
         viewModelScope.launch {
             try{
+                // Iniciamos sesión con correo electrónico y contraseña
                 auth.signInWithEmailAndPassword(loginDetails.email, loginDetails.password)
                     .addOnCompleteListener{task ->
                         // Actualizar estado de cargando a false
                         _loginUiState.update { it.copy(isLoading = false) }
 
                         if(task.isSuccessful) {
+                            // Si ha podido iniciar sesión, navegamos a Home
                             navigateToHome()
                         } else {
+                            // Si no ha podido iniciar sesión, mostramos mensaje de error
                             _loginUiState.update { it.copy(errorMessage = context.getString(R.string.error_login_label)) }
                         }
                     }
@@ -112,15 +128,23 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * Función para iniciar sesión con credenciales de Google.
+     *
+     * @param credential Credencial de autenticación.
+     * @param navigateToHome Función de navegación para ir a la pantalla principal.
+     */
     fun signInWithGoogleCredential(
         credential: AuthCredential,
         navigateToHome: () -> Unit = {}
     ) {
         viewModelScope.launch {
             try{
+                // Iniciamos sesión con la credencial de Google
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener{task ->
                         if(task.isSuccessful) {
+                            // Si ha podido iniciar sesión, creamos objeto User con los datos
                             viewModelScope.launch {
                                 userRepository.insertUser(
                                     User(
@@ -130,6 +154,7 @@ class LoginViewModel(
                                     )
                                 )
                             }
+                            // Navegamos a Home
                             navigateToHome()
                         }
                     }
@@ -137,6 +162,12 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * Función para validar el formulario de inicio de sesión.
+     *
+     * @param loginDetails Datos del inicio de sesión recogidos del formulario.
+     * @return true si el formulario es válido, false en caso contrario.
+     */
     private fun validateForm(loginDetails: LoginDetails): Boolean {
         return ValidationUtils.isEmailValid(loginDetails.email) &&
                 ValidationUtils.isPasswordValid(loginDetails.password)

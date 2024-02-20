@@ -23,11 +23,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.swiftlearn.R
-import com.example.swiftlearn.ui.navigation.SwiftLearnScreens
+import com.example.swiftlearn.ui.navigation.NavigationDestination
 import com.example.swiftlearn.ui.screens.home.HomeDestination
 import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
+
+object SplashDestination : NavigationDestination {
+    override val titleRes = null
+    override val route = "splash"
+}
 
 @Composable
 fun SplashScreen(
@@ -57,7 +62,7 @@ fun SplashScreen(
         } else {
             navController.navigate(HomeDestination.route) {
                 // Evitamos que si damos hacia atrás en el dispositivo vuelva a salir el splash
-                popUpTo(SwiftLearnScreens.SplashScreen.name) {
+                popUpTo(SplashDestination.route) {
                     inclusive = true
                 }
             }

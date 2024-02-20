@@ -152,7 +152,7 @@ fun NavInfStudent(
 }
 
 /**
- * [FloatingButtonNavigation] es una función para mostrar el botón de acción flotante para la navegación.
+ * [FloatingButtonNavigation] es una función para mostrar un botón flotante en la navegación inferior.
  *
  * @param navController NavController para manejar la navegación.
  */
@@ -160,7 +160,7 @@ fun NavInfStudent(
 fun FloatingButtonNavigation(
     navController: NavHostController
 ) {
-    // Creamos botón de acción flotante para la navegación
+    // Creamos botón flotante para la navegación
     FloatingActionButton(
         onClick = {
             navController.navigate(MenuItems.NewAdvertItem.route)

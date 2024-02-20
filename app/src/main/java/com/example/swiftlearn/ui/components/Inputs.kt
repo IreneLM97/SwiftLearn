@@ -52,8 +52,8 @@ import com.example.swiftlearn.R
  *
  * @param placeholder Texto descriptivo que se muestra cuando el campo está vacío.
  * @param query Valor actual del campo de búsqueda.
- * @param onQueryChange Acción al cambiar el valor del campo de búsqueda.
- * @param onSearch Acción para manejar el evento de búsqueda.
+ * @param onQueryChange Función que se ejecuta al cambiar el valor del campo de búsqueda.
+ * @param onSearch Función para manejar el evento de búsqueda.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

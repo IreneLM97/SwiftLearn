@@ -26,7 +26,9 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 /**
- * [ViewModel] para gestionar el estado y la lógica de la pantalla de registro.
+ * [RegisterViewModel] es un [ViewModel] que gestiona el estado y la lógica de la pantalla de registro.
+ *
+ * @param userRepository Repositorio para gestionar la colección usuarios.
  */
 class RegisterViewModel(
     val userRepository: UserRepository
@@ -38,43 +40,67 @@ class RegisterViewModel(
     // Variable para la autentificación de usuarios
     private val auth: FirebaseAuth = Firebase.auth
 
+    /**
+     * Función que se ejecuta cuando cambia un campo del formulario.
+     *
+     * @param registerDetails Detalles del formulario.
+     */
     fun onFieldChanged(registerDetails: RegisterDetails) {
         _registerUiState.update { it.copy(registerDetails = registerDetails, isEntryValid = validateForm(registerDetails)) }
     }
 
+    /**
+     * Función para crear un nuevo usuario y agregarlo a la autentificación Firebase.
+     *
+     * @param context Contexto de la aplicación.
+     * @param registerDetails Detalles del registro del usuario.
+     * @param navigateToHome Función de navegación para ir a la pantalla principal.
+     */
     fun createUserWithEmailAndPassword(
         context: Context,
         registerDetails: RegisterDetails,
         navigateToHome: () -> Unit = {}
     ) {
+        // Comprobamos que no está cargando para no registrar varios usuarios al mismo tiempo
         if(!_registerUiState.value.isLoading) {
-            // Actualizar estado de cargando a true
+            // Actualizamos estado de cargando a true
             _registerUiState.update { it.copy(isLoading = true) }
 
+            // Creamos la autentificación en Firebase del nuevo usuario
             auth.createUserWithEmailAndPassword(registerDetails.email, registerDetails.password)
                 .addOnCompleteListener {task ->
                     if(task.isSuccessful) {
                         viewModelScope.launch {
+                            // Insertamos el usuario en la colección
                             insertUser(registerDetails.toUser(), context)
 
-                            // Actualizamos el estado de cargando a false
+                            // Actualizamos estado de cargando a false
                             _registerUiState.update { it.copy(isLoading = false) }
 
                             // Navegamos a Home
                             navigateToHome()
                         }
                     } else {
-                        // Actualizar estado de cargando a false
+                        // Actualizamos estado de cargando a false
                         _registerUiState.update { it.copy(isLoading = false) }
 
-                        // Actualizar mensaje de error
+                        // Actualizamos mensaje de error
                         _registerUiState.update { it.copy(errorMessage = context.getString(R.string.error_register_label)) }
                     }
                 }
         }
     }
 
-    private suspend fun insertUser(user: User, context: Context) {
+    /**
+     * Función para insertar un nuevo usuario.
+     *
+     * @param user Usuario a insertar.
+     * @param context Contexto de la aplicación.
+     */
+    private suspend fun insertUser(
+        user: User,
+        context: Context
+    ) {
         // Recogemos el Id que se generó al autentificar al usuario
         val authId = auth.currentUser?.uid
 
@@ -82,7 +108,7 @@ class RegisterViewModel(
         val userWithAuthId = user.copy(authId = authId.toString())
 
         // Asignamos coordenadas de la dirección al usuario
-        val coordinates = saveCoordinates(user.address, context)
+        val coordinates = getCoordinates(user.address, context)
         val userWithCoordinates = userWithAuthId.copy(latitude = coordinates?.latitude ?: 0.0, longitude = coordinates?.longitude ?: 0.0)
 
         // Agregamos el usuario a la colección
@@ -105,34 +131,51 @@ class RegisterViewModel(
                 ValidationUtils.isConfirmPasswordValid(registerDetails.password, registerDetails.confirmPassword)
     }
 
-    private suspend fun saveCoordinates(address: String, context: Context): LatLng? {
+    /**
+     * Función para obtener las coordenadas geográficas de una ubicación a partir de una dirección.
+     *
+     * @param address Dirección proporcionada para obtener las coordenadas.
+     * @param context Contexto de la aplicación.
+     * @return Coordenadas geográficas de la ubicación encontrada, o null si no se encuentran coordenadas.
+     */
+    private suspend fun getCoordinates(address: String, context: Context): LatLng? {
+        // Creamos cliente de Places utilizando el contexto proporcionado
         val placesClient = Places.createClient(context)
+        // Definimos los campos que queremos recuperar de la respuesta de búsqueda
         val fields = listOf(Place.Field.LAT_LNG)
 
+        // Creamos una solicitud de predicciones de autocompletado con la consulta de búsqueda
         val request = FindAutocompletePredictionsRequest.builder()
             .setQuery(address)
             .build()
 
         return suspendCoroutine { continuation ->
+            // Realizamos la búsqueda de predicciones y manejamos el resultado obtenido
             placesClient.findAutocompletePredictions(request)
                 .addOnCompleteListener { task: Task<FindAutocompletePredictionsResponse> ->
                     if (task.isSuccessful) {
+                        // Verificamos si se obtuvo una respuesta válida y si hay predicciones disponibles
                         val response = task.result
                         if (response != null && !response.autocompletePredictions.isNullOrEmpty()) {
+                            // Obtenemos la primera predicción de la lista
                             val prediction = response.autocompletePredictions[0]
                             val placeId = prediction.placeId
 
+                            // Utilizamos el placeId para obtener los detalles que queremos del lugar
                             placesClient.fetchPlace(
                                 FetchPlaceRequest.newInstance(placeId, fields)
                             ).addOnCompleteListener { fetchTask: Task<FetchPlaceResponse> ->
                                 if (fetchTask.isSuccessful) {
+                                    // Obtenemos las coordenadas geográficas del lugar
                                     val place = fetchTask.result?.place
                                     val latLng = place?.latLng
+                                    // Continuamos la ejecución con las coordenadas obtenidas
                                     continuation.resume(latLng)
                                 }
                             }
                         }
                     } else {
+                        // Si la tarea no fue exitosa, continuamos la ejecución con un valor nulo
                         continuation.resume(null)
                     }
                 }

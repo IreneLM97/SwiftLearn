@@ -12,30 +12,36 @@ import com.example.swiftlearn.ui.screens.login.LoginDestination
 import com.example.swiftlearn.ui.screens.login.LoginScreen
 import com.example.swiftlearn.ui.screens.register.RegisterDestination
 import com.example.swiftlearn.ui.screens.register.RegisterScreen
+import com.example.swiftlearn.ui.screens.splash.SplashDestination
 import com.example.swiftlearn.ui.screens.splash.SplashScreen
 
-enum class SwiftLearnScreens {
-    SplashScreen
-}
-
 /**
- * Provides Navigation graph for the application.
+ * [SwiftLearnNavigation] maneja la navegación principal de la aplicación SwiftLearn.
+ *
+ * @param windowSize Clase de tamaño de ventana.
+ * @param navController Controlador de navegación.
+ * @param modifier Modificador de diseño.
+ * @param startDestination Destino de inicio de la navegación.
  */
 @Composable
 fun SwiftLearnNavigation(
     windowSize: WindowWidthSizeClass,
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = SwiftLearnScreens.SplashScreen.name
+    startDestination: String = SplashDestination.route
 ) {
+    // Configuración del sistema de navegación
     NavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable(route = SwiftLearnScreens.SplashScreen.name) {
+        // Navegación a la pantalla 'Splash'
+        composable(route = SplashDestination.route) {
             SplashScreen(navController = navController)
         }
+
+        // Navegación a la pantalla 'Inicio de sesión'
         composable(route = LoginDestination.route) {
             LoginScreen(
                 navigateToHome = {
@@ -46,6 +52,8 @@ fun SwiftLearnNavigation(
                 }
             )
         }
+
+        // Navegación a la pantalla 'Registro'
         composable(route = RegisterDestination.route) {
             RegisterScreen(
                 navigateToHome = {
@@ -56,6 +64,8 @@ fun SwiftLearnNavigation(
                 }
             )
         }
+
+        // Navegación a la pantalla 'Home'
         composable(route = HomeDestination.route) {
             HomeScreen(
                 windowSize = windowSize,

@@ -21,6 +21,11 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 
+/**
+ * [MapScreen] define la pantalla de visualizado del mapa.
+ *
+ * @param viewModel ViewModel para gestionar la pantalla de mapas.
+ */
 @SuppressLint("MissingPermission")
 @Composable
 fun MapScreen(
@@ -57,7 +62,7 @@ fun MapScreen(
             CircularProgressIndicator()
         }
     } else {
-        // Mostramos el contenido del mapa
+        // Mostramos el contenido del mapa si no está cargando
         MapContent(
             cameraPositionState = cameraPositionState,
             mapUiState = mapUiState,
@@ -69,6 +74,14 @@ fun MapScreen(
     }
 }
 
+/**
+ * Función que define el contenido del mapa interactivo.
+ *
+ * @param cameraPositionState Estado de la posición de la cámara del mapa.
+ * @param mapUiState Estado de la interfaz de usuario.
+ * @param onQueryChange Función que se ejecuta al cambiar el valor del campo de búsqueda.
+ * @param onSearch Función para manejar el evento de búsqueda.
+ */
 @Composable
 fun MapContent(
     cameraPositionState: CameraPositionState,
@@ -76,6 +89,7 @@ fun MapContent(
     onQueryChange: (String) -> Unit = {},
     onSearch: (String) -> Unit = {}
 ) {
+    // Caja contenedora del mapa
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -88,7 +102,7 @@ fun MapContent(
                 .fillMaxSize()
                 .padding(bottom = 60.dp)
         ) {
-            // Si hay coordenadas, agregamos un marcador en esa ubicación
+            // Si hay coordenadas de búsqueda, agregamos un marcador en esa ubicación
             mapUiState.searchCoordinates?.let { coordinates ->
                 Marker(
                     position = LatLng(coordinates.latitude, coordinates.longitude),
@@ -96,7 +110,7 @@ fun MapContent(
                 )
             }
 
-            // Agregamos marcadores para cada profesor cercano
+            // Agregamos marcadores para cada profesor cercano a la ubicación de búsqueda
             mapUiState.nearbyProfessors.forEach { professor ->
                 Marker(
                     position = LatLng(professor.latitude, professor.longitude),

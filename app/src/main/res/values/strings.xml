@@ -20,8 +20,6 @@
     <string name="new_account_label">Nueva cuenta</string>
     <string name="register_label">Registrarme</string>
     <string name="rol_label">¿Qué perfil eres?</string>
-    <string name="professor_label">Profesor</string>
-    <string name="student_label">Alumno</string>
     <string name="username_label">Nombre de usuario</string>
     <string name="phone_label">Teléfono</string>
     <string name="address_label">Dirección</string>
