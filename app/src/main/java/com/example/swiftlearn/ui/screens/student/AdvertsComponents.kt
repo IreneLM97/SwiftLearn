@@ -597,6 +597,7 @@ fun AdvertDetail(
                     textSize = 20.sp,
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
+                Spacer(modifier = Modifier.height(10.dp))
             }
             Spacer(modifier = Modifier.height(15.dp))
 
@@ -768,7 +769,8 @@ fun IconWithText(
         Text(
             text = text,
             fontSize = textSize,
-            color = textColor
+            color = textColor,
+            modifier = Modifier.padding(end = 10.dp)
         )
     }
     Spacer(modifier = Modifier.height(10.dp))
