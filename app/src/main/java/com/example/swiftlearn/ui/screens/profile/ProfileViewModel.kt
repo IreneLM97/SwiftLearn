@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -120,7 +119,7 @@ class ProfileViewModel(
         viewModelScope.launch {
             try {
                 // Eliminamos el usuario de la autenticación
-                auth.currentUser?.delete()?.await()
+                auth.currentUser?.delete()
 
                 // Eliminamos dependencias según el rol del usuario
                 if (user.role == Role.Profesor) {
